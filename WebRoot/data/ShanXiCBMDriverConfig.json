@@ -3,7 +3,7 @@
     "DriverCode": "shanxiCBM",
     "Port": 30000,
     "Protocol": 2,
-    "DataConfig": {
+    "CMBWellDataConfig": {
         "RTUStatus": {
             "Address": 40090,
             "DataType": 1,
@@ -252,6 +252,164 @@
         },
         "setWellName": {
             "Address": 40099,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        }
+    },
+    "GroupValveDataConfig":{
+        "CumulativeFlow1": {
+            "Address": 40101,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterBackupPoint1": {
+            "Address": 40103,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "InstantaneousFlow1": {
+            "Address": 40105,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterTemperature1": {
+            "Address": 40107,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterPress1": {
+            "Address": 40109,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "CumulativeFlow2": {
+            "Address": 40111,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterBackupPoint2": {
+            "Address": 40113,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "InstantaneousFlow2": {
+            "Address": 40115,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterTemperature2": {
+            "Address": 40117,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterPress2": {
+            "Address": 40119,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "CumulativeFlow3": {
+            "Address": 40121,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterBackupPoint3": {
+            "Address": 40123,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "InstantaneousFlow3": {
+            "Address": 40125,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterTemperature3": {
+            "Address": 40127,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterPress3": {
+            "Address": 40129,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "CumulativeFlow4": {
+            "Address": 40131,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterBackupPoint4": {
+            "Address": 40133,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "InstantaneousFlow4": {
+            "Address": 40135,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterTemperature4": {
+            "Address": 40137,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "FlowmeterPress4": {
+            "Address": 40139,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "DeviceId": {
+            "Address": 40151,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "BaudRate": {
+            "Address": 40152,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "InstrumentCombinationMode1": {
+            "Address": 40153,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "InstrumentCombinationMode2": {
+            "Address": 40154,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "InstrumentCombinationMode3": {
+            "Address": 40155,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "InstrumentCombinationMode4": {
+            "Address": 40156,
             "DataType": 1,
             "Length": 1,
             "Zoom": 1

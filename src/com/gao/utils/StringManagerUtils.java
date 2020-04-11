@@ -1273,7 +1273,7 @@ public class StringManagerUtils {
 		    {         
 		        e.printStackTrace();     
 		    }     
-		    return fileContent;   
+		    return fileContent.replaceAll(" ", "");   
 		}
 	    
 	    /*

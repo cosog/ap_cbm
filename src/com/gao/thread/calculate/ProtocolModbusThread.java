@@ -54,12 +54,6 @@ public class ProtocolModbusThread extends Thread{
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
         int readTimeout=1000*60;//socket read超时时间
         Gson gson = new Gson();
-        byte[] writeCommand={0x00,0x03,0x00,0x00,0x00,0x06,0x01,0x06,0x00,0x03,(byte) 0x88,(byte) 0x88};
-        if(driveConfig.getProtocol()==1){
-        	writeCommand=new byte[]{0x00,0x03,0x00,0x00,0x00,0x06,0x01,0x06,0x00,0x03,(byte) 0x88,(byte) 0x88};
-        }else if(driveConfig.getProtocol()==2){
-        	writeCommand=new byte[]{0x01,0x06,0x00,0x03,(byte) 0x88,(byte) 0x88,0x1F,(byte) 0xAC};
-        }
         while(!isExit){
         	//获取输入流，并读取客户端信息
             try {
@@ -76,26 +70,18 @@ public class ProtocolModbusThread extends Thread{
         				break;
         			}
     				String revMacStr="";
-    				if("BeeTech".equalsIgnoreCase(driveConfig.getDriverCode())){
+    				if("shanxiCBM".equalsIgnoreCase(driveConfig.getDriverCode())){
     					if((recByte[0]&0xFF)==0xAA&&(recByte[1]&0xFF)==0x01){
-    						byte[] macByte=new byte[10];
-        					for(int i=0;i<10;i++){
-        						macByte[i]=recByte[i+2];
-        					}
-        					revMacStr=new String(macByte);
-    					}
-    				}else if("SunMoonStandardDrive".equalsIgnoreCase(driveConfig.getDriverCode())){
-    					if((recByte[0]&0xFF)==0xAA&&(recByte[1]&0xFF)==0x01){
-    						byte[] macByte=new byte[11];
-        					for(int i=0;i<11;i++){
+    						byte[] macByte=new byte[13];
+        					for(int i=0;i<13&&i<recByte.length-3;i++){
         						macByte[i]=recByte[i+2];
         					}
         					revMacStr=new String(macByte);
     					}
     				}else {
     					if((recByte[0]&0xFF)==0xAA&&(recByte[1]&0xFF)==0x01){
-    						byte[] macByte=new byte[11];
-        					for(int i=0;i<11;i++){
+    						byte[] macByte=new byte[13];
+        					for(int i=0;i<13&&i<recByte.length-3;i++){
         						macByte[i]=recByte[i+2];
         					}
         					revMacStr=new String(macByte);
@@ -109,43 +95,20 @@ public class ProtocolModbusThread extends Thread{
     							clientUnit.unitDataList.add(beeTechDriverServerTast.units.get(i));
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).setCommStatus(1);
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageCount+=1;
-    							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageSize+=(64+14);
+    							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageSize+=(64+16);
     							if(!StringManagerUtils.getCurrentTime().equals(clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).currentDate)){//如果跨天保存数据
     		    	    			saveCommLog(clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1));
     							}
-//    							if(clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).jslx>=200&&clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).jslx<300){//如果是抽油机
-//    								//设置功图采集周期
-//    								readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).UnitId,6, clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getRtuDriveConfig().getDataConfig().getFSDiagramAcquisitionInterval().getAddress(), clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).cycle);
-//        							rc=this.writeSocketData(clientUnit.socket, readByte,os);
-//        							if(rc==-1){//断开连接
-//        	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"设置功图采集周期失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-//        	        					this.releaseResource(is,os);
-//        	            				wellReaded=false;
-//        	            				break;
-//        	            			}
-//        							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is);
-//        	    					if(rc==-1){//断开连接
-//        	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"读取设置功图采集周期返回数据读取失败，断开连接,释放资源");
-//        	            				this.releaseResource(is,os);
-//        	            				wellReaded=false;
-//        	            				break;
-//        	            			}
-//        	    					if(recByte[7]!=0x06){
-//        	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"功图采集周期设置异常");
-//        	            				wellReaded=false;
-//        	            				continue;
-//        	    					}
-//    							}
     						}
     					}
     					if(clientUnit.unitDataList.size()==0){//未找到匹配的井
-    						System.out.println("线程"+this.threadId+"未找到匹配的井，断开连接,释放资源:"+StringManagerUtils.bytesToHexString(recByte,12)+":"+revMacStr);
+    						System.out.println("线程"+this.threadId+"未找到匹配的井，断开连接,释放资源:"+StringManagerUtils.bytesToHexString(recByte,recByte.length)+":"+revMacStr);
             				this.releaseResource(is,os);
             				wellReaded=false;
             				break;
     					}else{
     						String AcquisitionTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
-							String updateDiscreteComm="update tbl_rpc_discrete_latest t set t.commstatus=1,t.acquisitiontime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss')  "
+							String updateDiscreteComm="update tbl_cbm_discrete_latest t set t.commstatus=1,t.acquisitiontime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss')  "
 									+ " where t.wellId in (select well.id from tbl_wellinformation well where well.driveraddr='"+revMacStr+"') ";
 							Connection conn=OracleJdbcUtis.getConnection();
 							Statement stmt=null;
@@ -169,1920 +132,671 @@ public class ProtocolModbusThread extends Thread{
         			}
     				continue;
     			}else{
-    				//循环读取功图点数、采集时间、冲次、冲程数据 
+    				//循环读取数据 
     				String AcquisitionTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
     				for(int i=0;i<clientUnit.unitDataList.size();i++){
-    					//启停井控制
-    					if(clientUnit.unitDataList.get(i).runStatusControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunControl()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunControl().getAddress(), clientUnit.unitDataList.get(i).runStatusControl,driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setRunStatusControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"启停井指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取启停控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"启停控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					//功图采集周期控制
-    					if(clientUnit.unitDataList.get(i).FSDiagramIntervalControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramAcquisitionInterval()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramAcquisitionInterval().getAddress(), clientUnit.unitDataList.get(i).FSDiagramIntervalControl,driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setFSDiagramIntervalControl(0);;
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"功图采集周期设置指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图采集周期设置返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"功图采集周期设置异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-    					}
-    					//变频频率控制
-    					if(clientUnit.unitDataList.get(i).FrequencyControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequency()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteFloatData(clientUnit.unitDataList.get(i).UnitId, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequency().getAddress(), clientUnit.unitDataList.get(i).FrequencyControl,driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setFrequencyControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"变频频率控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频频率控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"变频频率控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//平衡调节远程触发控制
-    					if(clientUnit.unitDataList.get(i).balanceControlModeControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceControlMode()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceControlMode().getAddress(), clientUnit.unitDataList.get(i).getBalanceControlModeControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceControlModeControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"平衡远程调节触发状态控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡远程调节触发状态控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"平衡远程调节触发状态控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//平衡调节计算方式控制
-    					if(clientUnit.unitDataList.get(i).balanceCalculateModeControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCalculateMode()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCalculateMode().getAddress(), clientUnit.unitDataList.get(i).getBalanceCalculateModeControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceCalculateModeControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"平衡计算方式控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡计算方式控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"平衡计算方式控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//重心远离支点每拍调节时间控制
-    					if(clientUnit.unitDataList.get(i).balanceAwayTimeControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTime()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTime().getAddress(), clientUnit.unitDataList.get(i).getBalanceAwayTimeControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceAwayTimeControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"重心远离支点每拍调节时间控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心远离支点每拍调节时间控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"重心远离支点每拍调节时间控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//重心接近支点每拍调节时间控制
-    					if(clientUnit.unitDataList.get(i).balanceCloseTimeControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTime()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTime().getAddress(), clientUnit.unitDataList.get(i).getBalanceCloseTimeControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceCloseTimeControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"重心接近支点每拍调节时间控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心接近支点每拍调节时间控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"重心接近支点每拍调节时间控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//参与平衡计算冲程次数控制
-    					if(clientUnit.unitDataList.get(i).balanceStrokeCountControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceStrokeCount()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceStrokeCount().getAddress(), clientUnit.unitDataList.get(i).getBalanceStrokeCountControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceStrokeCountControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"参与平衡计算冲程次数控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取参与平衡计算冲程次数控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"参与平衡计算冲程次数控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//平衡调节上限控制
-    					if(clientUnit.unitDataList.get(i).balanceOperationUpLimitControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationUpLimit()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationUpLimit().getAddress(), clientUnit.unitDataList.get(i).getBalanceOperationUpLimitControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceOperationUpLimitControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"平衡调节上限控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节上限控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"平衡调节上限控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					//平衡调节下限控制
-    					if(clientUnit.unitDataList.get(i).balanceOperationDownLimitControl>0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationDownLimit()!=null){
-    						wellReaded=true;
-							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationDownLimit().getAddress(), clientUnit.unitDataList.get(i).getBalanceOperationDownLimitControl(),driveConfig.getProtocol());
-							clientUnit.unitDataList.get(i).setBalanceOperationDownLimitControl(0);
-							
-							//写操作口令验证
-							rc=this.writeSocketData(clientUnit.socket,writeCommand ,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证发送失败:"+StringManagerUtils.bytesToHexString(readByte,12));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"写操作口令验证返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							
-							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
-							if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"平衡调节下限控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,14));
-	        					this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-							clientUnit.unitDataList.get(i).sendPackageCount+=1;
-							clientUnit.unitDataList.get(i).sendPackageSize+=17;
-							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
-	    					if(rc==-1){//断开连接
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节下限控制返回数据读取失败，断开连接,释放资源");
-	            				this.releaseResource(is,os);
-	            				wellReaded=false;
-	            				break;
-	            			}
-	    					if(recByte[7]!=0x06){
-	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).getWellName()+"平衡调节下限控制异常");
-	            				wellReaded=false;
-	            				continue;
-	    					}
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
-	    					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime("");;//控制指令发出后，将螺杆泵数据上一次保存时间清空，执行离散数据保存
-    					}
-    					
-    					long readTime=0;
-						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime())){
-							readTime=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime()).getTime();
-						}
-						//当前采集时间与上次读取时间差值大于离散数据采集周期时，读取离散数据
-    					if(format.parse(AcquisitionTime).getTime()-readTime>=clientUnit.unitDataList.get(i).getAcqCycle_Discrete()){
-    						clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime(AcquisitionTime);
-    						short runSatus=0;
-        					float TubingPressure=0;
-        					float CasingPressure=0;
-        					float BackPressure=0;
-        					float WellHeadFluidTemperature=0;
-        					float ProducingfluidLevel=0;//动液面
-        					float WaterCut=0;//含水率
-        					float CurrentA=0;
-        					float CurrentB=0;
-        					float CurrentC=0;
-        					float VoltageA=0;
-        					float VoltageB=0;
-        					float VoltageC=0;
-        					float ActivePowerConsumption=0;
-        					float ReactivePowerConsumption=0;
-        					float ActivePower=0;
-        					float ReactivePower=0;
-        					float ReversePower=0;
-        					float PowerFactor=0;
-        					short acquisitionCycle=0;
-        					short point=0;
-        					short FSDiagramSetPointCount=0;
-        					float SPM=0;
-        					float Stroke=0;
-        					float RPM=0;
-        					float Torque=0;
-        					float SetFrequency=0;
-        					float RunFrequency=0;
+    					if(clientUnit.unitDataList.get(i).type==1){//抽油机
+    						//先查看是否有待发控制项
+    						//启井控制
+        					if(clientUnit.unitDataList.get(i).wellStartupControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellStartup()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,5, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellStartup().getAddress(), clientUnit.unitDataList.get(i).wellStartupControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setWellStartupControl(0);
+    							
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"停井指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取启井控制返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
         					
-        					short balanceAutoControl=0;
-        					short spmAutoControl=0;
-        					short balanceFrontLimit=0;
-        					short balanceAfterLimit=0;
-        					short balanceControlMode=0;
-        					short balanceCalculateMode=0;
-        					int balanceAwayTime=0;
-        					int balanceCloseTime=0;
-        					int balanceAwayTimePerBeat=0;
-        					int balanceCloseTimePerBeat=0;
-        					short balanceStrokeCount=0;
-        					short balanceOperationUpLimit=0;
-        					short balanceOperationDownLimit=0;
+        					//停井控制
+        					if(clientUnit.unitDataList.get(i).wellStopControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellStop()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,5, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellStop().getAddress(), clientUnit.unitDataList.get(i).wellStopControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setWellStopControl(0);
+    							
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"停井指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取启停控制返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
         					
-        					String diagramAcquisitionTime="1970-01-01 08:00:00";
+        					//频率控制
+        					if(clientUnit.unitDataList.get(i).frequencySetValueControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencySetValue()!=null){
+        						wellReaded=true;
+        						//现将频率/冲次控制方式寄存器写入值：1
+        						readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyOrRPMControlSign().getAddress(),1,driveConfig.getProtocol());
+        						rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+        						if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"控制频率/冲次控制方式指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+        						rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+        						if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取控制频率/冲次控制方式返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+        						//写频率
+    							readByte=this.getWriteFloatData(clientUnit.unitDataList.get(i).UnitId, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencySetValue().getAddress(), clientUnit.unitDataList.get(i).frequencySetValueControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setFrequencySetValueControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"变频频率控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频频率控制返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+    	    				}
         					
-        					String prodTableName="tbl_rpc_productiondata_latest";
-    						String discreteTableName="tbl_rpc_discrete_latest";
-    						if(clientUnit.unitDataList.get(i).getLiftingType()>=400&&clientUnit.unitDataList.get(i).getLiftingType()<500){//螺杆泵井
-    							prodTableName="tbl_pcp_productiondata_latest";
-        						discreteTableName="tbl_pcp_discrete_latest";
+        					
+        					//冲次控制
+        					if(clientUnit.unitDataList.get(i).SPMSetValueControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMSetValue()!=null){
+        						wellReaded=true;
+        						//现将频率/冲次控制方式寄存器写入值：0
+        						readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyOrRPMControlSign().getAddress(),0,driveConfig.getProtocol());
+        						rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+        						if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"控制频率/冲次控制方式指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+        						rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+        						if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取控制频率/冲次控制方式返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+        						//写冲次
+    							readByte=this.getWriteFloatData(clientUnit.unitDataList.get(i).UnitId, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMSetValue().getAddress(), clientUnit.unitDataList.get(i).SPMSetValueControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setSPMSetValueControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"冲次控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取冲次控制返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+    	    				}
+        					
+        					//10HZ对应冲次值设置
+        					if(clientUnit.unitDataList.get(i).SPMBy10HzControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMBy10Hz()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteFloatData(clientUnit.unitDataList.get(i).UnitId, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMBy10Hz().getAddress(), clientUnit.unitDataList.get(i).SPMBy10HzControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setSPMBy10HzControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"10HZ对应冲次控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取10HZ对应冲次控制返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+    	    				}
+        					
+        					//50HZ对应冲次值设置
+        					if(clientUnit.unitDataList.get(i).SPMBy50HzControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMBy50Hz()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteFloatData(clientUnit.unitDataList.get(i).UnitId, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMBy50Hz().getAddress(), clientUnit.unitDataList.get(i).SPMBy50HzControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setSPMBy50HzControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"50HZ对应冲次控制指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取50HZ对应冲次控制返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+    	    				}
+        					
+        					//RTU地址设置
+        					if(clientUnit.unitDataList.get(i).RTUAddrControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUAddr()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUAddr().getAddress(), clientUnit.unitDataList.get(i).RTUAddrControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setRTUAddrControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"RTU地址设置指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取RTU地址设置返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
+        					
+        					//RTU程序版本号设置
+        					if(clientUnit.unitDataList.get(i).RTUProgramVersionControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUProgramVersion()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUProgramVersion().getAddress(), clientUnit.unitDataList.get(i).RTUProgramVersionControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setRTUProgramVersionControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"RTU程序版本号设置指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取RTU程序版本号设置返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
+        					
+        					//RTU井号设置
+        					if(clientUnit.unitDataList.get(i).setWellNameControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetWellName()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetWellName().getAddress(), clientUnit.unitDataList.get(i).setWellNameControl,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setSetWellNameControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"RTU井号设置指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取RTU井号设置返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
+        					
+        					//读取数据
+        					long readTime=0;
+    						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime())){
+    							readTime=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime()).getTime();
     						}
-    						boolean hasProData=false;
-    						String updateProdData="update "+prodTableName+" t set t.acquisitionTime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss')";
-    						String updateDailyData="";
-    						String updateDiscreteData="update "+discreteTableName+" t set t.commStatus=1,t.acquisitionTime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss')";
-    						
-        					clientUnit.unitDataList.get(i).getAcquisitionData().setAcquisitionTime(AcquisitionTime);
-        					//如果是抽油机读取功图点数、采集时间、冲次、冲程数据 
-        					if(clientUnit.unitDataList.get(i).getLiftingType()>=200&&clientUnit.unitDataList.get(i).getLiftingType()<300){
-        						//读取功图采集间隔
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getFSDiagramAcquisitionInterval()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramAcquisitionInterval().getAddress()>40000){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramAcquisitionInterval().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramAcquisitionInterval().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图采集间隔发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图采集间隔数据异常,rc="+rc);
-        								break;
-        							}else{
-        								acquisitionCycle=getShort(recByte,0, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setAcquisitionCycle(acquisitionCycle);
-        								updateDiscreteData+=",t.acqCycle_Diagram="+acquisitionCycle;
-        							}
-        						}
-        						//读取功图设置点数
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getFSDiagramSetPointCount()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramSetPointCount().getAddress()>40000){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramSetPointCount().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramSetPointCount().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图点数发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图点数数据异常,rc="+rc);
-        								break;
-        							}else{
-        								FSDiagramSetPointCount=getShort(recByte,0, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setFSDiagramSetPointCount(FSDiagramSetPointCount);
-        							}
-        						}
+    						//当前采集时间与上次读取时间差值大于离散数据采集周期时，读取离散数据
+        					if(format.parse(AcquisitionTime).getTime()-readTime>=clientUnit.unitDataList.get(i).getAcqCycle_Discrete()){
+        						clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime(AcquisitionTime);
+        						int RTUStatus=0;
+        						String RTUSystemTime="";
+        						int runStatus=0;
+        						float SPM=0;
+        						float AI1=0;
+        						float AI2=0;
+        						float AI3=0;
+        						float AI4=0;
         						
-        						//读取功图实际点数
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getFSDiagramPointCount()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramPointCount().getAddress()>40000){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramPointCount().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFSDiagramPointCount().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图点数发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图点数数据异常,rc="+rc);
-        								break;
-        							}else{
-        								point=getShort(recByte,0, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setPoint(point);
-        							}
-        						}
-        						//读取功图采集时间
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getAcquisitionTime()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAcquisitionTime().getAddress()>40000){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAcquisitionTime().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAcquisitionTime().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图采集时间发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图采集时间数据异常,rc="+rc);
-        								break;
-        							}else{
-        								diagramAcquisitionTime=BCD2TimeString(recByte, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setGtcjsj(diagramAcquisitionTime);
-        							}
-        						}
-        						//读取功图冲次
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getSPM()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPM().getAddress()>40000){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPM().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPM().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图冲次发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图冲次数据异常,rc="+rc);
-        								break;
-        							}else{
-        								SPM=getFloat(recByte,0, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setSPM(SPM);
-        							}
-        						}
-        						//读取功图冲程
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getStroke()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getStroke().getAddress()>40000){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getStroke().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getStroke().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图冲程发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图冲程数据异常,rc="+rc);
-        								break;
-        							}else{
-        								Stroke=getFloat(recByte,0, driveConfig.getProtocol());;
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setStroke(Stroke);
-        							}
-        						}
+        						int gasFlowmeterCommStatus=0;
+        						float gasInstantaneousFlow=0;
+        						float gasCumulativeFlow=0;
+        						float gasFlowmeterPress=0;
         						
+        						int liquidFlowmeterCommStatus=0;
+        						float liquidInstantaneousFlow=0;
+        						float liquidCumulativeFlow=0;
+        						float liquidFlowmeterProd=0;
+
+        						int fluidLevelIndicatorCommStatus=0;
+        						String fluidLevelAcquisitionTime="";
+        						float fluidLevelIndicatorSoundVelocity=0;
+        						float fluidLevel=0;
+        						float fluidLevelIndicatorPress=0;
         						
+        						int frequencyChangerCommStatus=0;
+        						int frequencyChangerStatus=0;
+        						int frequencyChangerStatus2=0;
+        						float runFrequency=0;
+        						float frequencyChangerBusbarVoltage=0;
+        						float frequencyChangerOutputVoltage=0;
+        						float frequencyChangerOutputCurrent=0;
+        						float setFrequencyFeedback=0;
+        						int frequencyChangerFaultCode=0;
+        						int frequencyChangerPosition=0;
+        						int frequencyChangerManufacturerCode=0;
         						
-        						//平衡调节远程状态
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalaceControlStatus()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalaceControlStatus()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalaceControlStatus().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalaceControlStatus().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节远程状态发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节远程状态数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceAutoControl=(short) (0x0000 | (0x01 & recByte[10]));  
-        								spmAutoControl=(short) (0x0000 | (0x02 & recByte[10]));  
-        								balanceFrontLimit=(short) (0x0000 | (0x04 & recByte[10])>>2);  
-        								balanceAfterLimit=(short) (0x0000 | (0x08 & recByte[10])>>3);  
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceAutoControl(balanceAutoControl);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setSpmAutoControl(spmAutoControl);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceFrontLimit(balanceFrontLimit);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceAfterLimit(balanceAfterLimit);
-                    					updateDiscreteData+=",t.balanceAutoControl="+balanceAutoControl;
-                    					updateDiscreteData+=",t.spmAutoControl="+spmAutoControl;
-                    					updateDiscreteData+=",t.balanceFrontLimit="+balanceFrontLimit;
-                    					updateDiscreteData+=",t.balanceAfterLimit="+balanceAfterLimit;
-        							}
-        						}
+        						int frequencyOrRPMControlSign=0;
+        						float frequencySetValue=0;
+        						float SPMSetValue=0;
+        						float SPMBy10Hz=0;
+        						float SPMBy50Hz=0;
+        						int RTUAddr=0;
+        						int RTUProgramVersion=0;
+        						int setWellName=0;
         						
-        						//平衡调节远程触发控制
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceControlMode()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceControlMode()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceControlMode().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceControlMode().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节远程触发控制发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节远程触发控制数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceControlMode=getShort(recByte,0, driveConfig.getProtocol());
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceControlMode(balanceControlMode);
-                    					updateDiscreteData+=",t.balanceControlMode="+balanceControlMode;
-        							}
-        						}
+        						String discreteTableName="tbl_cbm_discrete_latest";
+        						String insertDiscreteItem="wellid,acquisitionTime";
+        						String insertDiscreteValue="id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh:mi:ss')";
         						
-        						//平衡计算方式
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceCalculateMode()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCalculateMode()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCalculateMode().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCalculateMode().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡计算方式发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡计算方式数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceCalculateMode=getShort(recByte,0, driveConfig.getProtocol());
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceCalculateMode(balanceCalculateMode);
-                    					updateDiscreteData+=",t.balanceCalculateMode="+balanceCalculateMode;
-        							}
-        						}
-        						
-        						//重心远离支点调节时间
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceAwayTime()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTime()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTime().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTime().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心远离支点每拍调节时间发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心远离支点每拍调节时间数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceAwayTime=StringManagerUtils.getUnsignedShort(recByte, 9);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceAwayTime(balanceAwayTime);
-                    					updateDiscreteData+=",t.balanceAwayTime="+balanceAwayTime;
-        							}
-        						}
-        						
-        						//重心接近支点调节时间
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceCloseTime()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTime()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTime().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTime().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心接近支点每拍调节时间发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心接近支点每拍调节时间数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceCloseTime=StringManagerUtils.getUnsignedShort(recByte, 9);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceCloseTime(balanceCloseTime);
-                    					updateDiscreteData+=",t.balanceCloseTime="+balanceCloseTime;
-        							}
-        						}
-        						
-        						//重心远离支点每拍调节时间
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceAwayTimePerBeat()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTimePerBeat()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTimePerBeat().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceAwayTimePerBeat().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心远离支点每拍调节时间发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心远离支点每拍调节时间数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceAwayTimePerBeat=StringManagerUtils.getUnsignedShort(recByte, 3);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceAwayTimePerBeat(balanceAwayTimePerBeat);
-                    					updateDiscreteData+=",t.balanceAwayTimePerBeat="+balanceAwayTimePerBeat;
-        							}
-        						}
-        						
-        						//重心接近支点每拍调节时间
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceCloseTimePerBeat()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTimePerBeat()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTimePerBeat().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceCloseTimePerBeat().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心接近支点每拍调节时间发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取重心接近支点每拍调节时间数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceCloseTimePerBeat=StringManagerUtils.getUnsignedShort(recByte, 3);
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceCloseTimePerBeat(balanceCloseTimePerBeat);
-                    					updateDiscreteData+=",t.balanceCloseTimePerBeat="+balanceCloseTimePerBeat;
-        							}
-        						}
-        						
-        						//参与平衡度计算的冲程次数
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceStrokeCount()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceStrokeCount()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceStrokeCount().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceStrokeCount().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取参与平衡度计算的冲程次数发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取参与平衡度计算的冲程次数数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceStrokeCount=getShort(recByte,0, driveConfig.getProtocol());
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceStrokeCount(balanceStrokeCount);
-                    					updateDiscreteData+=",t.balanceStrokeCount="+balanceStrokeCount;
-        							}
-        						}
-        						
-        						//平衡调节上限
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceOperationUpLimit()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationUpLimit()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationUpLimit().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationUpLimit().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节上限发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节上限数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceOperationUpLimit=getShort(recByte,0, driveConfig.getProtocol());
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceOperationUpLimit(balanceOperationUpLimit);
-                    					updateDiscreteData+=",t.balanceOperationUpLimit="+balanceOperationUpLimit;
-        							}
-        						}
-        						
-        						//平衡调节下限
-        						if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBalanceOperationDownLimit()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationDownLimit()!=null){
-        							wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationDownLimit().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBalanceOperationDownLimit().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节下限发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取平衡调节下限数据异常,rc="+rc);
-        								break;
-        							}else{
-        								balanceOperationDownLimit=getShort(recByte,0, driveConfig.getProtocol());
-                    					clientUnit.unitDataList.get(i).getAcquisitionData().setBalanceOperationDownLimit(balanceOperationDownLimit);
-                    					updateDiscreteData+=",t.balanceOperationDownLimit="+balanceOperationDownLimit;
-        							}
-        						}
-        					}	
-        					
-        					//读取油井运行状态
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getRunStatus()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunStatus().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunStatus().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunStatus().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
+        						clientUnit.unitDataList.get(i).getAcquisitionData().setAcquisitionTime(AcquisitionTime);
+        						//一次性将100个寄存器数据读回
+        						rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,40001,100,recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
     							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取运行状态发送或接收失败,rc="+rc);
+    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取数据发送或接收失败,rc="+rc);
     								this.releaseResource(is,os);
                     				wellReaded=false;
                     				break;
     							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取运行状态数据异常,rc="+rc);
+    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取数据异常,rc="+rc);
     								break;
     							}else{
-    								runSatus= getShort(recByte,0, driveConfig.getProtocol());
+    								//频率/冲次控制方式
+    								frequencyOrRPMControlSign=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyOrRPMControlSign().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//频率设定值
+    								frequencySetValue=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencySetValue().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//冲次设定值
+    								SPMSetValue=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMSetValue().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//10HZ对应冲次值
+    								SPMBy10Hz=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMBy10Hz().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//50HZ对应冲次值
+    								SPMBy50Hz=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPMBy50Hz().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								
+    								//气体质量流量计通信状态
+    								gasFlowmeterCommStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getGasFlowmeterCommStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//气体质量流量计瞬时流量
+    								gasInstantaneousFlow=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getGasInstantaneousFlow().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//气体质量流量计累积流量
+    								gasCumulativeFlow=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getGasCumulativeFlow().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//气体质量流量计当前压力
+    								gasFlowmeterPress=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getGasFlowmeterPress().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								
+    								//量水仪通讯状态
+    								liquidFlowmeterCommStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getLiquidFlowmeterCommStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//量水仪瞬时流量
+    								liquidInstantaneousFlow=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getLiquidInstantaneousFlow().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//量水仪累积流量
+    								liquidCumulativeFlow=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getLiquidCumulativeFlow().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//量水仪日产量
+    								liquidFlowmeterProd=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getLiquidFlowmeterProd().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								
+    								//液面仪通讯状态
+    								fluidLevelIndicatorCommStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelIndicatorCommStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//液面仪-测试时间
+    								fluidLevelAcquisitionTime=(getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())+2000)+"-"
+    										+getUnsignedShort(recByte,
+    	    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000)*2, 
+    	    										driveConfig.getProtocol())+"-"
+    	    								+getUnsignedShort(recByte,
+    	    	    								(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000+1)*2, 
+    	    	    								driveConfig.getProtocol())+" "
+    	    	    						+getUnsignedShort(recByte,
+    	    	    	    						(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000+2)*2, 
+    	    	    	    						driveConfig.getProtocol())+":"
+    	    	    	    				+getUnsignedShort(recByte,
+    	    	    	    						(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000+3)*2, 
+    	    	    	    	    				driveConfig.getProtocol())+":"
+    	    	    	    	    		+getUnsignedShort(recByte,
+    	    	    	    	    				(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000+4)*2, 
+    	    	    	    	    	    		driveConfig.getProtocol());
+    								//液面仪音速
+    								fluidLevelIndicatorSoundVelocity=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelIndicatorSoundVelocity().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelIndicatorSoundVelocity().getZoom();
+    								//液面仪-计算液面深度
+    								fluidLevel=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevel().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevel().getZoom();
+    								//液面仪-套压
+    								fluidLevelIndicatorPress=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelIndicatorPress().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFluidLevelIndicatorPress().getZoom();
+    								
+    								//变频器通讯状态
+    								frequencyChangerCommStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerCommStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//变频器状态字
+    								frequencyChangerStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//变频器状态字2
+    								frequencyChangerStatus2=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerStatus2().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//变频器-运行频率
+    								runFrequency=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunFrequency().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunFrequency().getZoom();
+    								//变频器-母线电压
+    								frequencyChangerBusbarVoltage=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerBusbarVoltage().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerBusbarVoltage().getZoom();
+    								//变频器-输出电压
+    								frequencyChangerOutputVoltage=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerOutputVoltage().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerOutputVoltage().getZoom();
+    								//变频器-输出电流
+    								frequencyChangerOutputCurrent=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerOutputCurrent().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerOutputCurrent().getZoom();
+    								//变频器-设定频率反馈
+    								setFrequencyFeedback=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequencyFeedback().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequencyFeedback().getZoom();
+    								//变频器故障代码
+    								frequencyChangerFaultCode=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerFaultCode().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//变频器本地旋钮位置
+    								frequencyChangerPosition=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerPosition().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//变频器厂家代码
+    								frequencyChangerManufacturerCode=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFrequencyChangerManufacturerCode().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								
+    								//计算冲次值
+    								SPM=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSPM().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//AI1换算后实际值
+    								AI1=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAI1().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//AI2换算后实际值
+    								AI2=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAI2().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//AI3换算后实际值
+    								AI3=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAI3().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//AI4换算后实际值
+    								AI4=getFloat(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getAI4().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//抽油机启停状态
+    								runStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								
+    								//RTU状态
+    								RTUStatus=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUStatus().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//RTU系统时间
+    								RTUSystemTime=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUSystemTime().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol())+"-"
+    										+getUnsignedShort(recByte,
+    	    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUSystemTime().getAddress()%10000)*2, 
+    	    										driveConfig.getProtocol())+"-"
+    	    								+getUnsignedShort(recByte,
+    	    	    								(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUSystemTime().getAddress()%10000+1)*2, 
+    	    	    								driveConfig.getProtocol())+" "
+    	    	    						+getUnsignedShort(recByte,
+    	    	    	    						(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUSystemTime().getAddress()%10000+2)*2, 
+    	    	    	    						driveConfig.getProtocol())+":"
+    	    	    	    				+getUnsignedShort(recByte,
+    	    	    	    						(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUSystemTime().getAddress()%10000+3)*2, 
+    	    	    	    	    				driveConfig.getProtocol())+":"
+    	    	    	    	    		+getUnsignedShort(recByte,
+    	    	    	    	    				(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUSystemTime().getAddress()%10000+4)*2, 
+    	    	    	    	    	    		driveConfig.getProtocol());
+    								//RTU地址
+    								RTUAddr=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUAddr().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//RTU程序版本号
+    								RTUProgramVersion=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRTUProgramVersion().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								//RTU设置的井号
+    								setWellName=getUnsignedShort(recByte,
+    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetWellName().getAddress()%10000-1)*2, 
+    										driveConfig.getProtocol());
+    								
+    								//进行通信计算
+    	        					String commRequest="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastCommRange)){
+    	        						commRequest+= "\"Last\":{"
+    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
+    	    									+ "\"CommEfficiency\": {"
+    	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
+    	    									+ "\"Time\": "+clientUnit.unitDataList.get(i).lastCommTime+","
+    	    									+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(clientUnit.unitDataList.get(i).lastCommRange+"")+""
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					commRequest+= "\"Current\": {"
+    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"CommStatus\":true"
+    										+ "}"
+    										+ "}";
+    	        					String commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
+    	        					java.lang.reflect.Type type = new TypeToken<CommResponseData>() {}.getType();
+    	        					CommResponseData commResponseData=gson.fromJson(commResponse, type);
+    	        					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
+    	        						if(commResponseData.getCurrent().getCommEfficiency().getRangeString().indexOf("-;")>=0){
+    	        							System.out.println("通信返回数据出现：-;");
+    	        							System.out.println("通信请求数据："+commRequest);
+    	        							System.out.println("通信返回数据："+commResponse);
+    	        							commResponseData.getCurrent().getCommEfficiency().setRangeString(commResponseData.getCurrent().getCommEfficiency().getRangeString().replaceAll("-;", ""));
+    	        						}
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setCommTime(commResponseData.getCurrent().getCommEfficiency().getTime());
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setCommEfficiency(commResponseData.getCurrent().getCommEfficiency().getEfficiency());
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setCommRange(commResponseData.getCurrent().getCommEfficiency().getRangeString());
+    	        						
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastCommStatus=commResponseData.getCurrent().getCommStatus()?1:0;
+    	        						clientUnit.unitDataList.get(i).lastCommTime=commResponseData.getCurrent().getCommEfficiency().getTime();
+    	        						clientUnit.unitDataList.get(i).lastCommTimeEfficiency=commResponseData.getCurrent().getCommEfficiency().getEfficiency();
+    	        						clientUnit.unitDataList.get(i).lastCommRange=commResponseData.getCurrent().getCommEfficiency().getRangeString();
+    	        					}else{
+    	        						System.out.println("comm error");
+    	        						System.out.println("通信请求数据："+commRequest);
+    	    							System.out.println("通信返回数据："+commResponse);
+    	        					}
+    	        					
+    	        					//进行时率计算
+    	        					TimeEffResponseData timeEffResponseData=null;
+    	        					String tiemEffRequest="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastRunRange)){
+    	        						tiemEffRequest+= "\"Last\":{"
+    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"RunStatus\": "+(clientUnit.unitDataList.get(i).lastRunStatus==1?true:false)+","
+    	    									+ "\"RunEfficiency\": {"
+    	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastRunTimeEfficiency+","
+    	    									+ "\"Time\": "+clientUnit.unitDataList.get(i).lastRunTime+","
+    	    									+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(clientUnit.unitDataList.get(i).lastRunRange+"")+""
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					tiemEffRequest+= "\"Current\": {"
+    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"RunStatus\":"+(runStatus==1?true:false)+""
+    										+ "}"
+    										+ "}";
+    	        					//时率来源非人工录入时时，此时进行时率计算
+    	        					String timeEffResponse=StringManagerUtils.sendPostMethod(tiemEffUrl, tiemEffRequest,"utf-8");
+	            					type = new TypeToken<TimeEffResponseData>() {}.getType();
+	            					timeEffResponseData=gson.fromJson(timeEffResponse, type);
+    	        					if(timeEffResponseData!=null&&timeEffResponseData.getResultStatus()==1){
+    	        						if(timeEffResponseData.getCurrent().getRunEfficiency().getRangeString().indexOf("-;")>=0){
+    	        							System.out.println("时率返回数据出现：-;");
+    	        							System.out.println("时率请求数据："+tiemEffRequest);
+    	        							System.out.println("时率返回数据："+timeEffResponse);
+    	        							timeEffResponseData.getCurrent().getRunEfficiency().setRangeString(timeEffResponseData.getCurrent().getRunEfficiency().getRangeString().replaceAll("-;", ""));
+    	        						}
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setRunTime(timeEffResponseData.getCurrent().getRunEfficiency().getTime());
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setRunEfficiency(timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency());
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setRunRange(timeEffResponseData.getCurrent().getRunEfficiency().getRangeString());
+    	        						clientUnit.unitDataList.get(i).lastRunStatus=timeEffResponseData.getCurrent().getRunStatus()?1:0;
+    	        						clientUnit.unitDataList.get(i).lastRunTime=timeEffResponseData.getCurrent().getRunEfficiency().getTime();
+    	        						clientUnit.unitDataList.get(i).lastRunTimeEfficiency=timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency();
+    	        						clientUnit.unitDataList.get(i).lastRunRange=timeEffResponseData.getCurrent().getRunEfficiency().getRangeString();
+    	        					}else{
+    	        						System.out.println("run error");
+    	        						System.out.println("时率请求数据："+tiemEffRequest);
+    	    							System.out.println("时率返回数据："+timeEffResponse);
+    	        					}
+    	        					clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        					if(commResponseData!=null&&commResponseData.getResultStatus()==1&&timeEffResponseData!=null&&timeEffResponseData.getResultStatus()==1){
+    	        						//入库
+        	        					Connection conn=OracleJdbcUtis.getConnection();
+                						Statement stmt=null;
+                						String saveDiscreteData="insert into tbl_cbm_discrete_hist("
+                								+ "wellid,acquisitiontime,"
+                								+ "commstatus,commtimeefficiency,commtime,commrange,"
+                								+ "runstatus,runtimeefficiency,runtime,runrange,"
+                								+ "rtustatus,spm,ai1,ai2,ai3,ai4,"
+                								+ "gasflowmetercommstatus,gasinstantaneousflow,gascumulativeflow,gasflowmeterpress,"
+                								+ "liquidflowmetercommstatus,liquidinstantaneousflow,liquidcumulativeflow,liquidflowmeterprod,"
+                								+ "fluidlevelindicatorcommstatus,fluidlevelacquisitiontime,soundvelocity,fluidlevel,fluidlevelindicatorpress,"
+                								+ "vfdcommstatus,vfdstatus,vfdstatus2,runfrequency,"
+                								+ "vfdbusbarvoltage,vfdoutputvoltage,vfdoutputcurrent,setfrequencyfeedback,"
+                								+ "vfdfaultcode,vfdposition,vfdmanufacturercode,"
+                								+ "frequencyorrpmcontrolsign,frequencysetvalue,spmsetvalue,spmby10hz,spmby50hz,"
+                								+ "rtuaddr,rtuprogramversion,setwellname)"
+                								+ "select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
+                								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+timeEffResponseData.getCurrent().getRunEfficiency().getRangeString()+"',"
+                								+ runStatus+","+timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency()+","+timeEffResponseData.getCurrent().getRunEfficiency().getTime()+",'"+timeEffResponseData.getCurrent().getRunEfficiency().getRangeString()+"',"
+                								+ RTUStatus+","+SPM+","+AI1+","+AI2+","+AI3+","+AI4+","
+                								+ gasFlowmeterCommStatus+","+gasInstantaneousFlow+","+gasCumulativeFlow+","+gasFlowmeterPress+","
+                								+ liquidFlowmeterCommStatus+","+liquidInstantaneousFlow+","+liquidCumulativeFlow+","+liquidFlowmeterProd+","
+                								+ fluidLevelIndicatorCommStatus+",to_date('"+fluidLevelAcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"+fluidLevelIndicatorSoundVelocity+","+fluidLevel+","+fluidLevelIndicatorPress+","
+                								+ frequencyChangerCommStatus+","+frequencyChangerStatus+","+frequencyChangerStatus2+","+runFrequency+","
+                								+ frequencyChangerBusbarVoltage+","+frequencyChangerOutputVoltage+","+frequencyChangerOutputCurrent+","+setFrequencyFeedback+","
+                								+ frequencyChangerFaultCode+","+frequencyChangerPosition+","+frequencyChangerManufacturerCode+","
+                								+ frequencyOrRPMControlSign+","+frequencySetValue+","+SPMSetValue+","+SPMBy10Hz+","+SPMBy50Hz+","
+                								+ RTUAddr+","+RTUProgramVersion+","+setWellName
+                								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"'";
+        	        					
+                						try {
+            								stmt = conn.createStatement();
+            								int result=stmt.executeUpdate(saveDiscreteData);
+            								conn.close();
+            								stmt.close();
+            								clientUnit.unitDataList.get(i).getAcquisitionData().setRunStatus(runStatus);
+            								clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime(AcquisitionTime);
+            							} catch (SQLException e) {
+            								e.printStackTrace();
+            								try {
+            									conn.close();
+            									if(stmt!=null){
+            										stmt.close();
+            									}
+            								} catch (SQLException e1) {
+            									e1.printStackTrace();
+            								}
+            							}
+    	        					}
     							}
-        					}
-        					
-        					//读取油压
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getTubingPressure()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getTubingPressure().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getTubingPressure().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getTubingPressure().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取油压发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取油压数据异常,rc="+rc);
-    								break;
-    							}else{
-    								TubingPressure=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setTubingPressure(TubingPressure);
-    								updateDiscreteData+=",t.TubingPressure="+TubingPressure;
-    								updateProdData+=",t.tubingPressure="+TubingPressure;
-    								hasProData=true;
-    							}
-        					}
-        					//读取套压
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getCasingPressure()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCasingPressure().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCasingPressure().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCasingPressure().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取套压发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取套压数据异常,rc="+rc);
-    								break;
-    							}else{
-    								CasingPressure=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setCasingPressure(CasingPressure);
-    								updateDiscreteData+=",t.CasingPressure="+CasingPressure;
-    								updateProdData+=",t.casingPressure="+CasingPressure;
-    								hasProData=true;
-    							}
-        					}
-        					//读取回压
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getBackPressure()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBackPressure().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBackPressure().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getBackPressure().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取回压发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取回压数据异常,rc="+rc);
-    								break;
-    							}else{
-    								BackPressure=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setBackPressure(BackPressure);
-    								updateDiscreteData+=",t.BackPressure="+BackPressure;
-    								updateProdData+=",t.backPressure="+BackPressure;
-    								hasProData=true;
-    							}
-        					}
-        					//读取井口油温
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getWellHeadFluidTemperature()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellHeadFluidTemperature().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellHeadFluidTemperature().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWellHeadFluidTemperature().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取井口油温发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取井口油温数据异常,rc="+rc);
-    								break;
-    							}else{
-    								WellHeadFluidTemperature=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setWellHeadFluidTemperature(WellHeadFluidTemperature);
-    								updateDiscreteData+=",t.WellHeadFluidTemperature="+WellHeadFluidTemperature;
-    								updateProdData+=",t.wellHeadFluidTemperature="+WellHeadFluidTemperature;
-    								hasProData=true;
-    							}
-        					}
-        					//读取动液面
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getProducingfluidLevel()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getProducingfluidLevel().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getProducingfluidLevel().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getProducingfluidLevel().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取动液面发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取动液面数据异常,rc="+rc);
-    								break;
-    							}else{
-    								ProducingfluidLevel=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setProducingfluidLevel(ProducingfluidLevel);
-    								updateProdData+=",t.producingfluidLevel="+ProducingfluidLevel;
-    								hasProData=true;
-    							}
-        					}
-        					//读取含水率
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getWaterCut()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWaterCut().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWaterCut().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getWaterCut().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取含水率发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取含水率数据异常,rc="+rc);
-    								break;
-    							}else{
-    								WaterCut=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setWaterCut(WaterCut);
-    								updateProdData+=",t.waterCut_W="+WaterCut;
-    								hasProData=true;
-    							}
-        					}
-        					
-        					//读取电参数据
-        					//读取A相电流
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getCurrentA()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentA().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentA().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentA().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取A相电流发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取A相电流数据异常,rc="+rc);
-    								break;
-    							}else{
-    								CurrentA=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setCurrentA(CurrentA);
-    								updateDiscreteData+=",t.Ia="+CurrentA;
-    							}
-        					}
-        					//读取B相电流
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getCurrentB()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentB().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentB().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentB().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取B相电流发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取B相电流数据异常,rc="+rc);
-    								break;
-    							}else{
-    								CurrentB=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setCurrentB(CurrentB);
-    								updateDiscreteData+=",t.Ib="+CurrentB;
-    							}
-        					}
-        					//读取C相电流
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getCurrentC()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentC().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentC().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getCurrentC().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取C相电流发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取C相电流数据异常,rc="+rc);
-    								break;
-    							}else{
-    								CurrentC=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setCurrentC(CurrentC);
-    								updateDiscreteData+=",t.Ic="+CurrentC;
-    							}
-        					}
-        					//读取A相电压
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getVoltageA()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageA().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageA().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageA().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取A相电压发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取A相电压数据异常,rc="+rc);
-    								break;
-    							}else{
-    								VoltageA=getFloat(recByte,0, driveConfig.getProtocol());
-    								if(VoltageA<0){
-    									VoltageA=0;
-    								}else if(VoltageA>500){
-    									VoltageA=500;
-    								}
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setVoltageA(VoltageA);
-    								updateDiscreteData+=",t.Va="+VoltageA;
-    							}
-        					}
-        					//读取B相电压
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getVoltageB()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageB().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageB().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageB().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取B相电压发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取B相电压数据异常,rc="+rc);
-    								break;
-    							}else{
-    								VoltageB=getFloat(recByte,0, driveConfig.getProtocol());
-    								if(VoltageB<0){
-    									VoltageB=0;
-    								}else if(VoltageB>500){
-    									VoltageB=500;
-    								}
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setVoltageB(VoltageB);
-    								updateDiscreteData+=",t.Vb="+VoltageB;
-    							}
-        					}
-        					//读取C相电压
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getVoltageC()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageC().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageC().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getVoltageC().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取C相电压发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取C相电压数据异常,rc="+rc);
-    								break;
-    							}else{
-    								VoltageC=getFloat(recByte,0, driveConfig.getProtocol());
-    								if(VoltageC<0){
-    									VoltageC=0;
-    								}else if(VoltageC>500){
-    									VoltageC=500;
-    								}
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setVoltageC(VoltageC);
-    								updateDiscreteData+=",t.Vc="+VoltageC;
-    							}
-        					}
-        					//读取有功功耗
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getActivePowerConsumption()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getActivePowerConsumption().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getActivePowerConsumption().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getActivePowerConsumption().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取有功功耗发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取有功功耗数据异常,rc="+rc);
-    								break;
-    							}else{
-    								ActivePowerConsumption=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setActivePowerConsumption(ActivePowerConsumption);
-    							}
-        					}
-        					//读取无功功耗
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getReactivePowerConsumption()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReactivePowerConsumption().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReactivePowerConsumption().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReactivePowerConsumption().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取无功功耗发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取无功功耗数据异常,rc="+rc);
-    								break;
-    							}else{
-    								ReactivePowerConsumption=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setReactivePowerConsumption(ReactivePowerConsumption);
-    							}
-        					}
-        					//读取有功功率
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getActivePower()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getActivePower().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getActivePower().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getActivePower().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取有功功率发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取有功功率数据异常,rc="+rc);
-    								break;
-    							}else{
-    								ActivePower=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setActivePower(ActivePower);
-    								updateDiscreteData+=",t.wattSum="+ActivePower;
-    							}
-        					}
-        					//读取无功功率
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getReactivePower()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReactivePower().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReactivePower().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReactivePower().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取无功功率发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取无功功率数据异常,rc="+rc);
-    								break;
-    							}else{
-    								ReactivePower=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setReactivePower(ReactivePower);
-    								updateDiscreteData+=",t.varSum="+ReactivePower;
-    							}
-        					}
-        					//读取反向功率
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getReversePower()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReversePower().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReversePower().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getReversePower().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取反向功率发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取反向功率数据异常,rc="+rc);
-    								break;
-    							}else{
-    								ReversePower=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setReversePower(ReversePower);
-    								updateDiscreteData+=",t.ReversePower="+ReversePower;
-    							}
-        					}
-        					//读取功率因数
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getPowerFactor()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPowerFactor().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPowerFactor().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPowerFactor().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功率因数发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功率因数数据异常,rc="+rc);
-    								break;
-    							}else{
-    								PowerFactor=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setPowerFactor(PowerFactor);
-    								updateDiscreteData+=",t.pfSum="+PowerFactor;
-    							}
-        					}
-        					
-        					//读取变频频率
-        					//读取变频设置频率
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getSetFrequency()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequency().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequency().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSetFrequency().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率据异常,rc="+rc);
-    								break;
-    							}else{
-    								SetFrequency=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setSetFrequency(SetFrequency);
-    								updateDiscreteData+=",t.frequencySetValue="+SetFrequency;
-    							}
-        					}
-        					//读取变频运行频率
-        					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getRunFrequency()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunFrequency().getAddress()>40000){
-        						wellReaded=true;
-    							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunFrequency().getAddress(),
-        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRunFrequency().getLength(),
-        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-    							if(rc==-1||rc==-2){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率发送或接收失败,rc="+rc);
-    								this.releaseResource(is,os);
-                    				wellReaded=false;
-                    				break;
-    							}else if(rc==-3){
-    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率据异常,rc="+rc);
-    								break;
-    							}else{
-    								RunFrequency=getFloat(recByte,0, driveConfig.getProtocol());
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setRunFrequency(RunFrequency);
-    								updateDiscreteData+=",t.frequencyRunValue="+RunFrequency;
-    							}
-        					}
-        					
-        					//进行通信计算
-        					String commRequest="{"
-									+ "\"AKString\":\"\","
-									+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
-        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastCommRange)){
-        						commRequest+= "\"Last\":{"
-    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
-    									+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
-    									+ "\"CommEfficiency\": {"
-    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
-    									+ "\"Time\": "+clientUnit.unitDataList.get(i).lastCommTime+","
-    									+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(clientUnit.unitDataList.get(i).lastCommRange+"")+""
-    									+ "}"
-    									+ "},";
-        					}	
-        					commRequest+= "\"Current\": {"
-									+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
-									+ "\"CommStatus\":true"
-									+ "}"
-									+ "}";
-        					String commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
-        					java.lang.reflect.Type type = new TypeToken<CommResponseData>() {}.getType();
-        					CommResponseData commResponseData=gson.fromJson(commResponse, type);
-        					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
-        						if(commResponseData.getCurrent().getCommEfficiency().getRangeString().indexOf("-;")>=0){
-        							System.out.println("通信返回数据出现：-;");
-        							System.out.println("通信请求数据："+commRequest);
-        							System.out.println("通信返回数据："+commResponse);
-        							commResponseData.getCurrent().getCommEfficiency().setRangeString(commResponseData.getCurrent().getCommEfficiency().getRangeString().replaceAll("-;", ""));
-        						}
-        						clientUnit.unitDataList.get(i).getAcquisitionData().setRealTimeCommTime(commResponseData.getCurrent().getCommEfficiency().getTime());
-        						clientUnit.unitDataList.get(i).getAcquisitionData().setRealTimeCommTimeEfficiency(commResponseData.getCurrent().getCommEfficiency().getEfficiency());
-        						clientUnit.unitDataList.get(i).getAcquisitionData().setRealTimeCommRangeString(commResponseData.getCurrent().getCommEfficiency().getRangeString());
-        						
-//        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
-        						clientUnit.unitDataList.get(i).lastCommStatus=commResponseData.getCurrent().getCommStatus()?1:0;
-        						clientUnit.unitDataList.get(i).lastCommTime=commResponseData.getCurrent().getCommEfficiency().getTime();
-        						clientUnit.unitDataList.get(i).lastCommTimeEfficiency=commResponseData.getCurrent().getCommEfficiency().getEfficiency();
-        						clientUnit.unitDataList.get(i).lastCommRange=commResponseData.getCurrent().getCommEfficiency().getRangeString();
-        					}else{
-        						System.out.println("comm error");
-        						System.out.println("通信请求数据："+commRequest);
-    							System.out.println("通信返回数据："+commResponse);
-        					}
-        					//进行时率计算
-        					TimeEffResponseData timeEffResponseData=null;
-        					int RunStatus=runSatus;
-        					//时率来源为电参计算时，运行状态取电参计算结果
-        					if(clientUnit.unitDataList.get(i).getRunTimeEfficiencySource()==2){//时率来源为电参时
-        						if(CurrentA<2&&CurrentB<2&&CurrentB<2){
-        							RunStatus=0;
-        						}else{
-        							RunStatus=1;
-        						}
-        					}else if(clientUnit.unitDataList.get(i).getRunTimeEfficiencySource()==3){//时率来源为转速计算时
-        						if (clientUnit.unitDataList.get(i).lastRPM>0){
-        							RunStatus=1;
-        						}else{
-        							RunStatus=0;
-        						}
-        					}
-        					String tiemEffRequest="{"
-									+ "\"AKString\":\"\","
-									+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
-        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastRunRange)){
-        						tiemEffRequest+= "\"Last\":{"
-    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
-    									+ "\"RunStatus\": "+(clientUnit.unitDataList.get(i).lastRunStatus==1?true:false)+","
-    									+ "\"RunEfficiency\": {"
-    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastRunTimeEfficiency+","
-    									+ "\"Time\": "+clientUnit.unitDataList.get(i).lastRunTime+","
-    									+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(clientUnit.unitDataList.get(i).lastRunRange+"")+""
-    									+ "}"
-    									+ "},";
-        					}	
-        					tiemEffRequest+= "\"Current\": {"
-									+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
-									+ "\"RunStatus\":"+(RunStatus==1?true:false)+""
-									+ "}"
-									+ "}";
-        					//时率来源非人工录入时时，此时进行时率计算
-        					String timeEffResponse="";
-        					if(clientUnit.unitDataList.get(i).getRunTimeEfficiencySource()!=0){
-        						timeEffResponse=StringManagerUtils.sendPostMethod(tiemEffUrl, tiemEffRequest,"utf-8");
-            					type = new TypeToken<TimeEffResponseData>() {}.getType();
-            					timeEffResponseData=gson.fromJson(timeEffResponse, type);
-        					}
-        					if(timeEffResponseData!=null&&timeEffResponseData.getResultStatus()==1){
-        						if(timeEffResponseData.getCurrent().getRunEfficiency().getRangeString().indexOf("-;")>=0){
-        							System.out.println("时率返回数据出现：-;");
-        							System.out.println("时率请求数据："+tiemEffRequest);
-        							System.out.println("时率返回数据："+timeEffResponse);
-        							timeEffResponseData.getCurrent().getRunEfficiency().setRangeString(timeEffResponseData.getCurrent().getRunEfficiency().getRangeString().replaceAll("-;", ""));
-        						}
-        						clientUnit.unitDataList.get(i).getAcquisitionData().setRealTimeRunTime(timeEffResponseData.getCurrent().getRunEfficiency().getTime());
-        						clientUnit.unitDataList.get(i).getAcquisitionData().setRealTimeRunTimeEfficiency(timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency());
-        						clientUnit.unitDataList.get(i).getAcquisitionData().setRealTimeRunRangeString(timeEffResponseData.getCurrent().getRunEfficiency().getRangeString());
-        						
-//        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
-        						clientUnit.unitDataList.get(i).lastRunStatus=timeEffResponseData.getCurrent().getRunStatus()?1:0;
-        						clientUnit.unitDataList.get(i).lastRunTime=timeEffResponseData.getCurrent().getRunEfficiency().getTime();
-        						clientUnit.unitDataList.get(i).lastRunTimeEfficiency=timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency();
-        						clientUnit.unitDataList.get(i).lastRunRange=timeEffResponseData.getCurrent().getRunEfficiency().getRangeString();
-        					}else{
-        						System.out.println("run error");
-        						System.out.println("时率请求数据："+tiemEffRequest);
-    							System.out.println("时率返回数据："+timeEffResponse);
-        					}
-        					
-        					//进行电量计算
-        					EnergyCalculateResponseData energyCalculateResponseData=null;
-        					String energyRequest="{"
-									+ "\"AKString\":\"\","
-									+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
-        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
-        						energyRequest+= "\"Last\":{"
-    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
-    									+ "\"Total\":{"
-    									+ "\"Watt\":"+clientUnit.unitDataList.get(i).lastTotalWattEnergy+","
-    									+ "\"PWatt\":"+clientUnit.unitDataList.get(i).lastTotalPWattEnergy+","
-    									+ "\"NWatt\":"+clientUnit.unitDataList.get(i).lastTotalNWattEnergy+","
-    									+ "\"Var\":"+clientUnit.unitDataList.get(i).lastTotalVarEnergy+","
-    									+ "\"PVar\":"+clientUnit.unitDataList.get(i).lastTotalPVarEnergy+","
-    									+ "\"NVar\":"+clientUnit.unitDataList.get(i).lastTotalNVarEnergy+","
-    									+ "\"VA\":"+clientUnit.unitDataList.get(i).lastTotalVAEnergy+""
-    									+ "},\"Today\":{"
-    									+ "\"Watt\":"+clientUnit.unitDataList.get(i).lastTodayWattEnergy+","
-    									+ "\"PWatt\":"+clientUnit.unitDataList.get(i).lastTodayPWattEnergy+","
-    									+ "\"NWatt\":"+clientUnit.unitDataList.get(i).lastTodayNWattEnergy+","
-    									+ "\"Var\":"+clientUnit.unitDataList.get(i).lastTodayVarEnergy+","
-    									+ "\"PVar\":"+clientUnit.unitDataList.get(i).lastTodayPVarEnergy+","
-    									+ "\"NVar\":"+clientUnit.unitDataList.get(i).lastTodayNVarEnergy+","
-    									+ "\"VA\":"+clientUnit.unitDataList.get(i).lastTodayVAEnergy+""
-    									+ "}"
-    									+ "},";
-        					}	
-        					energyRequest+= "\"Current\": {"
-									+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
-									+ "\"Total\":{"
-									+ "\"Watt\":"+ActivePowerConsumption+","
-									+ "\"PWatt\":"+0+","
-									+ "\"NWatt\":"+0+","
-									+ "\"Var\":"+ReactivePowerConsumption+","
-									+ "\"PVar\":"+0+","
-									+ "\"NVar\":"+0+","
-									+ "\"VA\":"+0+""
-									+ "}"
-									+ "}"
-									+ "}";
-        					String energyResponse=StringManagerUtils.sendPostMethod(energyUrl, energyRequest,"utf-8");
-        					type = new TypeToken<EnergyCalculateResponseData>() {}.getType();
-        					energyCalculateResponseData=gson.fromJson(energyResponse, type);
-        					if(energyCalculateResponseData!=null&&energyCalculateResponseData.getResultStatus()==1){
-//        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
-        						clientUnit.unitDataList.get(i).lastTotalWattEnergy=energyCalculateResponseData.getCurrent().getTotal().getWatt();
-        						clientUnit.unitDataList.get(i).lastTotalPWattEnergy=energyCalculateResponseData.getCurrent().getTotal().getPWatt();
-        						clientUnit.unitDataList.get(i).lastTotalNWattEnergy=energyCalculateResponseData.getCurrent().getTotal().getNWatt();
-        						clientUnit.unitDataList.get(i).lastTotalVarEnergy=energyCalculateResponseData.getCurrent().getTotal().getVar();
-        						clientUnit.unitDataList.get(i).lastTotalPVarEnergy=energyCalculateResponseData.getCurrent().getTotal().getPVar();
-        						clientUnit.unitDataList.get(i).lastTotalNVarEnergy=energyCalculateResponseData.getCurrent().getTotal().getNVar();
-        						clientUnit.unitDataList.get(i).lastTotalVAEnergy=energyCalculateResponseData.getCurrent().getTotal().getVA();
-        						
-        						clientUnit.unitDataList.get(i).lastTodayWattEnergy=energyCalculateResponseData.getCurrent().getToday().getWatt();
-        						clientUnit.unitDataList.get(i).lastTodayPWattEnergy=energyCalculateResponseData.getCurrent().getToday().getPWatt();
-        						clientUnit.unitDataList.get(i).lastTodayNWattEnergy=energyCalculateResponseData.getCurrent().getToday().getNWatt();
-        						clientUnit.unitDataList.get(i).lastTodayVarEnergy=energyCalculateResponseData.getCurrent().getToday().getVar();
-        						clientUnit.unitDataList.get(i).lastTodayPVarEnergy=energyCalculateResponseData.getCurrent().getToday().getPVar();
-        						clientUnit.unitDataList.get(i).lastTodayNVarEnergy=energyCalculateResponseData.getCurrent().getToday().getNVar();
-        						clientUnit.unitDataList.get(i).lastTodayVAEnergy=energyCalculateResponseData.getCurrent().getToday().getVA();
-        					}else{
-        						System.out.println("energy error");
-        						System.out.println("请求数据："+energyRequest);
-    							System.out.println("返回数据："+energyResponse);
-        					}
-        					clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
-        					long hisDataInterval=0;
-    						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getSaveTime())){
-    							hisDataInterval=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getSaveTime()).getTime();
-    						}
-    						if(commResponseData!=null&&timeEffResponseData!=null&&
-        							(RunStatus!=clientUnit.unitDataList.get(i).acquisitionData.runStatus//运行状态发生改变
-        							||format.parse(AcquisitionTime).getTime()-hisDataInterval>=clientUnit.unitDataList.get(i).getSaveCycle_Discrete()//比上次保存时间大于5分钟
-        							)
-        						){
-        						clientUnit.unitDataList.get(i).acquisitionData.setRunStatus(RunStatus);
-        						Connection conn=OracleJdbcUtis.getConnection();
-        						Statement stmt=null;
-            					updateProdData+=" where t.wellId= (select t2.id from tbl_wellinformation t2 where t007.wellName='"+clientUnit.unitDataList.get(i).wellName+"') ";
-            					
-                						
-        						if(commResponseData!=null&&commResponseData.getResultStatus()==1){
-        							updateDiscreteData+=" ,t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
-        								+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime()
-        								+ " ,t.commRange= '"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"'";
-        							if(timeEffResponseData.getDaily()!=null&&StringManagerUtils.isNotNull(timeEffResponseData.getDaily().getDate())){
-        								
-        							}
-            					}
-        						if(timeEffResponseData!=null&&timeEffResponseData.getResultStatus()==1){
-        							updateDiscreteData+=",t.runTimeEfficiency= "+timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency()
-        								+ " ,t.runTime= "+timeEffResponseData.getCurrent().getRunEfficiency().getTime()
-        								+ " ,t.runRange= '"+timeEffResponseData.getCurrent().getRunEfficiency().getRangeString()+"'";
-        							if(timeEffResponseData.getDaily()!=null&&StringManagerUtils.isNotNull(timeEffResponseData.getDaily().getDate())){
-        								
-        							}
-            					}
-        						if(energyCalculateResponseData!=null&&energyCalculateResponseData.getResultStatus()==1){
-        							updateDiscreteData+=",t.TotalWattEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getWatt()
-            								+ ",t.TotalPWattEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getPWatt()
-            								+ ",t.TotalNWattEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getNWatt()
-            								+ ",t.TotalVarEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getVar()
-            								+ ",t.TotalPVarEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getPVar()
-            								+ ",t.TotalNVarEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getNVar()
-            								+ ",t.TotalVAEnergy= "+energyCalculateResponseData.getCurrent().getTotal().getVA()
-            								+ ",t.TodayWattEnergy= "+energyCalculateResponseData.getCurrent().getToday().getWatt()
-            								+ ",t.TodayPWattEnergy= "+energyCalculateResponseData.getCurrent().getToday().getPWatt()
-            								+ ",t.TodayNWattEnergy= "+energyCalculateResponseData.getCurrent().getToday().getNWatt()
-            								+ ",t.TodayVarEnergy= "+energyCalculateResponseData.getCurrent().getToday().getVar()
-            								+ ",t.TodayPVarEnergy= "+energyCalculateResponseData.getCurrent().getToday().getPVar()
-            								+ ",t.TodayNVarEnergy= "+energyCalculateResponseData.getCurrent().getToday().getNVar()
-            								+ ",t.TodayVAEnergy= "+energyCalculateResponseData.getCurrent().getToday().getVA();
-        							if(energyCalculateResponseData.getDaily()!=null&&StringManagerUtils.isNotNull(energyCalculateResponseData.getDaily().getDate())){
-        								updateDailyData="update tbl_rpc_total_day t set t.todaywattenergy="+energyCalculateResponseData.getDaily().getWatt()
-        										+ ",t.TodayPWattEnergy= "+energyCalculateResponseData.getDaily().getPWatt()
-                								+ ",t.TodayNWattEnergy= "+energyCalculateResponseData.getDaily().getNWatt()
-                								+ ",t.TodayVarEnergy= "+energyCalculateResponseData.getDaily().getVar()
-                								+ ",t.TodayPVarEnergy= "+energyCalculateResponseData.getDaily().getPVar()
-                								+ ",t.TodayNVarEnergy= "+energyCalculateResponseData.getDaily().getNVar()
-                								+ ",t.TodayVAEnergy= "+energyCalculateResponseData.getDaily().getVA()
-        										+ " where t.calculatedate=to_date('"+energyCalculateResponseData.getDaily().getDate()+"','yyyy-mm-dd') "
-        								         +" and t.wellId= (select t2.id from tbl_wellinformation t2 where t2.wellName='"+clientUnit.unitDataList.get(i).wellName+"') ";
-        							}
-        						}else{
-        							updateDiscreteData+= " ,t.totalWattEnergy= "+ActivePowerConsumption
-        									+ " ,t.totalVarEnergy= "+ReactivePowerConsumption;
-        						}
-        						
-        						//如果时率来源非人工录入且电参计算成功，更新运行状态
-        						if(clientUnit.unitDataList.get(i).getRunTimeEfficiencySource()!=0){
-        							updateDiscreteData+=",t.runStatus="+RunStatus;
-        						}
-        						updateDiscreteData+=" where t.wellId= (select t2.id from tbl_wellinformation t2 where t2.wellName='"+clientUnit.unitDataList.get(i).wellName+"') ";
-        						try {
-    								stmt = conn.createStatement();
-    								int result=stmt.executeUpdate(updateDiscreteData);
-    								if(hasProData)
-    									result=stmt.executeUpdate(updateProdData);
-    								if(StringManagerUtils.isNotNull(updateDailyData)){
-    									result=stmt.executeUpdate(updateDailyData);
-    								}
-    								conn.close();
-    								stmt.close();
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setRunStatus(RunStatus);
-    								clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime(AcquisitionTime);
-    							} catch (SQLException e) {
-    								e.printStackTrace();
-    								try {
-    									conn.close();
-    									if(stmt!=null){
-    										stmt.close();
-    									}
-    								} catch (SQLException e1) {
-    									e1.printStackTrace();
-    								}
-    							}
-        					}
-        					if(clientUnit.unitDataList.get(i).getLiftingType()>=400&&clientUnit.unitDataList.get(i).getLiftingType()<500){//如果是螺杆泵读取转速和扭矩
-        						//读取螺杆泵转速、扭矩
-        						//读取螺杆泵转速
-            					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getRPM()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRPM().getAddress()>40000){
-            						wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRPM().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getRPM().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率据异常,rc="+rc);
-        								break;
-        							}else{
-        								RPM=getFloat(recByte,0, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setRPM(RPM);
-        								clientUnit.unitDataList.get(i).lastRPM=RPM;
-        							}
-            					}
-            					//读取螺杆泵扭矩
-            					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getTorque()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getTorque().getAddress()>40000){
-            						wellReaded=true;
-        							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getTorque().getAddress(),
-            								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getTorque().getLength(),
-            								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-        							if(rc==-1||rc==-2){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率发送或接收失败,rc="+rc);
-        								this.releaseResource(is,os);
-                        				wellReaded=false;
-                        				break;
-        							}else if(rc==-3){
-        								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频设置频率据异常,rc="+rc);
-        								break;
-        							}else{
-        								Torque=getFloat(recByte,0, driveConfig.getProtocol());
-        								clientUnit.unitDataList.get(i).getAcquisitionData().setTorque(Torque);
-        							}
-            					}
-            					long screwPumpLastSaveTime=0;
-        						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getScrewPumpSaveTime())){
-        							screwPumpLastSaveTime=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getScrewPumpSaveTime()).getTime();
-        						}
-        						//当前采集时间与上次保存时间差值大于保存时间时，保存螺杆泵数据
-            					if(format.parse(AcquisitionTime).getTime()-screwPumpLastSaveTime>=clientUnit.unitDataList.get(i).getScrewPumpDataSaveInterval()){
-            						recvBuff=new StringBuffer();
-            						StringBuffer proParamsBuff=new StringBuffer();
-            						StringBuffer elecBuff=new StringBuffer();
-            						proParamsBuff.append("\"ProductionParameter\": {");
-            						elecBuff.append("\"Electric\": {");
-            						recvBuff.append("{\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",\"LiftingType\":"+clientUnit.unitDataList.get(i).getLiftingType()+",\"AcquisitionTime\":\""+AcquisitionTime+"\",");
-            						
-            						
-                					proParamsBuff.append("\"TubingPressure\":"+TubingPressure+",");
-                					proParamsBuff.append("\"CasingPressure\":"+CasingPressure+",");
-                					proParamsBuff.append("\"BackPressure\":"+BackPressure+",");
-                					proParamsBuff.append("\"WellHeadFluidTemperature\":"+WellHeadFluidTemperature+",");
-                					proParamsBuff.append("\"bpszpl\":"+SetFrequency+",");
-                					proParamsBuff.append("\"bpyxpl\":"+RunFrequency+"}");
-                					
-                					recvBuff.append(proParamsBuff+",");
-                					
-                					elecBuff.append("\"CurrentA\":"+CurrentA+",");
-                					elecBuff.append("\"CurrentB\":"+CurrentB+",");
-                					elecBuff.append("\"CurrentC\":"+CurrentC+",");
-                					elecBuff.append("\"VoltageA\":"+VoltageA+",");
-                					elecBuff.append("\"VoltageB\":"+VoltageB+",");
-                					elecBuff.append("\"VoltageC\":"+VoltageC+",");
-                					elecBuff.append("\"ActivePowerConsumption\":"+ActivePowerConsumption+",");
-                					elecBuff.append("\"ReactivePowerConsumption\":"+ReactivePowerConsumption+",");
-                					elecBuff.append("\"ActivePower\":"+ActivePower+",");
-                					elecBuff.append("\"ReactivePower\":"+ReactivePower+",");
-                					elecBuff.append("\"ReversePower\":"+ReversePower+",");
-                					elecBuff.append("\"PowerFactor\":"+PowerFactor+"}");
-                					recvBuff.append(elecBuff+",");
-                					recvBuff.append("\"ScrewPump\":{\"RPM\":"+RPM+",\"Torque\":"+Torque+"}");
-                					recvBuff.append("}");
-                					System.out.println("线程"+this.threadId+"解析读取数据:"+recvBuff.toString());
-                					StringManagerUtils.sendPostMethod(url, recvBuff.toString(),"utf-8");
-                					clientUnit.unitDataList.get(i).getAcquisitionData().setScrewPumpSaveTime(AcquisitionTime);
-            					}
-        					}else if(clientUnit.unitDataList.get(i).getLiftingType()>=200&&clientUnit.unitDataList.get(i).getLiftingType()<300){//如果是抽油机判断是否有新功图,如有则读取功图
-        						long currentTimelong=0;
-            					if(clientUnit.unitDataList.get(i).getDiagranAcquisitionTime()!=null){
-            						currentTimelong = format.parse(clientUnit.unitDataList.get(i).getDiagranAcquisitionTime()).getTime();//数据库中最新功图采集时间
-            					}
-            					long newTimelong = format.parse(diagramAcquisitionTime).getTime();
-            					if(newTimelong>currentTimelong){//发现新功图
-            						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"发现新功图");
-            						clientUnit.unitDataList.get(i).setDiagranAcquisitionTime(diagramAcquisitionTime);
-            						recvBuff=new StringBuffer();
-            						StringBuffer recvFBuff=new StringBuffer();
-            						StringBuffer recvSBuff=new StringBuffer();
-            						StringBuffer recvABuff=new StringBuffer();
-            						StringBuffer recvPBuff=new StringBuffer();
-            						StringBuffer proParamsBuff=new StringBuffer();
-            						StringBuffer elecBuff=new StringBuffer();
-            						recvFBuff.append("\"F\": [");
-            						recvSBuff.append("\"S\": [");
-            						recvABuff.append("\"A\": [");
-            						recvPBuff.append("\"P\": [");
-            						proParamsBuff.append("\"ProductionParameter\": {");
-            						elecBuff.append("\"Electric\": {");
-            						recvBuff.append("{\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",\"LiftingType\":"+clientUnit.unitDataList.get(i).getLiftingType()+",\"AcquisitionTime\":\""+diagramAcquisitionTime+"\",");
-            						
-            						
-                					proParamsBuff.append("\"TubingPressure\":"+TubingPressure+",");
-                					proParamsBuff.append("\"CasingPressure\":"+CasingPressure+",");
-                					proParamsBuff.append("\"BackPressure\":"+BackPressure+",");
-                					proParamsBuff.append("\"WellHeadFluidTemperature\":"+WellHeadFluidTemperature+",");
-                					proParamsBuff.append("\"bpszpl\":"+SetFrequency+",");
-                					proParamsBuff.append("\"bpyxpl\":"+RunFrequency+"}");
-                					
-                					recvBuff.append(proParamsBuff+",");
-                					
-                					elecBuff.append("\"CurrentA\":"+CurrentA+",");
-                					elecBuff.append("\"CurrentB\":"+CurrentB+",");
-                					elecBuff.append("\"CurrentC\":"+CurrentC+",");
-                					elecBuff.append("\"VoltageA\":"+VoltageA+",");
-                					elecBuff.append("\"VoltageB\":"+VoltageB+",");
-                					elecBuff.append("\"VoltageC\":"+VoltageC+",");
-                					elecBuff.append("\"ActivePowerConsumption\":"+ActivePowerConsumption+",");
-                					elecBuff.append("\"ReactivePowerConsumption\":"+ReactivePowerConsumption+",");
-                					elecBuff.append("\"ActivePower\":"+ActivePower+",");
-                					elecBuff.append("\"ReactivePower\":"+ReactivePower+",");
-                					elecBuff.append("\"ReversePower\":"+ReversePower+",");
-                					elecBuff.append("\"PowerFactor\":"+PowerFactor+"}");
-                					recvBuff.append(elecBuff+",");
-            						
-                					
-                					recvBuff.append("\"Diagram\":{\"AcquisitionTime\":\""+diagramAcquisitionTime+"\",\"AcquisitionCycle\":"+acquisitionCycle+",\"SPM\":"+SPM+","+"\"Stroke\":"+Stroke+",");
-                					
-            						//读取功图位移数据
-                					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getSDiagram()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSDiagram().getAddress()>40000){
-                						if(point==0)
-                							point=(short)clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSDiagram().getLength();
-                						for(int j=0;j*100<point;j++){
-                							int length=100;
-                							if(j*100+length>point){
-                								length=point-j*100;
-                							}
-                							wellReaded=true;
-                							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-                    								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSDiagram().getAddress()+j*100,
-                    								length,
-                    								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-                							if(rc==-1||rc==-2){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图位移数据发送或接收失败,rc="+rc);
-                								this.releaseResource(is,os);
-                                				wellReaded=false;
-                                				break;
-                							}else if(rc==-3){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图位移数据异常,rc="+rc);
-                								break;
-                							}else{
-                								for(int k=0;k<length;k++){
-                            						Float recvS=(float) (getShort(recByte,k*2, driveConfig.getProtocol())*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getSDiagram().getZoom());
-                            						recvSBuff.append(recvS+",");
-                            					}
-                							}
-                						}
-                						if(recvSBuff.toString().endsWith(",")){
-                							recvSBuff.deleteCharAt(recvSBuff.length() - 1);
-                						}
-                					}
-                					recvSBuff.append("]");
-                					clientUnit.unitDataList.get(i).getAcquisitionData().setRecvSBuff(recvSBuff.toString());
-                					
-                					//读取功图载荷数据
-                					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getFDiagram()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFDiagram().getAddress()>40000){
-                						if(point==0)
-                							point=(short)clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFDiagram().getLength();
-                						for(int j=0;j*100<point;j++){
-                							int length=100;
-                							if(j*100+length>point){
-                								length=point-j*100;
-                							}
-                							wellReaded=true;
-                							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-                    								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFDiagram().getAddress()+j*100,
-                    								length,
-                    								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-                							if(rc==-1||rc==-2){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图载荷数据发送或接收失败,rc="+rc);
-                								this.releaseResource(is,os);
-                                				wellReaded=false;
-                                				break;
-                							}else if(rc==-3){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图载荷数据异常,rc="+rc);
-                								break;
-                							}else{
-                								for(int k=0;k<length;k++){
-                            						Float recvF=(float) (getShort(recByte,k*2, driveConfig.getProtocol())*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getFDiagram().getZoom());
-                            						recvFBuff.append(recvF+",");
-                            					}
-                							}
-                						}
-                						if(recvFBuff.toString().endsWith(",")){
-                							recvFBuff.deleteCharAt(recvFBuff.length() - 1);
-                						}
-                					}
-                					recvFBuff.append("]");
-                					clientUnit.unitDataList.get(i).getAcquisitionData().setRecvFBuff(recvFBuff.toString());
-                					//读取功图电流数据
-                					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getADiagram()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getADiagram().getAddress()>40000){
-                						if(point==0)
-                							point=(short)clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getADiagram().getLength();
-                						for(int j=0;j*100<point;j++){
-                							int length=100;
-                							if(j*100+length>point){
-                								length=point-j*100;
-                							}
-                							wellReaded=true;
-                							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-                    								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getADiagram().getAddress()+j*100,
-                    								length,
-                    								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-                							if(rc==-1||rc==-2){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图电流数据发送或接收失败,rc="+rc);
-                								this.releaseResource(is,os);
-                                				wellReaded=false;
-                                				break;
-                							}else if(rc==-3){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图电流数据异常,rc="+rc);
-                								break;
-                							}else{
-                								for(int k=0;k<length;k++){
-                            						Float recvA=(float) (getShort(recByte,k*2, driveConfig.getProtocol())*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getADiagram().getZoom());
-                            						recvABuff.append(recvA+",");
-                            					}
-                							}
-                						}
-                						if(recvABuff.toString().endsWith(",")){
-                							recvABuff.deleteCharAt(recvABuff.length() - 1);
-                						}
-                					}
-                					recvABuff.append("]");
-                					clientUnit.unitDataList.get(i).getAcquisitionData().setRecvABuff(recvABuff.toString());
-                					//读取功图功率数据
-                					if(clientUnit.unitDataList.get(i).getAcquisitionUnitData().getPDiagram()==1&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPDiagram().getAddress()>40000){
-                						if(point==0)
-                							point=(short)clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPDiagram().getLength();
-                						for(int j=0;j*100<point;j++){
-                							int length=100;
-                							if(j*100+length>point){
-                								length=point-j*100;
-                							}
-                							wellReaded=true;
-                							rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
-                    								clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPDiagram().getAddress()+j*100,
-                    								length,
-                    								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
-                							if(rc==-1||rc==-2){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图功率数据发送或接收失败,rc="+rc);
-                								this.releaseResource(is,os);
-                                				wellReaded=false;
-                                				break;
-                							}else if(rc==-3){
-                								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取功图功率数据异常,rc="+rc);
-                								break;
-                							}else{
-                								for(int k=0;k<length;k++){
-                            						Float recvP=(float) (getShort(recByte,k*2, driveConfig.getProtocol())*clientUnit.unitDataList.get(i).getRtuDriveConfig().getDataConfig().getPDiagram().getZoom());
-                            						recvPBuff.append(recvP+",");
-                            					}
-                							}
-                						}
-                						if(recvPBuff.toString().endsWith(",")){
-                							recvPBuff.deleteCharAt(recvPBuff.length() - 1);
-                						}
-                					}
-                					recvPBuff.append("]");
-                					clientUnit.unitDataList.get(i).getAcquisitionData().setRecvPBuff(recvPBuff.toString());
-                					
-                					recvBuff.append(recvFBuff+","+recvSBuff+","+recvABuff+","+recvPBuff+"}}");
-                					System.out.println("线程"+this.threadId+"解析读取数据:"+recvBuff.toString());
-                					StringManagerUtils.sendPostMethod(url, recvBuff.toString(),"utf-8");
-                					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime(AcquisitionTime);
-                					wellReaded=true;
-            					}
         					}
     					}
     				}
@@ -2115,9 +829,19 @@ public class ProtocolModbusThread extends Thread{
 			for(int i=0;i<this.clientUnit.unitDataList.size();i++){
 				clientUnit.unitDataList.get(i).acquisitionData=new  AcquisitionData();
 				clientUnit.unitDataList.get(i).commStatus=0;
-				clientUnit.unitDataList.get(i).runStatusControl=0;
-				clientUnit.unitDataList.get(i).FSDiagramIntervalControl=0;
-				clientUnit.unitDataList.get(i).FrequencyControl=0;
+				
+				clientUnit.unitDataList.get(i).wellStartupControl=0;
+				clientUnit.unitDataList.get(i).wellStopControl=0;
+				clientUnit.unitDataList.get(i).frequencyOrRPMControlSignControl=0;
+				
+				clientUnit.unitDataList.get(i).frequencySetValueControl=0;
+				clientUnit.unitDataList.get(i).SPMSetValueControl=0;
+				clientUnit.unitDataList.get(i).SPMBy10HzControl=0;
+				clientUnit.unitDataList.get(i).SPMBy50HzControl=0;
+				clientUnit.unitDataList.get(i).RTUAddrControl=0;
+				clientUnit.unitDataList.get(i).RTUProgramVersionControl=0;
+				clientUnit.unitDataList.get(i).setWellNameControl=0;
+				
 				clientUnit.unitDataList.get(i).acquisitionData.runStatus=0;
 				//进行通信计算
 				String commRequest="{"
@@ -2216,8 +940,20 @@ public class ProtocolModbusThread extends Thread{
 	}
 	
 	public byte[] getWriteSingleRegisterByteData(int id,int gnm,int startAddr,int data,int protocol){
-		byte startAddrArr[]=StringManagerUtils.getByteArray((short)(startAddr-40001));
-		byte dataArr[]=StringManagerUtils.getByteArray((short)data);
+		byte startAddrArr[]=null;
+		byte dataArr[]=null;
+		if (gnm==6){//写单个保持寄存器
+			startAddrArr=StringManagerUtils.getByteArray((short)(startAddr-40001));
+			dataArr=StringManagerUtils.getByteArray((short)data);
+		}else if(gnm==5){//写单个线圈
+			startAddrArr=StringManagerUtils.getByteArray((short)(startAddr-00001));
+			if(data==1){//线圈置位
+				startAddrArr=new byte[]{(byte) 0xFF,0x00};
+			}else{
+				startAddrArr=new byte[]{0x00,0x00};
+			}
+		}
+		
 		byte[] readByte=null;
 		if(protocol==1){
 			readByte=new byte[12];
@@ -2386,6 +1122,16 @@ public class ProtocolModbusThread extends Thread{
     	}
         return result;
     } 
+    
+    public int getUnsignedShort(byte[] arr,int index, int protocol) {  
+    	int result=0;
+    	if(protocol==1){
+    		result=StringManagerUtils.getUnsignedShort(arr, 9+index);
+    	}else if(protocol==2){
+    		result=StringManagerUtils.getUnsignedShort(arr, 3+index);
+    	}
+        return result;
+    }
     
     public float getFloat(byte[] arr,int index, int protocol) {  
     	float result=0;

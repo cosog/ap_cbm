@@ -81,201 +81,71 @@ public class RTUDriveConfig {
 	
 	public static class DataConfig
 	{
+	    private Item RTUStatus;
+	    private Item RTUSystemTime;
 	    private Item RunStatus;
-	    private Item RunControl;
 	    
-	    private Item CurrentA;
-	    private Item CurrentB;
-	    private Item CurrentC;
-	    private Item VoltageA;
-	    private Item VoltageB;
-	    private Item VoltageC;
-	    private Item ActivePowerConsumption;
-	    private Item ReactivePowerConsumption;
-	    private Item ActivePower;
-	    private Item ReactivePower;
-	    private Item ReversePower;
-	    private Item PowerFactor;
-	    
-	    private Item TubingPressure;
-	    private Item CasingPressure;
-	    private Item BackPressure;
-	    private Item WellHeadFluidTemperature;
-	    private Item ProducingfluidLevel;
-	    private Item WaterCut;
-	    
-	    private Item SetFrequency;
-	    private Item RunFrequency;
-	    
-	    private Item RPM;
-	    private Item Torque;
-	    
-	    private Item FSDiagramAcquisitionInterval;
-	    private Item FSDiagramSetPointCount;
-	    private Item FSDiagramPointCount;
-	    private Item AcquisitionTime;
 	    private Item SPM;
-	    private Item Stroke;
+	    private Item AI1;
+	    private Item AI2;
+	    private Item AI3;
+	    private Item AI4;
 	    
-	    private Item SDiagram;
-	    private Item FDiagram;
-	    private Item ADiagram;
-	    private Item PDiagram;
+	    private Item gasFlowmeterCommStatus;
+	    private Item gasInstantaneousFlow;
+	    private Item gasCumulativeFlow;
+	    private Item gasFlowmeterPress;
 	    
-	    private Item BalaceControlStatus;
-	    private Item BalanceControlMode;
-	    private Item BalanceCalculateMode;
-	    private Item BalanceAwayTime;
-	    private Item BalanceCloseTime;
-	    private Item BalanceStrokeCount;
-	    private Item BalanceOperationUpLimit;
-	    private Item BalanceOperationDownLimit;
-	    private Item BalanceAwayTimePerBeat;
-	    private Item BalanceCloseTimePerBeat;
-
-	    public void setRunStatus(Item RunStatus){
-	        this.RunStatus = RunStatus;
-	    }
-	    public Item getRunStatus(){
-	        return this.RunStatus;
-	    }
-	    public void setRunControl(Item RunControl){
-	        this.RunControl = RunControl;
-	    }
-	    public Item getRunControl(){
-	        return this.RunControl;
-	    }
-	    public void setCurrentA(Item CurrentA){
-	        this.CurrentA = CurrentA;
-	    }
-	    public Item getCurrentA(){
-	        return this.CurrentA;
-	    }
-	    public void setCurrentB(Item CurrentB){
-	        this.CurrentB = CurrentB;
-	    }
-	    public Item getCurrentB(){
-	        return this.CurrentB;
-	    }
-	    public void setCurrentC(Item CurrentC){
-	        this.CurrentC = CurrentC;
-	    }
-	    public Item getCurrentC(){
-	        return this.CurrentC;
-	    }
-		public Item getVoltageA() {
-			return VoltageA;
+	    private Item liquidFlowmeterCommStatus;
+	    private Item liquidInstantaneousFlow;
+	    private Item liquidCumulativeFlow;
+	    private Item liquidFlowmeterProd;
+	    
+	    private Item fluidLevelIndicatorCommStatus;
+	    private Item fluidLevelAcquisitionTime;
+	    private Item fluidLevelIndicatorSoundVelocity;
+	    private Item fluidLevel;
+	    private Item fluidLevelIndicatorPress;
+	    
+	    private Item frequencyChangerCommStatus;
+	    private Item frequencyChangerStatus;
+	    private Item frequencyChangerStatus2;
+	    private Item runFrequency;
+	    private Item frequencyChangerBusbarVoltage;
+	    private Item frequencyChangerOutputVoltage;
+	    private Item frequencyChangerOutputCurrent;
+	    private Item setFrequencyFeedback;
+	    private Item frequencyChangerFaultCode;
+	    private Item frequencyChangerPosition;
+	    private Item frequencyChangerManufacturerCode;
+	    
+	    private Item wellStartup;
+	    private Item wellStop;
+	    private Item frequencyOrRPMControlSign;
+	    private Item frequencySetValue;
+	    private Item SPMSetValue;
+	    private Item SPMBy10Hz;
+	    private Item SPMBy50Hz;
+	    private Item RTUAddr;
+	    private Item RTUProgramVersion;
+	    private Item setWellName;
+		public Item getRTUStatus() {
+			return RTUStatus;
 		}
-		public void setVoltageA(Item voltageA) {
-			VoltageA = voltageA;
+		public void setRTUStatus(Item rTUStatus) {
+			RTUStatus = rTUStatus;
 		}
-		public Item getVoltageB() {
-			return VoltageB;
+		public Item getRTUSystemTime() {
+			return RTUSystemTime;
 		}
-		public void setVoltageB(Item voltageB) {
-			VoltageB = voltageB;
+		public void setRTUSystemTime(Item rTUSystemTime) {
+			RTUSystemTime = rTUSystemTime;
 		}
-		public Item getVoltageC() {
-			return VoltageC;
+		public Item getRunStatus() {
+			return RunStatus;
 		}
-		public void setVoltageC(Item voltageC) {
-			VoltageC = voltageC;
-		}
-		public Item getActivePowerConsumption() {
-			return ActivePowerConsumption;
-		}
-		public void setActivePowerConsumption(Item activePowerConsumption) {
-			ActivePowerConsumption = activePowerConsumption;
-		}
-		public Item getReactivePowerConsumption() {
-			return ReactivePowerConsumption;
-		}
-		public void setReactivePowerConsumption(Item reactivePowerConsumption) {
-			ReactivePowerConsumption = reactivePowerConsumption;
-		}
-		public Item getActivePower() {
-			return ActivePower;
-		}
-		public void setActivePower(Item activePower) {
-			ActivePower = activePower;
-		}
-		public Item getReactivePower() {
-			return ReactivePower;
-		}
-		public void setReactivePower(Item reactivePower) {
-			ReactivePower = reactivePower;
-		}
-		public Item getReversePower() {
-			return ReversePower;
-		}
-		public void setReversePower(Item reversePower) {
-			ReversePower = reversePower;
-		}
-		public Item getPowerFactor() {
-			return PowerFactor;
-		}
-		public void setPowerFactor(Item powerFactor) {
-			PowerFactor = powerFactor;
-		}
-		public Item getTubingPressure() {
-			return TubingPressure;
-		}
-		public void setTubingPressure(Item tubingPressure) {
-			TubingPressure = tubingPressure;
-		}
-		public Item getCasingPressure() {
-			return CasingPressure;
-		}
-		public void setCasingPressure(Item casingPressure) {
-			CasingPressure = casingPressure;
-		}
-		public Item getBackPressure() {
-			return BackPressure;
-		}
-		public void setBackPressure(Item backPressure) {
-			BackPressure = backPressure;
-		}
-		public Item getWellHeadFluidTemperature() {
-			return WellHeadFluidTemperature;
-		}
-		public void setWellHeadFluidTemperature(Item wellHeadFluidTemperature) {
-			WellHeadFluidTemperature = wellHeadFluidTemperature;
-		}
-		public Item getSetFrequency() {
-			return SetFrequency;
-		}
-		public void setSetFrequency(Item SetFrequency) {
-			this.SetFrequency = SetFrequency;
-		}
-		public Item getRunFrequency() {
-			return RunFrequency;
-		}
-		public void setRunFrequency(Item RunFrequency) {
-			this.RunFrequency = RunFrequency;
-		}
-		public Item getRPM() {
-			return RPM;
-		}
-		public void setRPM(Item rPM) {
-			RPM = rPM;
-		}
-		public Item getTorque() {
-			return Torque;
-		}
-		public void setTorque(Item torque) {
-			Torque = torque;
-		}
-		public Item getFSDiagramPointCount() {
-			return FSDiagramPointCount;
-		}
-		public void setFSDiagramPointCount(Item fSDiagramPointCount) {
-			FSDiagramPointCount = fSDiagramPointCount;
-		}
-		public Item getAcquisitionTime() {
-			return AcquisitionTime;
-		}
-		public void setAcquisitionTime(Item acquisitionTime) {
-			AcquisitionTime = acquisitionTime;
+		public void setRunStatus(Item runStatus) {
+			RunStatus = runStatus;
 		}
 		public Item getSPM() {
 			return SPM;
@@ -283,120 +153,235 @@ public class RTUDriveConfig {
 		public void setSPM(Item sPM) {
 			SPM = sPM;
 		}
-		public Item getStroke() {
-			return Stroke;
+		public Item getAI1() {
+			return AI1;
 		}
-		public void setStroke(Item stroke) {
-			Stroke = stroke;
+		public void setAI1(Item aI1) {
+			AI1 = aI1;
 		}
-		public Item getSDiagram() {
-			return SDiagram;
+		public Item getAI2() {
+			return AI2;
 		}
-		public void setSDiagram(Item sDiagram) {
-			SDiagram = sDiagram;
+		public void setAI2(Item aI2) {
+			AI2 = aI2;
 		}
-		public Item getFDiagram() {
-			return FDiagram;
+		public Item getAI3() {
+			return AI3;
 		}
-		public void setFDiagram(Item fDiagram) {
-			FDiagram = fDiagram;
+		public void setAI3(Item aI3) {
+			AI3 = aI3;
 		}
-		public Item getADiagram() {
-			return ADiagram;
+		public Item getAI4() {
+			return AI4;
 		}
-		public void setADiagram(Item aDiagram) {
-			ADiagram = aDiagram;
+		public void setAI4(Item aI4) {
+			AI4 = aI4;
 		}
-		public Item getPDiagram() {
-			return PDiagram;
+		public Item getGasFlowmeterCommStatus() {
+			return gasFlowmeterCommStatus;
 		}
-		public void setPDiagram(Item pDiagram) {
-			PDiagram = pDiagram;
+		public void setGasFlowmeterCommStatus(Item gasFlowmeterCommStatus) {
+			this.gasFlowmeterCommStatus = gasFlowmeterCommStatus;
 		}
-		public Item getProducingfluidLevel() {
-			return ProducingfluidLevel;
+		public Item getGasInstantaneousFlow() {
+			return gasInstantaneousFlow;
 		}
-		public void setProducingfluidLevel(Item producingfluidLevel) {
-			ProducingfluidLevel = producingfluidLevel;
+		public void setGasInstantaneousFlow(Item gasInstantaneousFlow) {
+			this.gasInstantaneousFlow = gasInstantaneousFlow;
 		}
-		public Item getWaterCut() {
-			return WaterCut;
+		public Item getGasCumulativeFlow() {
+			return gasCumulativeFlow;
 		}
-		public void setWaterCut(Item waterCut) {
-			WaterCut = waterCut;
+		public void setGasCumulativeFlow(Item gasCumulativeFlow) {
+			this.gasCumulativeFlow = gasCumulativeFlow;
 		}
-		public Item getFSDiagramAcquisitionInterval() {
-			return FSDiagramAcquisitionInterval;
+		public Item getGasFlowmeterPress() {
+			return gasFlowmeterPress;
 		}
-		public void setFSDiagramAcquisitionInterval(Item fSDiagramAcquisitionInterval) {
-			FSDiagramAcquisitionInterval = fSDiagramAcquisitionInterval;
+		public void setGasFlowmeterPress(Item gasFlowmeterPress) {
+			this.gasFlowmeterPress = gasFlowmeterPress;
 		}
-		public Item getFSDiagramSetPointCount() {
-			return FSDiagramSetPointCount;
+		public Item getLiquidFlowmeterCommStatus() {
+			return liquidFlowmeterCommStatus;
 		}
-		public void setFSDiagramSetPointCount(Item fSDiagramSetPointCount) {
-			FSDiagramSetPointCount = fSDiagramSetPointCount;
+		public void setLiquidFlowmeterCommStatus(Item liquidFlowmeterCommStatus) {
+			this.liquidFlowmeterCommStatus = liquidFlowmeterCommStatus;
 		}
-		public Item getBalaceControlStatus() {
-			return BalaceControlStatus;
+		public Item getLiquidInstantaneousFlow() {
+			return liquidInstantaneousFlow;
 		}
-		public void setBalaceControlStatus(Item balaceControlStatus) {
-			BalaceControlStatus = balaceControlStatus;
+		public void setLiquidInstantaneousFlow(Item liquidInstantaneousFlow) {
+			this.liquidInstantaneousFlow = liquidInstantaneousFlow;
 		}
-		public Item getBalanceControlMode() {
-			return BalanceControlMode;
+		public Item getLiquidCumulativeFlow() {
+			return liquidCumulativeFlow;
 		}
-		public void setBalanceControlMode(Item balanceControlMode) {
-			BalanceControlMode = balanceControlMode;
+		public void setLiquidCumulativeFlow(Item liquidCumulativeFlow) {
+			this.liquidCumulativeFlow = liquidCumulativeFlow;
 		}
-		public Item getBalanceCalculateMode() {
-			return BalanceCalculateMode;
+		public Item getLiquidFlowmeterProd() {
+			return liquidFlowmeterProd;
 		}
-		public void setBalanceCalculateMode(Item balanceCalculateMode) {
-			BalanceCalculateMode = balanceCalculateMode;
+		public void setLiquidFlowmeterProd(Item liquidFlowmeterProd) {
+			this.liquidFlowmeterProd = liquidFlowmeterProd;
 		}
-		public Item getBalanceAwayTime() {
-			return BalanceAwayTime;
+		public Item getFluidLevelIndicatorCommStatus() {
+			return fluidLevelIndicatorCommStatus;
 		}
-		public void setBalanceAwayTime(Item balanceAwayTime) {
-			BalanceAwayTime = balanceAwayTime;
+		public void setFluidLevelIndicatorCommStatus(Item fluidLevelIndicatorCommStatus) {
+			this.fluidLevelIndicatorCommStatus = fluidLevelIndicatorCommStatus;
 		}
-		public Item getBalanceCloseTime() {
-			return BalanceCloseTime;
+		public Item getFluidLevelAcquisitionTime() {
+			return fluidLevelAcquisitionTime;
 		}
-		public void setBalanceCloseTime(Item balanceCloseTime) {
-			BalanceCloseTime = balanceCloseTime;
+		public void setFluidLevelAcquisitionTime(Item fluidLevelAcquisitionTime) {
+			this.fluidLevelAcquisitionTime = fluidLevelAcquisitionTime;
 		}
-		public Item getBalanceStrokeCount() {
-			return BalanceStrokeCount;
+		public Item getFluidLevelIndicatorSoundVelocity() {
+			return fluidLevelIndicatorSoundVelocity;
 		}
-		public void setBalanceStrokeCount(Item balanceStrokeCount) {
-			BalanceStrokeCount = balanceStrokeCount;
+		public void setFluidLevelIndicatorSoundVelocity(Item fluidLevelIndicatorSoundVelocity) {
+			this.fluidLevelIndicatorSoundVelocity = fluidLevelIndicatorSoundVelocity;
 		}
-		public Item getBalanceOperationUpLimit() {
-			return BalanceOperationUpLimit;
+		public Item getFluidLevel() {
+			return fluidLevel;
 		}
-		public void setBalanceOperationUpLimit(Item balanceOperationUpLimit) {
-			BalanceOperationUpLimit = balanceOperationUpLimit;
+		public void setFluidLevel(Item fluidLevel) {
+			this.fluidLevel = fluidLevel;
 		}
-		public Item getBalanceOperationDownLimit() {
-			return BalanceOperationDownLimit;
+		public Item getFluidLevelIndicatorPress() {
+			return fluidLevelIndicatorPress;
 		}
-		public void setBalanceOperationDownLimit(Item balanceOperationDownLimit) {
-			BalanceOperationDownLimit = balanceOperationDownLimit;
+		public void setFluidLevelIndicatorPress(Item fluidLevelIndicatorPress) {
+			this.fluidLevelIndicatorPress = fluidLevelIndicatorPress;
 		}
-		public Item getBalanceAwayTimePerBeat() {
-			return BalanceAwayTimePerBeat;
+		public Item getFrequencyChangerCommStatus() {
+			return frequencyChangerCommStatus;
 		}
-		public void setBalanceAwayTimePerBeat(Item balanceAwayTimePerBeat) {
-			BalanceAwayTimePerBeat = balanceAwayTimePerBeat;
+		public void setFrequencyChangerCommStatus(Item frequencyChangerCommStatus) {
+			this.frequencyChangerCommStatus = frequencyChangerCommStatus;
 		}
-		public Item getBalanceCloseTimePerBeat() {
-			return BalanceCloseTimePerBeat;
+		public Item getFrequencyChangerStatus() {
+			return frequencyChangerStatus;
 		}
-		public void setBalanceCloseTimePerBeat(Item balanceCloseTimePerBeat) {
-			BalanceCloseTimePerBeat = balanceCloseTimePerBeat;
+		public void setFrequencyChangerStatus(Item frequencyChangerStatus) {
+			this.frequencyChangerStatus = frequencyChangerStatus;
 		}
+		public Item getFrequencyChangerStatus2() {
+			return frequencyChangerStatus2;
+		}
+		public void setFrequencyChangerStatus2(Item frequencyChangerStatus2) {
+			this.frequencyChangerStatus2 = frequencyChangerStatus2;
+		}
+		public Item getRunFrequency() {
+			return runFrequency;
+		}
+		public void setRunFrequency(Item runFrequency) {
+			this.runFrequency = runFrequency;
+		}
+		public Item getFrequencyChangerBusbarVoltage() {
+			return frequencyChangerBusbarVoltage;
+		}
+		public void setFrequencyChangerBusbarVoltage(Item frequencyChangerBusbarVoltage) {
+			this.frequencyChangerBusbarVoltage = frequencyChangerBusbarVoltage;
+		}
+		public Item getFrequencyChangerOutputVoltage() {
+			return frequencyChangerOutputVoltage;
+		}
+		public void setFrequencyChangerOutputVoltage(Item frequencyChangerOutputVoltage) {
+			this.frequencyChangerOutputVoltage = frequencyChangerOutputVoltage;
+		}
+		public Item getFrequencyChangerOutputCurrent() {
+			return frequencyChangerOutputCurrent;
+		}
+		public void setFrequencyChangerOutputCurrent(Item frequencyChangerOutputCurrent) {
+			this.frequencyChangerOutputCurrent = frequencyChangerOutputCurrent;
+		}
+		public Item getSetFrequencyFeedback() {
+			return setFrequencyFeedback;
+		}
+		public void setSetFrequencyFeedback(Item setFrequencyFeedback) {
+			this.setFrequencyFeedback = setFrequencyFeedback;
+		}
+		public Item getFrequencyChangerFaultCode() {
+			return frequencyChangerFaultCode;
+		}
+		public void setFrequencyChangerFaultCode(Item frequencyChangerFaultCode) {
+			this.frequencyChangerFaultCode = frequencyChangerFaultCode;
+		}
+		public Item getFrequencyChangerPosition() {
+			return frequencyChangerPosition;
+		}
+		public void setFrequencyChangerPosition(Item frequencyChangerPosition) {
+			this.frequencyChangerPosition = frequencyChangerPosition;
+		}
+		public Item getFrequencyChangerManufacturerCode() {
+			return frequencyChangerManufacturerCode;
+		}
+		public void setFrequencyChangerManufacturerCode(Item frequencyChangerManufacturerCode) {
+			this.frequencyChangerManufacturerCode = frequencyChangerManufacturerCode;
+		}
+		public Item getWellStartup() {
+			return wellStartup;
+		}
+		public void setWellStartup(Item wellStartup) {
+			this.wellStartup = wellStartup;
+		}
+		public Item getWellStop() {
+			return wellStop;
+		}
+		public void setWellStop(Item wellStop) {
+			this.wellStop = wellStop;
+		}
+		public Item getFrequencyOrRPMControlSign() {
+			return frequencyOrRPMControlSign;
+		}
+		public void setFrequencyOrRPMControlSign(Item frequencyOrRPMControlSign) {
+			this.frequencyOrRPMControlSign = frequencyOrRPMControlSign;
+		}
+		public Item getFrequencySetValue() {
+			return frequencySetValue;
+		}
+		public void setFrequencySetValue(Item frequencySetValue) {
+			this.frequencySetValue = frequencySetValue;
+		}
+		public Item getSPMSetValue() {
+			return SPMSetValue;
+		}
+		public void setSPMSetValue(Item sPMSetValue) {
+			SPMSetValue = sPMSetValue;
+		}
+		public Item getSPMBy10Hz() {
+			return SPMBy10Hz;
+		}
+		public void setSPMBy10Hz(Item sPMBy10Hz) {
+			SPMBy10Hz = sPMBy10Hz;
+		}
+		public Item getSPMBy50Hz() {
+			return SPMBy50Hz;
+		}
+		public void setSPMBy50Hz(Item sPMBy50Hz) {
+			SPMBy50Hz = sPMBy50Hz;
+		}
+		public Item getRTUAddr() {
+			return RTUAddr;
+		}
+		public void setRTUAddr(Item rTUAddr) {
+			RTUAddr = rTUAddr;
+		}
+		public Item getRTUProgramVersion() {
+			return RTUProgramVersion;
+		}
+		public void setRTUProgramVersion(Item rTUProgramVersion) {
+			RTUProgramVersion = rTUProgramVersion;
+		}
+		public Item getSetWellName() {
+			return setWellName;
+		}
+		public void setSetWellName(Item setWellName) {
+			this.setWellName = setWellName;
+		}
+	    
 	}
 
 }

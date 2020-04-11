@@ -5,459 +5,575 @@ public class AcquisitionUnitData {
 	private String AcquisitionUnitName;
 
     private String AcquisitionUnitCode;
-
-    private int RunStatus=0;
     
-    private int BalaceControlStatus=0;
-    
-    private int BalanceControlMode=0;
-    
-    private int BalanceCalculateMode=0;
-    
-    private int BalanceAwayTimePerBeat=0;
-    
-    private int BalanceCloseTimePerBeat=0;
-    
-    private int BalanceStrokeCount=0;
-    
-    private int BalanceOperationUpLimit=0;
-    
-    private int BalanceOperationDownLimit=0;
-    
-    private int BalanceAwayTime=0;
-    
-    private int BalanceCloseTime=0;
-
-    private int RunControl=0;
-
-    private int CurrentA=0;
-
-    private int CurrentB=0;
-
-    private int CurrentC=0;
-
-    private int VoltageA=0;
-
-    private int VoltageB=0;
-
-    private int VoltageC=0;
-
-    private int ActivePowerConsumption=0;
-
-    private int ReactivePowerConsumption=0;
-
-    private int ActivePower=0;
-
-    private int ReactivePower=0;
-
-    private int ReversePower=0;
-
-    private int PowerFactor=0;
-
-    private int TubingPressure=0;
-
-    private int CasingPressure=0;
-
-    private int BackPressure=0;
-
-    private int WellHeadFluidTemperature=0;
-
-    private int ProducingfluidLevel=0;
-
-    private int WaterCut=0;
-
-    private int SetFrequency=0;
-
-    private int RunFrequency=0;
-
-    private int RPM=0;
-
-    private int Torque=0;
-
-    private int FSDiagramAcquisitionInterval=0;
-
-    private int FSDiagramSetPointCount=0;
-
-    private int FSDiagramPointCount=0;
-
-    private int AcquisitionTime=0;
-
+    private int RTUStatus=0;
+    private int runStatus=0;
     private int SPM=0;
+    private int AI1=0;
+    private int AI2=0;
+    private int AI3=0;
+    private int AI4=0;
+    private int gasFlowmeter=0;
+    private int gasFlowmeterCommStatus=0;
+    private int gasInstantaneousFlow=0;
+    private int gasCumulativeFlow=0;
+    private int gasFlowmeterPress=0;
+    private int liquidFlowmeter=0;
+    private int liquidFlowmeterCommStatus=0;
+    private int liquidInstantaneousFlow=0;
+    private int liquidCumulativeFlow=0;
+    private int liquidFlowmeterProd=0;
+    private int fluidLevelIndicator=0;
+    private int fluidLevelIndicatorCommStatus=0;
+    private int fluidLevelAcquisitionTime=0;
+    private int fluidLevelIndicatorSoundVelocity=0;
+    private int fluidLevel=0;
+    private int fluidLevelIndicatorPress=0;
+    private int frequencyChanger=0;
+    private int frequencyChangerCommStatus=0;
+    private int frequencyChangerStatus=0;
+    private int frequencyChangerStatus2=0;
+    private int runFrequency=0;
+    private int frequencyChangerBusbarVoltage=0;
+    private int frequencyChangerOutputVoltage=0;
+    private int frequencyChangerOutputCurrent=0;
+    private int setFrequencyFeedback=0;
+    private int frequencyChangerFaultCode=0;
+    private int frequencyChangerPosition=0;
+    private int frequencyChangerManufacturerCode=0;
 
-    private int Stroke=0;
+    
+    private int wellStartup=0;
+    private int wellStop=0;
+    private int frequencyOrRPMControlSign=0;
+    private int frequencySetValue=0;
+    private int SPMSetValue=0;
+    private int SPMBy10Hz=0;
+    private int SPMBy50Hz=0;
+    private int RTUAddr=0;
+    private int RTUProgramVersion=0;
+    private int setWellName=0;
 
-    private int SDiagram=0;
-
-    private int FDiagram=0;
-
-    private int ADiagram=0;
-
-    private int PDiagram=0;
     
     public void init(){
-    	this.RunStatus=0;
-
-        this.RunControl=0;
-
-        this.CurrentA=0;
-
-        this.CurrentB=0;
-
-        this.CurrentC=0;
-
-        this.VoltageA=0;
-
-        this.VoltageB=0;
-
-        this.VoltageC=0;
-
-        this.ActivePowerConsumption=0;
-
-        this.ReactivePowerConsumption=0;
-
-        this.ActivePower=0;
-
-        this.ReactivePower=0;
-
-        this.ReversePower=0;
-
-        this.PowerFactor=0;
-
-        this.TubingPressure=0;
-
-        this.CasingPressure=0;
-
-        this.BackPressure=0;
-
-        this.WellHeadFluidTemperature=0;
-
-        this.ProducingfluidLevel=0;
-
-        this.WaterCut=0;
-
-        this.SetFrequency=0;
-
-        this.RunFrequency=0;
-
-        this.RPM=0;
-
-        this.Torque=0;
-
-        this.FSDiagramAcquisitionInterval=0;
-
-        this.FSDiagramSetPointCount=0;
-
-        this.FSDiagramPointCount=0;
-
-        this.AcquisitionTime=0;
-
+    	this.RTUStatus=0;
+        this.runStatus=0;
         this.SPM=0;
+        this.AI1=0;
+        this.AI2=0;
+        this.AI3=0;
+        this.AI4=0;
+        this.gasFlowmeter=0;
+        this.gasFlowmeterCommStatus=0;
+        this.gasInstantaneousFlow=0;
+        this.gasCumulativeFlow=0;
+        this.gasFlowmeterPress=0;
+        
+        this.liquidFlowmeter=0;
+        this.liquidFlowmeterCommStatus=0;
+        this.liquidInstantaneousFlow=0;
+        this.liquidCumulativeFlow=0;
+        this.liquidFlowmeterProd=0;
+        
+        this.fluidLevelIndicator=0;
+        this.fluidLevelIndicatorCommStatus=0;
+        this.fluidLevelAcquisitionTime=0;
+        this.fluidLevelIndicatorSoundVelocity=0;
+        this.fluidLevel=0;
+        this.fluidLevelIndicatorPress=0;
+        
+        this.frequencyChanger=0;
+        this.frequencyChangerCommStatus=0;
+        this.frequencyChangerStatus=0;
+        this.frequencyChangerStatus2=0;
+        this.runFrequency=0;
+        this.frequencyChangerBusbarVoltage=0;
+        this.frequencyChangerOutputVoltage=0;
+        this.frequencyChangerOutputCurrent=0;
+        this.setFrequencyFeedback=0;
+        this.frequencyChangerFaultCode=0;
+        this.frequencyChangerPosition=0;
+        this.frequencyChangerManufacturerCode=0;
 
-        this.Stroke=0;
-
-        this.SDiagram=0;
-
-        this.FDiagram=0;
-
-        this.ADiagram=0;
-
-        this.PDiagram=0;
-    }
-
-    public void setAcquisitionUnitName(String AcquisitionUnitName){
-        this.AcquisitionUnitName = AcquisitionUnitName;
-    }
-    public String getAcquisitionUnitName(){
-        return this.AcquisitionUnitName;
-    }
-    public void setAcquisitionUnitCode(String AcquisitionUnitCode){
-        this.AcquisitionUnitCode = AcquisitionUnitCode;
-    }
-    public String getAcquisitionUnitCode(){
-        return this.AcquisitionUnitCode;
-    }
-    public void setRunStatus(int RunStatus){
-        this.RunStatus = RunStatus;
-    }
-    public int getRunStatus(){
-        return this.RunStatus;
-    }
-    public void setRunControl(int RunControl){
-        this.RunControl = RunControl;
-    }
-    public int getRunControl(){
-        return this.RunControl;
-    }
-    public void setCurrentA(int CurrentA){
-        this.CurrentA = CurrentA;
-    }
-    public int getCurrentA(){
-        return this.CurrentA;
-    }
-    public void setCurrentB(int CurrentB){
-        this.CurrentB = CurrentB;
-    }
-    public int getCurrentB(){
-        return this.CurrentB;
-    }
-    public void setCurrentC(int CurrentC){
-        this.CurrentC = CurrentC;
-    }
-    public int getCurrentC(){
-        return this.CurrentC;
-    }
-    public void setVoltageA(int VoltageA){
-        this.VoltageA = VoltageA;
-    }
-    public int getVoltageA(){
-        return this.VoltageA;
-    }
-    public void setVoltageB(int VoltageB){
-        this.VoltageB = VoltageB;
-    }
-    public int getVoltageB(){
-        return this.VoltageB;
-    }
-    public void setVoltageC(int VoltageC){
-        this.VoltageC = VoltageC;
-    }
-    public int getVoltageC(){
-        return this.VoltageC;
-    }
-    public void setActivePowerConsumption(int ActivePowerConsumption){
-        this.ActivePowerConsumption = ActivePowerConsumption;
-    }
-    public int getActivePowerConsumption(){
-        return this.ActivePowerConsumption;
-    }
-    public void setReactivePowerConsumption(int ReactivePowerConsumption){
-        this.ReactivePowerConsumption = ReactivePowerConsumption;
-    }
-    public int getReactivePowerConsumption(){
-        return this.ReactivePowerConsumption;
-    }
-    public void setActivePower(int ActivePower){
-        this.ActivePower = ActivePower;
-    }
-    public int getActivePower(){
-        return this.ActivePower;
-    }
-    public void setReactivePower(int ReactivePower){
-        this.ReactivePower = ReactivePower;
-    }
-    public int getReactivePower(){
-        return this.ReactivePower;
-    }
-    public void setReversePower(int ReversePower){
-        this.ReversePower = ReversePower;
-    }
-    public int getReversePower(){
-        return this.ReversePower;
-    }
-    public void setPowerFactor(int PowerFactor){
-        this.PowerFactor = PowerFactor;
-    }
-    public int getPowerFactor(){
-        return this.PowerFactor;
-    }
-    public void setTubingPressure(int TubingPressure){
-        this.TubingPressure = TubingPressure;
-    }
-    public int getTubingPressure(){
-        return this.TubingPressure;
-    }
-    public void setCasingPressure(int CasingPressure){
-        this.CasingPressure = CasingPressure;
-    }
-    public int getCasingPressure(){
-        return this.CasingPressure;
-    }
-    public void setBackPressure(int BackPressure){
-        this.BackPressure = BackPressure;
-    }
-    public int getBackPressure(){
-        return this.BackPressure;
-    }
-    public void setWellHeadFluidTemperature(int WellHeadFluidTemperature){
-        this.WellHeadFluidTemperature = WellHeadFluidTemperature;
-    }
-    public int getWellHeadFluidTemperature(){
-        return this.WellHeadFluidTemperature;
-    }
-    public void setProducingfluidLevel(int ProducingfluidLevel){
-        this.ProducingfluidLevel = ProducingfluidLevel;
-    }
-    public int getProducingfluidLevel(){
-        return this.ProducingfluidLevel;
-    }
-    public void setWaterCut(int WaterCut){
-        this.WaterCut = WaterCut;
-    }
-    public int getWaterCut(){
-        return this.WaterCut;
-    }
-    public void setSetFrequency(int SetFrequency){
-        this.SetFrequency = SetFrequency;
-    }
-    public int getSetFrequency(){
-        return this.SetFrequency;
-    }
-    public void setRunFrequency(int RunFrequency){
-        this.RunFrequency = RunFrequency;
-    }
-    public int getRunFrequency(){
-        return this.RunFrequency;
-    }
-    public void setRPM(int RPM){
-        this.RPM = RPM;
-    }
-    public int getRPM(){
-        return this.RPM;
-    }
-    public void setTorque(int Torque){
-        this.Torque = Torque;
-    }
-    public int getTorque(){
-        return this.Torque;
-    }
-    public void setFSDiagramAcquisitionInterval(int FSDiagramAcquisitionInterval){
-        this.FSDiagramAcquisitionInterval = FSDiagramAcquisitionInterval;
-    }
-    public int getFSDiagramAcquisitionInterval(){
-        return this.FSDiagramAcquisitionInterval;
-    }
-    public void setFSDiagramSetPointCount(int FSDiagramSetPointCount){
-        this.FSDiagramSetPointCount = FSDiagramSetPointCount;
-    }
-    public int getFSDiagramSetPointCount(){
-        return this.FSDiagramSetPointCount;
-    }
-    public void setFSDiagramPointCount(int FSDiagramPointCount){
-        this.FSDiagramPointCount = FSDiagramPointCount;
-    }
-    public int getFSDiagramPointCount(){
-        return this.FSDiagramPointCount;
-    }
-    public void setAcquisitionTime(int AcquisitionTime){
-        this.AcquisitionTime = AcquisitionTime;
-    }
-    public int getAcquisitionTime(){
-        return this.AcquisitionTime;
-    }
-    public void setSPM(int SPM){
-        this.SPM = SPM;
-    }
-    public int getSPM(){
-        return this.SPM;
-    }
-    public void setStroke(int Stroke){
-        this.Stroke = Stroke;
-    }
-    public int getStroke(){
-        return this.Stroke;
-    }
-    public void setSDiagram(int SDiagram){
-        this.SDiagram = SDiagram;
-    }
-    public int getSDiagram(){
-        return this.SDiagram;
-    }
-    public void setFDiagram(int FDiagram){
-        this.FDiagram = FDiagram;
-    }
-    public int getFDiagram(){
-        return this.FDiagram;
-    }
-    public void setADiagram(int ADiagram){
-        this.ADiagram = ADiagram;
-    }
-    public int getADiagram(){
-        return this.ADiagram;
-    }
-    public void setPDiagram(int PDiagram){
-        this.PDiagram = PDiagram;
-    }
-    public int getPDiagram(){
-        return this.PDiagram;
+        this.wellStartup=0;
+        this.wellStop=0;
+        this.frequencyOrRPMControlSign=0;
+        this.frequencySetValue=0;
+        this.SPMSetValue=0;
+        this.SPMBy10Hz=0;
+        this.SPMBy50Hz=0;
+        this.RTUAddr=0;
+        this.RTUProgramVersion=0;
+        this.setWellName=0;
     }
 
-	public int getBalaceControlStatus() {
-		return BalaceControlStatus;
+
+	public String getAcquisitionUnitName() {
+		return AcquisitionUnitName;
 	}
 
-	public void setBalaceControlStatus(int balaceControlStatus) {
-		BalaceControlStatus = balaceControlStatus;
+
+	public void setAcquisitionUnitName(String acquisitionUnitName) {
+		AcquisitionUnitName = acquisitionUnitName;
 	}
 
-	public int getBalanceControlMode() {
-		return BalanceControlMode;
+
+	public String getAcquisitionUnitCode() {
+		return AcquisitionUnitCode;
 	}
 
-	public void setBalanceControlMode(int balanceControlMode) {
-		BalanceControlMode = balanceControlMode;
+
+	public void setAcquisitionUnitCode(String acquisitionUnitCode) {
+		AcquisitionUnitCode = acquisitionUnitCode;
 	}
 
-	public int getBalanceCalculateMode() {
-		return BalanceCalculateMode;
+
+	public int getRTUStatus() {
+		return RTUStatus;
 	}
 
-	public void setBalanceCalculateMode(int balanceCalculateMode) {
-		BalanceCalculateMode = balanceCalculateMode;
+
+	public void setRTUStatus(int rTUStatus) {
+		RTUStatus = rTUStatus;
 	}
 
-	public int getBalanceAwayTime() {
-		return BalanceAwayTime;
+
+	public int getRunStatus() {
+		return runStatus;
 	}
 
-	public void setBalanceAwayTime(int balanceAwayTime) {
-		BalanceAwayTime = balanceAwayTime;
+
+	public void setRunStatus(int runStatus) {
+		this.runStatus = runStatus;
 	}
 
-	public int getBalanceCloseTime() {
-		return BalanceCloseTime;
+
+	public int getSPM() {
+		return SPM;
 	}
 
-	public void setBalanceCloseTime(int balanceCloseTime) {
-		BalanceCloseTime = balanceCloseTime;
+
+	public void setSPM(int sPM) {
+		SPM = sPM;
 	}
 
-	public int getBalanceStrokeCount() {
-		return BalanceStrokeCount;
+
+	public int getAI1() {
+		return AI1;
 	}
 
-	public void setBalanceStrokeCount(int balanceStrokeCount) {
-		BalanceStrokeCount = balanceStrokeCount;
+
+	public void setAI1(int aI1) {
+		AI1 = aI1;
 	}
 
-	public int getBalanceOperationUpLimit() {
-		return BalanceOperationUpLimit;
+
+	public int getAI2() {
+		return AI2;
 	}
 
-	public void setBalanceOperationUpLimit(int balanceOperationUpLimit) {
-		BalanceOperationUpLimit = balanceOperationUpLimit;
+
+	public void setAI2(int aI2) {
+		AI2 = aI2;
 	}
 
-	public int getBalanceOperationDownLimit() {
-		return BalanceOperationDownLimit;
+
+	public int getAI3() {
+		return AI3;
 	}
 
-	public void setBalanceOperationDownLimit(int balanceOperationDownLimit) {
-		BalanceOperationDownLimit = balanceOperationDownLimit;
+
+	public void setAI3(int aI3) {
+		AI3 = aI3;
 	}
 
-	public int getBalanceAwayTimePerBeat() {
-		return BalanceAwayTimePerBeat;
+
+	public int getAI4() {
+		return AI4;
 	}
 
-	public void setBalanceAwayTimePerBeat(int balanceAwayTimePerBeat) {
-		BalanceAwayTimePerBeat = balanceAwayTimePerBeat;
+
+	public void setAI4(int aI4) {
+		AI4 = aI4;
 	}
 
-	public int getBalanceCloseTimePerBeat() {
-		return BalanceCloseTimePerBeat;
+
+	public int getGasFlowmeter() {
+		return gasFlowmeter;
 	}
 
-	public void setBalanceCloseTimePerBeat(int balanceCloseTimePerBeat) {
-		BalanceCloseTimePerBeat = balanceCloseTimePerBeat;
+
+	public void setGasFlowmeter(int gasFlowmeter) {
+		this.gasFlowmeter = gasFlowmeter;
+	}
+
+
+	public int getGasFlowmeterCommStatus() {
+		return gasFlowmeterCommStatus;
+	}
+
+
+	public void setGasFlowmeterCommStatus(int gasFlowmeterCommStatus) {
+		this.gasFlowmeterCommStatus = gasFlowmeterCommStatus;
+	}
+
+
+	public int getGasInstantaneousFlow() {
+		return gasInstantaneousFlow;
+	}
+
+
+	public void setGasInstantaneousFlow(int gasInstantaneousFlow) {
+		this.gasInstantaneousFlow = gasInstantaneousFlow;
+	}
+
+
+	public int getGasCumulativeFlow() {
+		return gasCumulativeFlow;
+	}
+
+
+	public void setGasCumulativeFlow(int gasCumulativeFlow) {
+		this.gasCumulativeFlow = gasCumulativeFlow;
+	}
+
+
+	public int getGasFlowmeterPress() {
+		return gasFlowmeterPress;
+	}
+
+
+	public void setGasFlowmeterPress(int gasFlowmeterPress) {
+		this.gasFlowmeterPress = gasFlowmeterPress;
+	}
+
+
+	public int getLiquidFlowmeter() {
+		return liquidFlowmeter;
+	}
+
+
+	public void setLiquidFlowmeter(int liquidFlowmeter) {
+		this.liquidFlowmeter = liquidFlowmeter;
+	}
+
+
+	public int getLiquidFlowmeterCommStatus() {
+		return liquidFlowmeterCommStatus;
+	}
+
+
+	public void setLiquidFlowmeterCommStatus(int liquidFlowmeterCommStatus) {
+		this.liquidFlowmeterCommStatus = liquidFlowmeterCommStatus;
+	}
+
+
+	public int getLiquidInstantaneousFlow() {
+		return liquidInstantaneousFlow;
+	}
+
+
+	public void setLiquidInstantaneousFlow(int liquidInstantaneousFlow) {
+		this.liquidInstantaneousFlow = liquidInstantaneousFlow;
+	}
+
+
+	public int getLiquidCumulativeFlow() {
+		return liquidCumulativeFlow;
+	}
+
+
+	public void setLiquidCumulativeFlow(int liquidCumulativeFlow) {
+		this.liquidCumulativeFlow = liquidCumulativeFlow;
+	}
+
+
+	public int getLiquidFlowmeterProd() {
+		return liquidFlowmeterProd;
+	}
+
+
+	public void setLiquidFlowmeterProd(int liquidFlowmeterProd) {
+		this.liquidFlowmeterProd = liquidFlowmeterProd;
+	}
+
+
+	public int getFluidLevelIndicator() {
+		return fluidLevelIndicator;
+	}
+
+
+	public void setFluidLevelIndicator(int fluidLevelIndicator) {
+		this.fluidLevelIndicator = fluidLevelIndicator;
+	}
+
+
+	public int getFluidLevelIndicatorCommStatus() {
+		return fluidLevelIndicatorCommStatus;
+	}
+
+
+	public void setFluidLevelIndicatorCommStatus(int fluidLevelIndicatorCommStatus) {
+		this.fluidLevelIndicatorCommStatus = fluidLevelIndicatorCommStatus;
+	}
+
+
+	public int getFluidLevelAcquisitionTime() {
+		return fluidLevelAcquisitionTime;
+	}
+
+
+	public void setFluidLevelAcquisitionTime(int fluidLevelAcquisitionTime) {
+		this.fluidLevelAcquisitionTime = fluidLevelAcquisitionTime;
+	}
+
+
+	public int getFluidLevelIndicatorSoundVelocity() {
+		return fluidLevelIndicatorSoundVelocity;
+	}
+
+
+	public void setFluidLevelIndicatorSoundVelocity(int fluidLevelIndicatorSoundVelocity) {
+		this.fluidLevelIndicatorSoundVelocity = fluidLevelIndicatorSoundVelocity;
+	}
+
+
+	public int getFluidLevel() {
+		return fluidLevel;
+	}
+
+
+	public void setFluidLevel(int fluidLevel) {
+		this.fluidLevel = fluidLevel;
+	}
+
+
+	public int getFrequencyChanger() {
+		return frequencyChanger;
+	}
+
+
+	public void setFrequencyChanger(int frequencyChanger) {
+		this.frequencyChanger = frequencyChanger;
+	}
+
+
+	public int getFrequencyChangerCommStatus() {
+		return frequencyChangerCommStatus;
+	}
+
+
+	public void setFrequencyChangerCommStatus(int frequencyChangerCommStatus) {
+		this.frequencyChangerCommStatus = frequencyChangerCommStatus;
+	}
+
+
+	public int getFrequencyChangerStatus() {
+		return frequencyChangerStatus;
+	}
+
+
+	public void setFrequencyChangerStatus(int frequencyChangerStatus) {
+		this.frequencyChangerStatus = frequencyChangerStatus;
+	}
+
+
+	public int getFrequencyChangerStatus2() {
+		return frequencyChangerStatus2;
+	}
+
+
+	public void setFrequencyChangerStatus2(int frequencyChangerStatus2) {
+		this.frequencyChangerStatus2 = frequencyChangerStatus2;
+	}
+
+
+	public int getRunFrequency() {
+		return runFrequency;
+	}
+
+
+	public void setRunFrequency(int runFrequency) {
+		this.runFrequency = runFrequency;
+	}
+
+
+	public int getFrequencyChangerBusbarVoltage() {
+		return frequencyChangerBusbarVoltage;
+	}
+
+
+	public void setFrequencyChangerBusbarVoltage(int frequencyChangerBusbarVoltage) {
+		this.frequencyChangerBusbarVoltage = frequencyChangerBusbarVoltage;
+	}
+
+
+	public int getFrequencyChangerOutputVoltage() {
+		return frequencyChangerOutputVoltage;
+	}
+
+
+	public void setFrequencyChangerOutputVoltage(int frequencyChangerOutputVoltage) {
+		this.frequencyChangerOutputVoltage = frequencyChangerOutputVoltage;
+	}
+
+
+	public int getFrequencyChangerOutputCurrent() {
+		return frequencyChangerOutputCurrent;
+	}
+
+
+	public void setFrequencyChangerOutputCurrent(int frequencyChangerOutputCurrent) {
+		this.frequencyChangerOutputCurrent = frequencyChangerOutputCurrent;
+	}
+
+
+	public int getSetFrequencyFeedback() {
+		return setFrequencyFeedback;
+	}
+
+
+	public void setSetFrequencyFeedback(int setFrequencyFeedback) {
+		this.setFrequencyFeedback = setFrequencyFeedback;
+	}
+
+
+	public int getFrequencyChangerFaultCode() {
+		return frequencyChangerFaultCode;
+	}
+
+
+	public void setFrequencyChangerFaultCode(int frequencyChangerFaultCode) {
+		this.frequencyChangerFaultCode = frequencyChangerFaultCode;
+	}
+
+
+	public int getFrequencyChangerPosition() {
+		return frequencyChangerPosition;
+	}
+
+
+	public void setFrequencyChangerPosition(int frequencyChangerPosition) {
+		this.frequencyChangerPosition = frequencyChangerPosition;
+	}
+
+
+	public int getFrequencyChangerManufacturerCode() {
+		return frequencyChangerManufacturerCode;
+	}
+
+
+	public void setFrequencyChangerManufacturerCode(int frequencyChangerManufacturerCode) {
+		this.frequencyChangerManufacturerCode = frequencyChangerManufacturerCode;
+	}
+
+
+	public int getWellStartup() {
+		return wellStartup;
+	}
+
+
+	public void setWellStartup(int wellStartup) {
+		this.wellStartup = wellStartup;
+	}
+
+
+	public int getWellStop() {
+		return wellStop;
+	}
+
+
+	public void setWellStop(int wellStop) {
+		this.wellStop = wellStop;
+	}
+
+
+	public int getFrequencyOrRPMControlSign() {
+		return frequencyOrRPMControlSign;
+	}
+
+
+	public void setFrequencyOrRPMControlSign(int frequencyOrRPMControlSign) {
+		this.frequencyOrRPMControlSign = frequencyOrRPMControlSign;
+	}
+
+
+	public int getFrequencySetValue() {
+		return frequencySetValue;
+	}
+
+
+	public void setFrequencySetValue(int frequencySetValue) {
+		this.frequencySetValue = frequencySetValue;
+	}
+
+
+	public int getSPMSetValue() {
+		return SPMSetValue;
+	}
+
+
+	public void setSPMSetValue(int sPMSetValue) {
+		SPMSetValue = sPMSetValue;
+	}
+
+
+	public int getSPMBy10Hz() {
+		return SPMBy10Hz;
+	}
+
+
+	public void setSPMBy10Hz(int sPMBy10Hz) {
+		SPMBy10Hz = sPMBy10Hz;
+	}
+
+
+	public int getSPMBy50Hz() {
+		return SPMBy50Hz;
+	}
+
+
+	public void setSPMBy50Hz(int sPMBy50Hz) {
+		SPMBy50Hz = sPMBy50Hz;
+	}
+
+
+	public int getRTUAddr() {
+		return RTUAddr;
+	}
+
+
+	public void setRTUAddr(int rTUAddr) {
+		RTUAddr = rTUAddr;
+	}
+
+
+	public int getRTUProgramVersion() {
+		return RTUProgramVersion;
+	}
+
+
+	public void setRTUProgramVersion(int rTUProgramVersion) {
+		RTUProgramVersion = rTUProgramVersion;
+	}
+
+
+	public int getSetWellName() {
+		return setWellName;
+	}
+
+
+	public void setSetWellName(int setWellName) {
+		this.setWellName = setWellName;
+	}
+
+
+	public int getFluidLevelIndicatorPress() {
+		return fluidLevelIndicatorPress;
+	}
+
+
+	public void setFluidLevelIndicatorPress(int fluidLevelIndicatorPress) {
+		this.fluidLevelIndicatorPress = fluidLevelIndicatorPress;
 	}
 }

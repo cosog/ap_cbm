@@ -1,0 +1,260 @@
+{
+    "DriverName": "山西中联煤层气",
+    "DriverCode": "shanxiCBM",
+    "Port": 30000,
+    "Protocol": 2,
+    "DataConfig": {
+        "RTUStatus": {
+            "Address": 40090,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "RTUSystemTime": {
+            "Address": 40091,
+            "DataType": 3,
+            "Length": 6,
+            "Zoom": 1
+        },
+        "RunStatus": {
+            "Address": 40081,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "SPM": {
+            "Address": 40071,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "AI1": {
+            "Address": 40073,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "AI2": {
+            "Address": 40075,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "AI3": {
+            "Address": 40077,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "AI4": {
+            "Address": 40079,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "gasFlowmeterCommStatus": {
+            "Address": 40041,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "gasInstantaneousFlow": {
+            "Address": 40009,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "gasCumulativeFlow": {
+            "Address": 40011,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "gasFlowmeterPress": {
+            "Address": 40013,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "liquidFlowmeterCommStatus": {
+            "Address": 40042,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "liquidInstantaneousFlow": {
+            "Address": 40015,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "liquidCumulativeFlow": {
+            "Address": 40017,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "liquidFlowmeterProd": {
+            "Address": 40019,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "fluidLevelIndicatorCommStatus": {
+            "Address": 40043,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "fluidLevelAcquisitionTime": {
+            "Address": 40021,
+            "DataType": 3,
+            "Length": 6,
+            "Zoom": 1
+        },
+        "fluidLevelIndicatorSoundVelocity": {
+            "Address": 40027,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 0.01
+        },
+        "fluidLevel": {
+            "Address": 40028,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 0.1
+        },
+        "fluidLevelIndicatorPress": {
+            "Address": 40029,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyChangerCommStatus": {
+            "Address": 40044,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyChangerStatus": {
+            "Address": 40051,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyChangerStatus2": {
+            "Address": 40052,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "runFrequency": {
+            "Address": 40053,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 0.01
+        },
+        "frequencyChangerBusbarVoltage": {
+            "Address": 40054,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 0.1
+        },
+        "frequencyChangerOutputVoltage": {
+            "Address": 40055,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyChangerOutputCurrent": {
+            "Address": 40056,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 0.01
+        },
+        "setFrequencyFeedback": {
+            "Address": 40060,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 0.01
+        },
+        "frequencyChangerFaultCode": {
+            "Address": 40061,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyChangerPosition": {
+            "Address": 40062,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyChangerManufacturerCode": {
+            "Address": 40070,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "wellStartup": {
+            "Address": 9,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "wellStop": {
+            "Address": 10,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencyOrRPMControlSign": {
+            "Address": 40100,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "frequencySetValue": {
+            "Address": 40001,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "SPMSetValue": {
+            "Address": 40003,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "SPMBy10Hz": {
+            "Address": 40005,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "SPMBy50Hz": {
+            "Address": 40007,
+            "DataType": 2,
+            "Length": 2,
+            "Zoom": 1
+        },
+        "RTUAddr": {
+            "Address": 40097,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "RTUProgramVersion": {
+            "Address": 40098,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        },
+        "setWellName": {
+            "Address": 40099,
+            "DataType": 1,
+            "Length": 1,
+            "Zoom": 1
+        }
+    }
+}

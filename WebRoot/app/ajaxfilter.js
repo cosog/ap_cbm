@@ -40,7 +40,8 @@ Ext.Ajax.on("requestexception", function(conn, response, options, eOpts) {
 				icon : Ext.MessageBox.WARNING,
 				buttons : Ext.Msg.OK,
 				fn : function() {
-					window.location.href = context + "/Login.jsp";
+//					window.location.href = context + "/Login.jsp";
+					window.location.href = "login/toLogin";
 				}
 			});
 			break;
@@ -59,7 +60,8 @@ xxErrorMsg = function(code, msg) {
 				fn : function(btn) {
 					if (btn == 'ok') {
 						if (code == "session") {
-							window.location.href = context + "/Login.jsp";
+//							window.location.href = context + "/Login.jsp";
+							window.location.href = "login/toLogin";
 						}
 					}
 				}

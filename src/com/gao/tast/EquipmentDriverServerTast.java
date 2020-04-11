@@ -938,10 +938,10 @@ public class EquipmentDriverServerTast {
 	public static class UnitData{
 		public  String wellName;
 		
+		//煤层气井控制标志
 		public int wellStartupControl=0;
 		public int wellStopControl=0;
 		public int frequencyOrRPMControlSignControl=0;
-		
 		public float frequencySetValueControl=0;
 		public float SPMSetValueControl=0;
 		public float SPMBy10HzControl=0;
@@ -949,6 +949,14 @@ public class EquipmentDriverServerTast {
 		public int RTUAddrControl=0;
 		public int RTUProgramVersionControl=0;
 		public int setWellNameControl=0;
+		//阀组控制标志
+		public int groupValveDeviceIdControl=0;
+		public int groupValveBaudRateControl=0;
+		public int groupValveInstrumentCombinationMode1Control=0;
+		public int groupValveInstrumentCombinationMode2Control=0;
+		public int groupValveInstrumentCombinationMode3Control=0;
+		public int groupValveInstrumentCombinationMode4Control=0;
+		
 		
 		public  String driverAddr;
 		public  String dirverId;
@@ -1275,6 +1283,55 @@ public class EquipmentDriverServerTast {
 		public void setAcquisitionUnitData(AcquisitionUnitData acquisitionUnitData) {
 			this.acquisitionUnitData = acquisitionUnitData;
 		}
+
+		public int getGroupValveDeviceIdControl() {
+			return groupValveDeviceIdControl;
+		}
+
+		public void setGroupValveDeviceIdControl(int groupValveDeviceIdControl) {
+			this.groupValveDeviceIdControl = groupValveDeviceIdControl;
+		}
+
+		public int getGroupValveBaudRateControl() {
+			return groupValveBaudRateControl;
+		}
+
+		public void setGroupValveBaudRateControl(int groupValveBaudRateControl) {
+			this.groupValveBaudRateControl = groupValveBaudRateControl;
+		}
+
+		public int getGroupValveInstrumentCombinationMode1Control() {
+			return groupValveInstrumentCombinationMode1Control;
+		}
+
+		public void setGroupValveInstrumentCombinationMode1Control(int groupValveInstrumentCombinationMode1Control) {
+			this.groupValveInstrumentCombinationMode1Control = groupValveInstrumentCombinationMode1Control;
+		}
+
+		public int getGroupValveInstrumentCombinationMode2Control() {
+			return groupValveInstrumentCombinationMode2Control;
+		}
+
+		public void setGroupValveInstrumentCombinationMode2Control(int groupValveInstrumentCombinationMode2Control) {
+			this.groupValveInstrumentCombinationMode2Control = groupValveInstrumentCombinationMode2Control;
+		}
+
+		public int getGroupValveInstrumentCombinationMode3Control() {
+			return groupValveInstrumentCombinationMode3Control;
+		}
+
+		public void setGroupValveInstrumentCombinationMode3Control(int groupValveInstrumentCombinationMode3Control) {
+			this.groupValveInstrumentCombinationMode3Control = groupValveInstrumentCombinationMode3Control;
+		}
+
+		public int getGroupValveInstrumentCombinationMode4Control() {
+			return groupValveInstrumentCombinationMode4Control;
+		}
+
+		public void setGroupValveInstrumentCombinationMode4Control(int groupValveInstrumentCombinationMode4Control) {
+			this.groupValveInstrumentCombinationMode4Control = groupValveInstrumentCombinationMode4Control;
+		}
+		
 	}
 	
 	public static class ClientUnit{

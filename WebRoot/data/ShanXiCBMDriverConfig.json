@@ -8,253 +8,295 @@
             "Address": 40090,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "RTUSystemTime": {
             "Address": 40091,
             "DataType": 3,
             "Length": 6,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "RunStatus": {
             "Address": 40081,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "SPM": {
             "Address": 40071,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "AI1": {
             "Address": 40073,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "AI2": {
             "Address": 40075,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "AI3": {
             "Address": 40077,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "AI4": {
             "Address": 40079,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "gasFlowmeterCommStatus": {
             "Address": 40041,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "gasInstantaneousFlow": {
             "Address": 40009,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "gasCumulativeFlow": {
             "Address": 40011,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "gasFlowmeterPress": {
             "Address": 40013,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "liquidFlowmeterCommStatus": {
             "Address": 40042,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "liquidInstantaneousFlow": {
             "Address": 40015,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "liquidCumulativeFlow": {
             "Address": 40017,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "liquidFlowmeterProd": {
             "Address": 40019,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "fluidLevelIndicatorCommStatus": {
             "Address": 40043,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "fluidLevelAcquisitionTime": {
             "Address": 40021,
             "DataType": 3,
             "Length": 6,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "fluidLevelIndicatorSoundVelocity": {
             "Address": 40027,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 0.01
+            "ZoomX": 0.01,
+            "ZoomY": 0
         },
         "fluidLevel": {
             "Address": 40028,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 0.1
+            "ZoomX": 0.1,
+            "ZoomY": 0
         },
         "fluidLevelIndicatorPress": {
             "Address": 40029,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyChangerCommStatus": {
             "Address": 40044,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyChangerStatus": {
             "Address": 40051,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyChangerStatus2": {
             "Address": 40052,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "runFrequency": {
             "Address": 40053,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 0.01
+            "ZoomX": 0.01,
+            "ZoomY": 0
         },
         "frequencyChangerBusbarVoltage": {
             "Address": 40054,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 0.1
+            "ZoomX": 0.1,
+            "ZoomY": 0
         },
         "frequencyChangerOutputVoltage": {
             "Address": 40055,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyChangerOutputCurrent": {
             "Address": 40056,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 0.01
+            "ZoomX": 0.01,
+            "ZoomY": 0
         },
         "setFrequencyFeedback": {
             "Address": 40060,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 0.01
+            "ZoomX": 0.01,
+            "ZoomY": 0
         },
         "frequencyChangerFaultCode": {
             "Address": 40061,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyChangerPosition": {
             "Address": 40062,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyChangerManufacturerCode": {
             "Address": 40070,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "wellStartup": {
             "Address": 9,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "wellStop": {
             "Address": 10,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencyOrRPMControlSign": {
             "Address": 40100,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "frequencySetValue": {
             "Address": 40001,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "SPMSetValue": {
             "Address": 40003,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "SPMBy10Hz": {
             "Address": 40005,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "SPMBy50Hz": {
             "Address": 40007,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "RTUAddr": {
             "Address": 40097,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "RTUProgramVersion": {
             "Address": 40098,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "setWellName": {
             "Address": 40099,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         }
     },
     "GroupValveDataConfig":{
@@ -262,157 +304,409 @@
             "Address": 40101,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterBackupPoint1": {
             "Address": 40103,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstantaneousFlow1": {
             "Address": 40105,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterTemperature1": {
             "Address": 40107,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterPress1": {
             "Address": 40109,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "CumulativeFlow2": {
             "Address": 40111,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterBackupPoint2": {
             "Address": 40113,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstantaneousFlow2": {
             "Address": 40115,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterTemperature2": {
             "Address": 40117,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterPress2": {
             "Address": 40119,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "CumulativeFlow3": {
             "Address": 40121,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterBackupPoint3": {
             "Address": 40123,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstantaneousFlow3": {
             "Address": 40125,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterTemperature3": {
             "Address": 40127,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterPress3": {
             "Address": 40129,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "CumulativeFlow4": {
             "Address": 40131,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterBackupPoint4": {
             "Address": 40133,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstantaneousFlow4": {
             "Address": 40135,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterTemperature4": {
             "Address": 40137,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "FlowmeterPress4": {
             "Address": 40139,
             "DataType": 2,
             "Length": 2,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "DeviceId": {
             "Address": 40151,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "BaudRate": {
             "Address": 40152,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstrumentCombinationMode1": {
             "Address": 40153,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstrumentCombinationMode2": {
             "Address": 40154,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstrumentCombinationMode3": {
             "Address": 40155,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
         },
         "InstrumentCombinationMode4": {
             "Address": 40156,
             "DataType": 1,
             "Length": 1,
-            "Zoom": 1
+            "ZoomX": 1,
+            "ZoomY": 0
+        }
+    },
+    "BoosterPumpDataConfig":{
+        "InletGasPressure": {
+            "Address": 40001,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": -0.05
+        },
+        "OutletGasPressure": {
+            "Address": 40002,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "SupplyOilPressure": {
+            "Address": 40003,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "InletGasPressureDifference": {
+            "Address": 40004,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "OilBranchCorePressureDifference": {
+            "Address": 40005,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "OilFilterPressureDifference": {
+            "Address": 40006,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "OilBranchTankLiquidLevel": {
+            "Address": 40007,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": 0
+        },
+        "FlammableGasConcentration": {
+            "Address": 40008,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": 0
+        },
+        "SupplyGasPressure": {
+            "Address": 40009,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "SupplyGasTemperature": {
+            "Address": 40010,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": -40
+        },
+        "MainMotorFrequency": {
+            "Address": 40011,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": 0
+        },
+        "MainMotorCurrent": {
+            "Address": 40012,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": 0
+        },
+        "InletGasTemperature": {
+            "Address": 40013,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": -40
+        },
+        "OutletGasTemperature": {
+            "Address": 40014,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": -40
+        },
+        "OilBranchTankTemperature": {
+            "Address": 40015,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.1,
+            "ZoomY": -40
+        },
+        "SupplyOilTemperature": {
+            "Address": 40016,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 0.001,
+            "ZoomY": 0
+        },
+        "LubricatingOilServiceTime": {
+            "Address": 40017,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "GreaseServiceTime": {
+            "Address": 40018,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "OilFilterServiceTime": {
+            "Address": 40019,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "OilBranchCoreServiceTime": {
+            "Address": 40020,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "InletGasFilterServiceTime": {
+            "Address": 40021,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "MechanicalSealServiceTime": {
+            "Address": 40022,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "HostTotalRunTime": {
+            "Address": 40023,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "HostCurrentRunTime": {
+            "Address": 40024,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status1": {
+            "Address": 40053,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status2": {
+            "Address": 40054,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status3": {
+            "Address": 40055,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status4": {
+            "Address": 40056,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status5": {
+            "Address": 40057,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status6": {
+            "Address": 40058,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status7": {
+            "Address": 40059,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
+        },
+        "Status5": {
+            "Address": 40060,
+            "DataType": 1,
+            "Length": 1,
+            "ZoomX": 1,
+            "ZoomY": 0
         }
     }
 }

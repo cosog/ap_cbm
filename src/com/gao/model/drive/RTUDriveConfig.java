@@ -13,6 +13,8 @@ public class RTUDriveConfig {
     private CMBWellDataConfig CMBWellDataConfig;
     
     private GroupValveDataConfig GroupValveDataConfig;
+    
+    private BoosterPumpDataConfig BoosterPumpDataConfig;
 
     public void setDriverName(String DriverName){
         this.DriverName = DriverName;
@@ -52,6 +54,15 @@ public class RTUDriveConfig {
 		GroupValveDataConfig = groupValveDataConfig;
 	}
 
+	public BoosterPumpDataConfig getBoosterPumpDataConfig() {
+		return BoosterPumpDataConfig;
+	}
+	public void setBoosterPumpDataConfig(BoosterPumpDataConfig boosterPumpDataConfig) {
+		BoosterPumpDataConfig = boosterPumpDataConfig;
+	}
+
+
+
 	public static class Item
 	{
 	    private int Address;
@@ -60,7 +71,9 @@ public class RTUDriveConfig {
 
 	    private int Length;
 
-	    private float Zoom;
+	    private float ZoomX;
+	    
+	    private float ZoomY;
 
 	    public void setAddress(int Address){
 	        this.Address = Address;
@@ -80,12 +93,19 @@ public class RTUDriveConfig {
 	    public int getLength(){
 	        return this.Length;
 	    }
-	    public void setZoom(float Zoom){
-	        this.Zoom = Zoom;
-	    }
-	    public float getZoom(){
-	        return this.Zoom;
-	    }
+		public float getZoomX() {
+			return ZoomX;
+		}
+		public void setZoomX(float zoomX) {
+			ZoomX = zoomX;
+		}
+		public float getZoomY() {
+			return ZoomY;
+		}
+		public void setZoomY(float zoomY) {
+			ZoomY = zoomY;
+		}
+	    
 	}
 	
 	public static class CMBWellDataConfig
@@ -581,5 +601,235 @@ public class RTUDriveConfig {
 		public void setInstrumentCombinationMode4(Item instrumentCombinationMode4) {
 			InstrumentCombinationMode4 = instrumentCombinationMode4;
 		}
+	}
+	
+	public static class BoosterPumpDataConfig
+	{
+		private Item InletGasPressure;
+		private Item OutletGasPressure;
+		private Item SupplyOilPressure;
+		private Item InletGasPressureDifference;
+		private Item OilBranchCorePressureDifference;
+		private Item OilFilterPressureDifference;
+		private Item OilBranchTankLiquidLevel;
+		private Item FlammableGasConcentration;
+		private Item SupplyGasPressure;
+		private Item SupplyGasTemperature;
+		private Item MainMotorFrequency;
+		private Item MainMotorCurrent;
+		private Item InletGasTemperature;
+		private Item OutletGasTemperature;
+		private Item OilBranchTankTemperature;
+		private Item SupplyOilTemperature;
+		private Item LubricatingOilServiceTime;
+		private Item GreaseServiceTime;
+		private Item OilFilterServiceTime;
+		private Item OilBranchCoreServiceTime;
+		private Item InletGasFilterServiceTime;
+		private Item MechanicalSealServiceTime;
+		private Item HostTotalRunTime;
+		private Item HostCurrentRunTime;
+		private Item Status1;
+		private Item Status2;
+		private Item Status3;
+		private Item Status4;
+		private Item Status5;
+		private Item Status6;
+		private Item Status7;
+		private Item Status8;
+		public Item getInletGasPressure() {
+			return InletGasPressure;
+		}
+		public void setInletGasPressure(Item inletGasPressure) {
+			InletGasPressure = inletGasPressure;
+		}
+		public Item getOutletGasPressure() {
+			return OutletGasPressure;
+		}
+		public void setOutletGasPressure(Item outletGasPressure) {
+			OutletGasPressure = outletGasPressure;
+		}
+		public Item getSupplyOilPressure() {
+			return SupplyOilPressure;
+		}
+		public void setSupplyOilPressure(Item supplyOilPressure) {
+			SupplyOilPressure = supplyOilPressure;
+		}
+		public Item getInletGasPressureDifference() {
+			return InletGasPressureDifference;
+		}
+		public void setInletGasPressureDifference(Item inletGasPressureDifference) {
+			InletGasPressureDifference = inletGasPressureDifference;
+		}
+		public Item getOilBranchCorePressureDifference() {
+			return OilBranchCorePressureDifference;
+		}
+		public void setOilBranchCorePressureDifference(Item oilBranchCorePressureDifference) {
+			OilBranchCorePressureDifference = oilBranchCorePressureDifference;
+		}
+		public Item getOilFilterPressureDifference() {
+			return OilFilterPressureDifference;
+		}
+		public void setOilFilterPressureDifference(Item oilFilterPressureDifference) {
+			OilFilterPressureDifference = oilFilterPressureDifference;
+		}
+		public Item getOilBranchTankLiquidLevel() {
+			return OilBranchTankLiquidLevel;
+		}
+		public void setOilBranchTankLiquidLevel(Item oilBranchTankLiquidLevel) {
+			OilBranchTankLiquidLevel = oilBranchTankLiquidLevel;
+		}
+		public Item getFlammableGasConcentration() {
+			return FlammableGasConcentration;
+		}
+		public void setFlammableGasConcentration(Item flammableGasConcentration) {
+			FlammableGasConcentration = flammableGasConcentration;
+		}
+		public Item getSupplyGasPressure() {
+			return SupplyGasPressure;
+		}
+		public void setSupplyGasPressure(Item supplyGasPressure) {
+			SupplyGasPressure = supplyGasPressure;
+		}
+		public Item getSupplyGasTemperature() {
+			return SupplyGasTemperature;
+		}
+		public void setSupplyGasTemperature(Item supplyGasTemperature) {
+			SupplyGasTemperature = supplyGasTemperature;
+		}
+		public Item getMainMotorFrequency() {
+			return MainMotorFrequency;
+		}
+		public void setMainMotorFrequency(Item mainMotorFrequency) {
+			MainMotorFrequency = mainMotorFrequency;
+		}
+		public Item getMainMotorCurrent() {
+			return MainMotorCurrent;
+		}
+		public void setMainMotorCurrent(Item mainMotorCurrent) {
+			MainMotorCurrent = mainMotorCurrent;
+		}
+		public Item getInletGasTemperature() {
+			return InletGasTemperature;
+		}
+		public void setInletGasTemperature(Item inletGasTemperature) {
+			InletGasTemperature = inletGasTemperature;
+		}
+		public Item getOutletGasTemperature() {
+			return OutletGasTemperature;
+		}
+		public void setOutletGasTemperature(Item outletGasTemperature) {
+			OutletGasTemperature = outletGasTemperature;
+		}
+		public Item getOilBranchTankTemperature() {
+			return OilBranchTankTemperature;
+		}
+		public void setOilBranchTankTemperature(Item oilBranchTankTemperature) {
+			OilBranchTankTemperature = oilBranchTankTemperature;
+		}
+		public Item getSupplyOilTemperature() {
+			return SupplyOilTemperature;
+		}
+		public void setSupplyOilTemperature(Item supplyOilTemperature) {
+			SupplyOilTemperature = supplyOilTemperature;
+		}
+		public Item getLubricatingOilServiceTime() {
+			return LubricatingOilServiceTime;
+		}
+		public void setLubricatingOilServiceTime(Item lubricatingOilServiceTime) {
+			LubricatingOilServiceTime = lubricatingOilServiceTime;
+		}
+		public Item getGreaseServiceTime() {
+			return GreaseServiceTime;
+		}
+		public void setGreaseServiceTime(Item greaseServiceTime) {
+			GreaseServiceTime = greaseServiceTime;
+		}
+		public Item getOilFilterServiceTime() {
+			return OilFilterServiceTime;
+		}
+		public void setOilFilterServiceTime(Item oilFilterServiceTime) {
+			OilFilterServiceTime = oilFilterServiceTime;
+		}
+		public Item getOilBranchCoreServiceTime() {
+			return OilBranchCoreServiceTime;
+		}
+		public void setOilBranchCoreServiceTime(Item oilBranchCoreServiceTime) {
+			OilBranchCoreServiceTime = oilBranchCoreServiceTime;
+		}
+		public Item getInletGasFilterServiceTime() {
+			return InletGasFilterServiceTime;
+		}
+		public void setInletGasFilterServiceTime(Item inletGasFilterServiceTime) {
+			InletGasFilterServiceTime = inletGasFilterServiceTime;
+		}
+		public Item getMechanicalSealServiceTime() {
+			return MechanicalSealServiceTime;
+		}
+		public void setMechanicalSealServiceTime(Item mechanicalSealServiceTime) {
+			MechanicalSealServiceTime = mechanicalSealServiceTime;
+		}
+		public Item getHostTotalRunTime() {
+			return HostTotalRunTime;
+		}
+		public void setHostTotalRunTime(Item hostTotalRunTime) {
+			HostTotalRunTime = hostTotalRunTime;
+		}
+		public Item getHostCurrentRunTime() {
+			return HostCurrentRunTime;
+		}
+		public void setHostCurrentRunTime(Item hostCurrentRunTime) {
+			HostCurrentRunTime = hostCurrentRunTime;
+		}
+		public Item getStatus1() {
+			return Status1;
+		}
+		public void setStatus1(Item status1) {
+			Status1 = status1;
+		}
+		public Item getStatus2() {
+			return Status2;
+		}
+		public void setStatus2(Item status2) {
+			Status2 = status2;
+		}
+		public Item getStatus3() {
+			return Status3;
+		}
+		public void setStatus3(Item status3) {
+			Status3 = status3;
+		}
+		public Item getStatus4() {
+			return Status4;
+		}
+		public void setStatus4(Item status4) {
+			Status4 = status4;
+		}
+		public Item getStatus5() {
+			return Status5;
+		}
+		public void setStatus5(Item status5) {
+			Status5 = status5;
+		}
+		public Item getStatus6() {
+			return Status6;
+		}
+		public void setStatus6(Item status6) {
+			Status6 = status6;
+		}
+		public Item getStatus7() {
+			return Status7;
+		}
+		public void setStatus7(Item status7) {
+			Status7 = status7;
+		}
+		public Item getStatus8() {
+			return Status8;
+		}
+		public void setStatus8(Item status8) {
+			Status8 = status8;
+		}
+		
+		
 	}
 }

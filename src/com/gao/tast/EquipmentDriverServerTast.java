@@ -957,6 +957,8 @@ public class EquipmentDriverServerTast {
 		public int groupValveInstrumentCombinationMode3Control=0;
 		public int groupValveInstrumentCombinationMode4Control=0;
 		
+		//增压泵控制标志
+		
 		
 		public  String driverAddr;
 		public  String dirverId;

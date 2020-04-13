@@ -530,17 +530,17 @@ public class ProtocolModbusThread extends Thread{
     								fluidLevelIndicatorSoundVelocity=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorSoundVelocity().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorSoundVelocity().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorSoundVelocity().getZoomX();
     								//液面仪-计算液面深度
     								fluidLevel=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevel().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevel().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevel().getZoomX();
     								//液面仪-套压
     								fluidLevelIndicatorPress=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorPress().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorPress().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorPress().getZoomX();
     								
     								//变频器通讯状态
     								frequencyChangerCommStatus=getUnsignedShort(recByte,
@@ -558,27 +558,27 @@ public class ProtocolModbusThread extends Thread{
     								runFrequency=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getRunFrequency().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getRunFrequency().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getRunFrequency().getZoomX();
     								//变频器-母线电压
     								frequencyChangerBusbarVoltage=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerBusbarVoltage().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerBusbarVoltage().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerBusbarVoltage().getZoomX();
     								//变频器-输出电压
     								frequencyChangerOutputVoltage=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerOutputVoltage().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerOutputVoltage().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerOutputVoltage().getZoomX();
     								//变频器-输出电流
     								frequencyChangerOutputCurrent=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerOutputCurrent().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerOutputCurrent().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerOutputCurrent().getZoomX();
     								//变频器-设定频率反馈
     								setFrequencyFeedback=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getSetFrequencyFeedback().getAddress()%10000-1)*2, 
     										driveConfig.getProtocol())
-    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getSetFrequencyFeedback().getZoom();
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getSetFrequencyFeedback().getZoomX();
     								//变频器故障代码
     								frequencyChangerFaultCode=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerFaultCode().getAddress()%10000-1)*2, 
@@ -1171,8 +1171,8 @@ public class ProtocolModbusThread extends Thread{
                 								+ "CumulativeFlow3,FlowmeterBackupPoint3,InstantaneousFlow3,FlowmeterTemperature3,FlowmeterPress3,"
                 								+ "CumulativeFlow4,FlowmeterBackupPoint4,InstantaneousFlow4,FlowmeterTemperature4,FlowmeterPress4,"
                 								+ "DeviceId,BaudRate,"
-                								+ "InstrumentCombinationMode1,InstrumentCombinationMode2,InstrumentCombinationMode3,InstrumentCombinationMode4)"
-                								+ "select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
+                								+ "InstrumentCombinationMode1,InstrumentCombinationMode2,InstrumentCombinationMode3,InstrumentCombinationMode4) "
+                								+ " select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
                 								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
                 								+ CumulativeFlow1+","+FlowmeterBackupPoint1+","+InstantaneousFlow1+","+FlowmeterTemperature1+","+FlowmeterPress1+","
                 								+ CumulativeFlow2+","+FlowmeterBackupPoint2+","+InstantaneousFlow2+","+FlowmeterTemperature2+","+FlowmeterPress2+","
@@ -1200,6 +1200,247 @@ public class ProtocolModbusThread extends Thread{
             							}
     	    						}
     	        					
+    							}
+        					}
+    					}else if(clientUnit.unitDataList.get(i).type==2){//55kW增压泵
+    						//读取数据
+        					long readTime=0;
+    						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime())){
+    							readTime=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime()).getTime();
+    						}
+    						//当前采集时间与上次读取时间差值大于离散数据采集周期时，读取离散数据
+        					if(format.parse(AcquisitionTime).getTime()-readTime>=clientUnit.unitDataList.get(i).getAcqCycle_Discrete()){
+        						clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime(AcquisitionTime);
+        						float InletGasPressure;
+        						float OutletGasPressure;
+        						float SupplyOilPressure;
+        						float InletGasPressureDifference;
+        						float OilBranchCorePressureDifference;
+        						float OilFilterPressureDifference;
+        						float OilBranchTankLiquidLevel;
+        						float FlammableGasConcentration;
+        						float SupplyGasPressure;
+        						float SupplyGasTemperature;
+        						float MainMotorFrequency;
+        						float MainMotorCurrent;
+        						float InletGasTemperature;
+        						float OutletGasTemperature;
+        						float OilBranchTankTemperature;
+        						float SupplyOilTemperature;
+        						float LubricatingOilServiceTime;
+        						float GreaseServiceTime;
+        						float OilFilterServiceTime;
+        						float OilBranchCoreServiceTime;
+        						float InletGasFilterServiceTime;
+        						float MechanicalSealServiceTime;
+        						float HostTotalRunTime;
+        						float HostCurrentRunTime;
+        						int Status1;
+        						int Status2;
+        						int Status3;
+        						int Status4;
+        						int Status5;
+        						int Status6;
+        						int Status7;
+        						int Status8;
+        						//一次性将100个寄存器数据读回
+        						rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,40001,100,recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
+        						if(rc==-1||rc==-2){
+    								System.out.println("线程"+this.threadId+"增压泵:"+clientUnit.unitDataList.get(i).getWellName()+"读取数据发送或接收失败,rc="+rc);
+    								this.releaseResource(is,os);
+                    				wellReaded=false;
+                    				break;
+    							}else if(rc==-3){
+    								System.out.println("线程"+this.threadId+",增压泵:"+clientUnit.unitDataList.get(i).getWellName()+"读取数据异常,rc="+rc);
+    								break;
+    							}else{
+    								//进气压力
+    								InletGasPressure=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasPressure().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasPressure().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasPressure().getZoomY();
+    								//排气压力
+    								OutletGasPressure=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOutletGasPressure().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOutletGasPressure().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOutletGasPressure().getZoomY();
+    								//供油压力
+    								SupplyOilPressure=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyOilPressure().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyOilPressure().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyOilPressure().getZoomY();
+    								//进气压差
+    								InletGasPressureDifference=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasPressureDifference().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasPressureDifference().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasPressureDifference().getZoomY();
+    								//油分芯压差
+    								OilBranchCorePressureDifference=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchCorePressureDifference().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchCorePressureDifference().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchCorePressureDifference().getZoomY();
+    								//油过滤器压差
+    								OilFilterPressureDifference=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilFilterPressureDifference().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilFilterPressureDifference().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilFilterPressureDifference().getZoomY();
+    								//油分罐液位
+    								OilBranchTankLiquidLevel=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchTankLiquidLevel().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchTankLiquidLevel().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchTankLiquidLevel().getZoomY();
+    								//可燃性气体浓度
+    								FlammableGasConcentration=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getFlammableGasConcentration().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getFlammableGasConcentration().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getFlammableGasConcentration().getZoomY();
+    								//供气压力
+    								SupplyGasPressure=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyGasPressure().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyGasPressure().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyGasPressure().getZoomY();
+    								//供气温度
+    								SupplyGasTemperature=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyGasTemperature().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyGasTemperature().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyGasTemperature().getZoomY();
+    								//主电机频率
+    								MainMotorFrequency=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMainMotorFrequency().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMainMotorFrequency().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMainMotorFrequency().getZoomY();
+    								//主机电流
+    								MainMotorCurrent=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMainMotorCurrent().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMainMotorCurrent().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMainMotorCurrent().getZoomY();
+    								//进气温度
+    								InletGasTemperature=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasTemperature().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasTemperature().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasTemperature().getZoomY();
+    								//排气温度
+    								OutletGasTemperature=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOutletGasTemperature().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOutletGasTemperature().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOutletGasTemperature().getZoomY();
+    								//油分罐温度
+    								OilBranchTankTemperature=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchTankTemperature().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchTankTemperature().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchTankTemperature().getZoomY();
+    								//供油温度
+    								SupplyOilTemperature=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyOilTemperature().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyOilTemperature().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getSupplyOilTemperature().getZoomY();
+    								//润滑油使用时间
+    								LubricatingOilServiceTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getLubricatingOilServiceTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getLubricatingOilServiceTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getLubricatingOilServiceTime().getZoomY();
+    								//润滑脂使用时间
+    								GreaseServiceTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getGreaseServiceTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getGreaseServiceTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getGreaseServiceTime().getZoomY();
+    								//油滤使用时间
+    								OilFilterServiceTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilFilterServiceTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilFilterServiceTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilFilterServiceTime().getZoomY();
+    								//油分芯使用时间
+    								OilBranchCoreServiceTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchCoreServiceTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchCoreServiceTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getOilBranchCoreServiceTime().getZoomY();
+    								//进气过滤使用时间
+    								InletGasFilterServiceTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasFilterServiceTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasFilterServiceTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getInletGasFilterServiceTime().getZoomY();
+    								//机械密封使用时间
+    								MechanicalSealServiceTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMechanicalSealServiceTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMechanicalSealServiceTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getMechanicalSealServiceTime().getZoomY();
+    								//主机累计运行时间
+    								HostTotalRunTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getHostTotalRunTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getHostTotalRunTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getHostTotalRunTime().getZoomY();
+    								//主机本次运行时间
+    								HostCurrentRunTime=getUnsignedShort(recByte,(clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getHostCurrentRunTime().getAddress()-40001)*2,driveConfig.getProtocol())
+    										*clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getHostCurrentRunTime().getZoomX()
+    										+clientUnit.unitDataList.get(i).getRtuDriveConfig().getBoosterPumpDataConfig().getHostCurrentRunTime().getZoomY();
+    								
+    								//进行通信计算
+    	        					String commRequest="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastCommRange)){
+    	        						commRequest+= "\"Last\":{"
+    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
+    	    									+ "\"CommEfficiency\": {"
+    	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
+    	    									+ "\"Time\": "+clientUnit.unitDataList.get(i).lastCommTime+","
+    	    									+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(clientUnit.unitDataList.get(i).lastCommRange+"")+""
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					commRequest+= "\"Current\": {"
+    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"CommStatus\":true"
+    										+ "}"
+    										+ "}";
+    	        					String commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
+    	        					java.lang.reflect.Type type = new TypeToken<CommResponseData>() {}.getType();
+    	        					CommResponseData commResponseData=gson.fromJson(commResponse, type);
+    	        					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
+    	        						if(commResponseData.getCurrent().getCommEfficiency().getRangeString().indexOf("-;")>=0){
+    	        							System.out.println("通信返回数据出现：-;");
+    	        							System.out.println("通信请求数据："+commRequest);
+    	        							System.out.println("通信返回数据："+commResponse);
+    	        							commResponseData.getCurrent().getCommEfficiency().setRangeString(commResponseData.getCurrent().getCommEfficiency().getRangeString().replaceAll("-;", ""));
+    	        						}
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setCommTime(commResponseData.getCurrent().getCommEfficiency().getTime());
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setCommEfficiency(commResponseData.getCurrent().getCommEfficiency().getEfficiency());
+    	        						clientUnit.unitDataList.get(i).getAcquisitionData().setCommRange(commResponseData.getCurrent().getCommEfficiency().getRangeString());
+    	        						
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastCommStatus=commResponseData.getCurrent().getCommStatus()?1:0;
+    	        						clientUnit.unitDataList.get(i).lastCommTime=commResponseData.getCurrent().getCommEfficiency().getTime();
+    	        						clientUnit.unitDataList.get(i).lastCommTimeEfficiency=commResponseData.getCurrent().getCommEfficiency().getEfficiency();
+    	        						clientUnit.unitDataList.get(i).lastCommRange=commResponseData.getCurrent().getCommEfficiency().getRangeString();
+    	        					}else{
+    	        						System.out.println("comm error");
+    	        						System.out.println("通信请求数据："+commRequest);
+    	    							System.out.println("通信返回数据："+commResponse);
+    	        					}
+    	        					clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        					//判断是否保存数据
+    	        					long hisDataInterval=0;
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getSaveTime())){
+    	    							hisDataInterval=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getSaveTime()).getTime();
+    	    						}
+    	    						if(commResponseData!=null&&commResponseData.getResultStatus()==1
+    	    							&&format.parse(AcquisitionTime).getTime()-hisDataInterval>=clientUnit.unitDataList.get(i).getSaveCycle_Discrete()//比上次保存时间大于5分钟
+    	        						){
+    	        						//入库
+        	        					Connection conn=OracleJdbcUtis.getConnection();
+                						Statement stmt=null;
+                						String saveBoosterPumpDiscreteData="insert into tbl_BoosterPump_discrete_hist("
+                								+ "wellid,acquisitiontime,"
+                								+ "commstatus,commtimeefficiency,commtime,commrange,"
+                								+ "InletGasPressure,OutletGasPressure,SupplyOilPressure,InletGasPressureDifference,OilBranchCorePressureDifference,"
+                								+ "OilFilterPressureDifference,OilBranchTankLiquidLevel,FlammableGasConcentration,SupplyGasPressure,SupplyGasTemperature,"
+                								+ "MainMotorFrequency,MainMotorCurrent,InletGasTemperature,OutletGasTemperature,OilBranchTankTemperature,"
+                								+ "SupplyOilTemperature,LubricatingOilServiceTime,GreaseServiceTime,OilFilterServiceTime,OilBranchCoreServiceTime,"
+                								+ "InletGasFilterServiceTime,MechanicalSealServiceTime,HostTotalRunTime,HostCurrentRunTime "
+                								+ "select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
+                								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
+                								+ InletGasPressure+","+OutletGasPressure+","+SupplyOilPressure+","+InletGasPressureDifference+","+OilBranchCorePressureDifference+","
+                								+ OilFilterPressureDifference+","+OilBranchTankLiquidLevel+","+FlammableGasConcentration+","+SupplyGasPressure+","+SupplyGasTemperature+","
+                								+ MainMotorFrequency+","+MainMotorCurrent+","+InletGasTemperature+","+OutletGasTemperature+","+OilBranchTankTemperature+","
+                								+ SupplyOilTemperature+","+LubricatingOilServiceTime+","+GreaseServiceTime+","+OilFilterServiceTime+","+OilBranchCoreServiceTime+","
+                								+ InletGasFilterServiceTime+","+MechanicalSealServiceTime+","+HostTotalRunTime
+                								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"'";
+                						try {
+            								stmt = conn.createStatement();
+            								int result=stmt.executeUpdate(saveBoosterPumpDiscreteData);
+            								conn.close();
+            								stmt.close();
+            								clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime(AcquisitionTime);
+            							} catch (SQLException e) {
+            								e.printStackTrace();
+            								try {
+            									conn.close();
+            									if(stmt!=null){
+            										stmt.close();
+            									}
+            								} catch (SQLException e1) {
+            									e1.printStackTrace();
+            								}
+            							}
+    	    						}
     							}
         					}
     					}

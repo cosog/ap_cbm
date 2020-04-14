@@ -41,17 +41,16 @@ Ext.define('AP.view.well.WellInfoPanel', {
                 }
             }
         });
-        var liftingTypeStoreDate=[
+        var unitTypeStoreDate=[
         	{"boxkey":'', "boxval":"选择全部"},
-        	{"boxkey":'200', "boxval":"抽油机"}
+        	{"boxkey":'1', "boxval":"煤层气井"},
+        	{"boxkey":'2', "boxval":"阀组"},
+        	{"boxkey":'3', "boxval":"增压泵"}
         ];
-        if(!pcpHidden){
-        	liftingTypeStoreDate.push({"boxkey":'400', "boxval":"螺杆泵"});
-        }
         
-        var liftingTypeStore = new Ext.data.JsonStore({
+        var unitTypeStore = new Ext.data.JsonStore({
             fields: ['boxkey', 'boxval'],
-            data : liftingTypeStoreDate
+            data : unitTypeStoreDate
         });
         
         var simpleCombo = Ext.create(
@@ -76,7 +75,7 @@ Ext.define('AP.view.well.WellInfoPanel', {
                 listeners: {
                     expand: function (sm, selections) {
 //                        simpleCombo.clearValue();
-//                        simpleCombo.getStore().loadPage(1); // 加载井下拉框的store
+                        simpleCombo.getStore().loadPage(1); // 加载井下拉框的store
                     },
                     afterRender: function (combo, o) {
                         if (jhStore.getTotalCount() > 0) {
@@ -99,15 +98,15 @@ Ext.define('AP.view.well.WellInfoPanel', {
                 }
             });
         
-        var liftingTypeCombo = Ext.create(
+        var unitTypeCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '举升类型',
-                    id: "wellInfoPanel_jslx_Id",
+                    fieldLabel: '单元类型',
+                    id: "wellInfoPanel_unitTypeCombo_Id",
                     labelWidth: 70,
                     width: 180,
                     labelAlign: 'left',
                     queryMode: 'local',
-                    store: liftingTypeStore,
+                    store: unitTypeStore,
                     autoSelect: false,
                     editable: false,
                     triggerAction: 'all',
@@ -124,7 +123,7 @@ Ext.define('AP.view.well.WellInfoPanel', {
                 });
         
         Ext.apply(this, {
-            tbar: [simpleCombo,'-',liftingTypeCombo,'-', {
+            tbar: [simpleCombo,'-',unitTypeCombo,'-', {
                 		id: 'ProductionWellTotalCount_Id',
                 		xtype: 'component',
                 		hidden: false,
@@ -143,7 +142,8 @@ Ext.define('AP.view.well.WellInfoPanel', {
             				var fields = "";
             			    var heads = "";
             			    var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-            				var jh = Ext.getCmp('wellInfoPanel_jh_Id').getValue();
+            				var wellName = Ext.getCmp('wellInfoPanel_jh_Id').getValue();
+            				var unitType = Ext.getCmp('wellInfoPanel_unitTypeCombo_Id').getValue();
             				var url=context + '/wellInformationManagerController/exportWellInformationData';
             				for(var i=0;i<wellInfoHandsontableHelper.colHeaders.length;i++){
             					fields+=wellInfoHandsontableHelper.columns[i].data+",";
@@ -154,7 +154,7 @@ Ext.define('AP.view.well.WellInfoPanel', {
             			        heads = heads.substring(0, heads.length - 1);
             			    }
             				
-            			    var param = "&fields=" + fields +"&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id  + "&jh=" + URLencode(URLencode(jh)) +"&recordCount=10000"+ "&fileName="+URLencode(URLencode("井名基本信息"))+ "&title="+URLencode(URLencode("井名基本信息"));
+            			    var param = "&fields=" + fields +"&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id  + "&wellName=" + URLencode(URLencode(wellName))+"&unitType="+unitType +"&recordCount=10000"+ "&fileName="+URLencode(URLencode("井名基本信息"))+ "&title="+URLencode(URLencode("井名基本信息"));
             			    openExcelWindow(url + '?flag=true' + param);
             			}
             		},'-', {
@@ -202,7 +202,7 @@ function CreateAndLoadWellInfoTable(isNew){
 	}
 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
 	var wellInformationName_Id = Ext.getCmp('wellInfoPanel_jh_Id').getValue();
-	var liftingType = Ext.getCmp('wellInfoPanel_jslx_Id').getValue();
+	var unitType = Ext.getCmp('wellInfoPanel_unitTypeCombo_Id').getValue();
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/wellInformationManagerController/doWellInformationShow',
@@ -214,33 +214,13 @@ function CreateAndLoadWellInfoTable(isNew){
 		        var columns="[";
 	            for(var i=0;i<result.columns.length;i++){
 	            	colHeaders+="'"+result.columns[i].header+"'";
-	            	if(result.columns[i].dataIndex==="liftingTypeName"){
-	            		if(pcpHidden){
-	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机']}";
-	            		}else{
-	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机', '螺杆泵']}";
-	            		}
-	            	}else if(result.columns[i].dataIndex==="runtimeEfficiencySource"){
-	            		if(pcpHidden){
-	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['人工录入','DI信号', '电参计算']}";
-	            		}else{
-	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['人工录入','DI信号', '电参计算','转速计算']}";
-	            		}
+	            	if(result.columns[i].dataIndex==="unitTypeName"){
+	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['煤层气井', '阀组','增压泵']}";
 	            	}else if(result.columns[i].dataIndex==="driverName"){
 	            		var source="[";
 	            		for(var j=0;j<result.driverDropdownData.length;j++){
 	            			source+="\'"+result.driverDropdownData[j]+"\'";
 	            			if(j<result.driverDropdownData.length-1){
-	            				source+=",";
-	            			}
-	            		}
-	            		source+="]";
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:"+source+"}";
-	            	}else if(result.columns[i].dataIndex==="acquisitionUnit"){
-	            		var source="[";
-	            		for(var j=0;j<result.unitDropdownData.length;j++){
-	            			source+="\'"+result.unitDropdownData[j]+"\'";
-	            			if(j<result.unitDropdownData.length-1){
 	            				source+=",";
 	            			}
 	            		}
@@ -269,7 +249,7 @@ function CreateAndLoadWellInfoTable(isNew){
 		},
 		params: {
             wellInformationName: wellInformationName_Id,
-            liftingType:liftingType,
+            unitType:unitType,
             recordCount:50,
             orgId:leftOrg_Id,
             page:1,

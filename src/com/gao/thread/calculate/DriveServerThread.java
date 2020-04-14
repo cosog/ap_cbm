@@ -2,6 +2,7 @@ package com.gao.thread.calculate;
 
 
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import com.gao.model.drive.RTUDriveConfig;
 import com.gao.tast.EquipmentDriverServerTast;
@@ -23,6 +24,7 @@ public class DriveServerThread extends Thread{
 			while(true){
 				for(int i=0;i<EquipmentDriverServerTast.clientUnitList.size();i++){
 					if(EquipmentDriverServerTast.clientUnitList.get(i).socket==null){
+						EquipmentDriverServerTast.clientUnitList.get(i).socket=new Socket();
 						System.out.println(driveConfig.getDriverCode()+"等待客户端连接...");
 						try {
 							if(serverSocket==null){

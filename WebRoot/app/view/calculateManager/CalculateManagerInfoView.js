@@ -102,6 +102,9 @@ Ext.define("AP.view.calculateManager.CalculateManagerInfoView", {
                         select: function (combo, record, index) {
                         	calculateSignComb.clearValue();
                         	calculateResultStore.loadPage(1);
+                        },
+                        expand: function (sm, selections) {
+                        	wellListComb.getStore().loadPage(1);
                         }
                     }
                 });

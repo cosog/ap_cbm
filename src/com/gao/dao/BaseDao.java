@@ -1069,7 +1069,7 @@ public class BaseDao extends HibernateDaoSupport {
 			EquipmentDriverServerTast.initDriverConfig();
 		}
 		try {
-			cs = conn.prepareCall("{call prd_save_wellinformation(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_save_wellinformation(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			if(wellHandsontableChangedData.getUpdatelist()!=null){
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
@@ -1084,21 +1084,18 @@ public class BaseDao extends HibernateDaoSupport {
 						}
 						
 						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getOrgName());
-						cs.setString(2, wellHandsontableChangedData.getUpdatelist().get(i).getResName());
-						cs.setString(3, wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-						cs.setString(4, wellHandsontableChangedData.getUpdatelist().get(i).getLiftingTypeName());
-						cs.setString(5, driverCode);
-						cs.setString(6, wellHandsontableChangedData.getUpdatelist().get(i).getAcquisitionUnit());
-						cs.setString(7, wellHandsontableChangedData.getUpdatelist().get(i).getDriverAddr());
-						cs.setString(8, wellHandsontableChangedData.getUpdatelist().get(i).getDriverId());
-						cs.setString(9, wellHandsontableChangedData.getUpdatelist().get(i).getAcqcycle_diagram());
-						cs.setString(10, wellHandsontableChangedData.getUpdatelist().get(i).getAcqcycle_discrete());
-						cs.setString(11, wellHandsontableChangedData.getUpdatelist().get(i).getSavecycle_discrete());
-						cs.setString(12, wellHandsontableChangedData.getUpdatelist().get(i).getRuntimeEfficiencySource());
-						cs.setString(13, wellHandsontableChangedData.getUpdatelist().get(i).getVideoUrl());
-						cs.setString(14, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
-						cs.setString(15, orgIds);
-						cs.setString(16, orgId);
+						cs.setString(2, wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+						cs.setString(3, wellHandsontableChangedData.getUpdatelist().get(i).getUnitTypeName());
+						cs.setString(4, driverCode);
+						cs.setString(5, wellHandsontableChangedData.getUpdatelist().get(i).getDriverAddr());
+						cs.setString(6, wellHandsontableChangedData.getUpdatelist().get(i).getDriverId());
+						cs.setString(7, wellHandsontableChangedData.getUpdatelist().get(i).getAcqcycle_diagram());
+						cs.setString(8, wellHandsontableChangedData.getUpdatelist().get(i).getAcqcycle_discrete());
+						cs.setString(9, wellHandsontableChangedData.getUpdatelist().get(i).getSavecycle_discrete());
+						cs.setString(10, wellHandsontableChangedData.getUpdatelist().get(i).getVideoUrl());
+						cs.setString(11, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
+						cs.setString(12, orgIds);
+						cs.setString(13, orgId);
 						cs.executeUpdate();
 					}
 				}
@@ -1117,21 +1114,19 @@ public class BaseDao extends HibernateDaoSupport {
 						}
 						
 						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getOrgName());
-						cs.setString(2, wellHandsontableChangedData.getInsertlist().get(i).getResName());
-						cs.setString(3, wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-						cs.setString(4, wellHandsontableChangedData.getInsertlist().get(i).getLiftingTypeName());
-						cs.setString(5, driverCode);
-						cs.setString(6, wellHandsontableChangedData.getInsertlist().get(i).getAcquisitionUnit());
-						cs.setString(7, wellHandsontableChangedData.getInsertlist().get(i).getDriverAddr());
-						cs.setString(8, wellHandsontableChangedData.getInsertlist().get(i).getDriverId());
-						cs.setString(9, wellHandsontableChangedData.getInsertlist().get(i).getAcqcycle_diagram());
-						cs.setString(10, wellHandsontableChangedData.getInsertlist().get(i).getAcqcycle_discrete());
-						cs.setString(11, wellHandsontableChangedData.getInsertlist().get(i).getSavecycle_discrete());
-						cs.setString(12, wellHandsontableChangedData.getInsertlist().get(i).getRuntimeEfficiencySource());
-						cs.setString(13, wellHandsontableChangedData.getInsertlist().get(i).getVideoUrl());
-						cs.setString(14, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
-						cs.setString(15, orgIds);
-						cs.setString(16, orgId);
+						cs.setString(2, wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+						cs.setString(3, wellHandsontableChangedData.getInsertlist().get(i).getUnitTypeName());
+						cs.setString(4, driverCode);
+						cs.setString(5, wellHandsontableChangedData.getInsertlist().get(i).getDriverAddr());
+						cs.setString(6, wellHandsontableChangedData.getInsertlist().get(i).getDriverId());
+						cs.setString(7, wellHandsontableChangedData.getInsertlist().get(i).getAcqcycle_diagram());
+						cs.setString(8, wellHandsontableChangedData.getInsertlist().get(i).getAcqcycle_discrete());
+						cs.setString(9, wellHandsontableChangedData.getInsertlist().get(i).getSavecycle_discrete());
+						cs.setString(10, wellHandsontableChangedData.getInsertlist().get(i).getVideoUrl());
+						cs.setString(11, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
+						cs.setString(12, orgIds);
+						cs.setString(13, orgId);
+						
 						cs.executeUpdate();
 					}
 				}

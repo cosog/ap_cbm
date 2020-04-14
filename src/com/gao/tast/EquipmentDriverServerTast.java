@@ -97,8 +97,8 @@ public class EquipmentDriverServerTast {
 	public static boolean init(){
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		Map<String, Object> acquisitionUnitMap = AcquisitionUnitMap.getMapObject();
-		String sql="select t.wellName,t.driverAddr,t.driverId,t.runtimeefficiencysource,t.acqcycle_discrete,t.savecycle_discrete,"
-				+ " t.drivercode,t.unitcode,"
+		String sql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
+				+ " t.drivercode,"
 				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
 				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange,"
 				+ " t3.runstatus,t3.runtime,t3.runtimeefficiency,t3.runrange"
@@ -142,13 +142,13 @@ public class EquipmentDriverServerTast {
 				UnitData unit=new UnitData();
 				ClientUnit clientUnit=new ClientUnit();
 				unit.wellName=rs.getString(1);
-				unit.driverAddr=rs.getString(2)==null?"":rs.getString(2);
-				unit.dirverId=rs.getString(3)==null?"":rs.getString(3);
-				unit.UnitId=Integer.parseInt(rs.getString(3)==null?"0":rs.getString(3));
+				unit.type=Integer.parseInt(rs.getString(2)==null?"1":rs.getString(2));
+				unit.driverAddr=rs.getString(3)==null?"":rs.getString(3);
+				unit.dirverId=rs.getString(4)==null?"":rs.getString(4);
+				unit.UnitId=Integer.parseInt(rs.getString(4)==null?"0":rs.getString(4));
 				unit.commStatus=0;
 				unit.acquisitionData=new AcquisitionData();
 				unit.acquisitionData.setRunStatus(0);
-				unit.runTimeEfficiencySource=rs.getInt(4);
 				unit.acqCycle_Discrete=60*1000*rs.getInt(5);
 				unit.saveCycle_Discrete=60*1000*rs.getInt(6);//离散数据保存间隔,单位毫秒
 				for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
@@ -159,29 +159,18 @@ public class EquipmentDriverServerTast {
 						break;
 					}
 				}
-				
-				for(Entry<String, Object> entry:acquisitionUnitMap.entrySet()){
-					AcquisitionUnitData acquisitionUnitData=(AcquisitionUnitData)entry.getValue();
-					if(acquisitionUnitData.getAcquisitionUnitCode().equalsIgnoreCase(rs.getString(8))){
-						unit.setAcquisitionUnitData(acquisitionUnitData);
-						break;
-					}
-				}
-				unit.lastDisAcquisitionTime=rs.getString(9);
-				unit.lastCommStatus=rs.getInt(10);
-				unit.lastCommTime=rs.getFloat(11);
-				unit.lastCommTimeEfficiency=rs.getFloat(12);
-				unit.lastCommRange=rs.getString(13);
-				unit.lastRunStatus=rs.getInt(14);
-				unit.lastRunTime=rs.getFloat(15);
-				unit.lastRunTimeEfficiency=rs.getFloat(16);
-				unit.lastRunRange=rs.getString(17);
-				
-				unit.type=1;
+				unit.lastDisAcquisitionTime=rs.getString(8);
+				unit.lastCommStatus=rs.getInt(9);
+				unit.lastCommTime=rs.getFloat(10);
+				unit.lastCommTimeEfficiency=rs.getFloat(11);
+				unit.lastCommRange=rs.getString(12);
+				unit.lastRunStatus=rs.getInt(13);
+				unit.lastRunTime=rs.getFloat(14);
+				unit.lastRunTimeEfficiency=rs.getFloat(15);
+				unit.lastRunRange=rs.getString(16);
 				
 				units.add(unit);
 				clientUnitList.add(clientUnit);
-				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -212,7 +201,7 @@ public class EquipmentDriverServerTast {
 		return true;
 	}
 	
-	public static int updateWellConfif(WellHandsontableChangedData wellHandsontableChangedData) throws SQLException, IOException{
+	public static int updateWellConfig(WellHandsontableChangedData wellHandsontableChangedData) throws SQLException, IOException{
 		String wellList="";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		Map<String, Object> acquisitionUnitMap = AcquisitionUnitMap.getMapObject();
@@ -233,8 +222,8 @@ public class EquipmentDriverServerTast {
 			wellList=wellList.substring(0, wellList.length()-1);
 		}
 		
-		String sql="select t.wellName,t.driveraddr,t.driverid,t.runtimeefficiencysource,t.acqcycle_discrete,t.savecycle_discrete,"
-				+ " t.drivercode,t.unitcode "
+		String sql="select t.wellName,t.unitType,t.driveraddr,t.driverid,t.acqcycle_discrete,t.savecycle_discrete,"
+				+ " t.drivercode "
 				+ " from tbl_wellinformation t "
 				+ " where 1=1  ";
 		if(StringManagerUtils.isNotNull(wellList)){
@@ -273,12 +262,11 @@ public class EquipmentDriverServerTast {
 							}
 						}
 					}
-					
-					units.get(i).driverAddr=rs.getString(2)==null?"":rs.getString(2);
-					units.get(i).dirverId=rs.getString(3)==null?"":rs.getString(3);
-					units.get(i).UnitId=Integer.parseInt(rs.getString(3)==null?"01":rs.getString(3));
+					units.get(i).type=Integer.parseInt(rs.getString(2)==null?"1":rs.getString(2));
+					units.get(i).driverAddr=rs.getString(3)==null?"":rs.getString(3);
+					units.get(i).dirverId=rs.getString(4)==null?"":rs.getString(4);
+					units.get(i).UnitId=Integer.parseInt(rs.getString(4)==null?"01":rs.getString(4));
 					units.get(i).commStatus=0;
-					units.get(i).runTimeEfficiencySource=rs.getInt(4);
 					units.get(i).acqCycle_Discrete=60*1000*rs.getInt(5);
 					units.get(i).saveCycle_Discrete=60*1000*rs.getInt(6);//离散数据保存间隔,单位毫秒
 					for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
@@ -286,14 +274,6 @@ public class EquipmentDriverServerTast {
 						if(driveConfig.getDriverCode().equals(rs.getString(7))){
 							units.get(i).setRtuDriveConfig(driveConfig);
 							units.get(i).setDirverName(driveConfig.getDriverName());
-							break;
-						}
-					}
-					
-					for(Entry<String, Object> entry:acquisitionUnitMap.entrySet()){
-						AcquisitionUnitData acquisitionUnitData=(AcquisitionUnitData)entry.getValue();
-						if(acquisitionUnitData.getAcquisitionUnitCode().equals(rs.getString(8))){
-							units.get(i).setAcquisitionUnitData(acquisitionUnitData);
 							break;
 						}
 					}
@@ -305,13 +285,13 @@ public class EquipmentDriverServerTast {
 				UnitData unit=new UnitData();
 				ClientUnit clientUnit=new ClientUnit();
 				unit.wellName=rs.getString(1);
-				unit.driverAddr=rs.getString(2);
-				unit.dirverId=rs.getString(3);
+				unit.type=Integer.parseInt(rs.getString(2)==null?"1":rs.getString(2));
+				unit.driverAddr=rs.getString(3);
+				unit.dirverId=rs.getString(4);
 				unit.UnitId=Integer.parseInt(unit.dirverId);
 				unit.commStatus=0;
 				unit.acquisitionData=new AcquisitionData();
 				unit.acquisitionData.setRunStatus(0);
-				unit.runTimeEfficiencySource=rs.getInt(4);
 				unit.acqCycle_Discrete=1000*rs.getInt(5);
 				unit.saveCycle_Discrete=1000*rs.getInt(6);//离散数据保存间隔,单位毫秒
 				unit.type=1;
@@ -320,14 +300,6 @@ public class EquipmentDriverServerTast {
 					if(driveConfig.getDriverCode().equals(rs.getString(7))){
 						unit.setRtuDriveConfig(driveConfig);
 						unit.setDirverName(driveConfig.getDriverName());
-						break;
-					}
-				}
-				
-				for(Entry<String, Object> entry:acquisitionUnitMap.entrySet()){
-					AcquisitionUnitData acquisitionUnitData=(AcquisitionUnitData)entry.getValue();
-					if(acquisitionUnitData.getAcquisitionUnitCode().equals(rs.getString(8))){
-						unit.setAcquisitionUnitData(acquisitionUnitData);
 						break;
 					}
 				}
@@ -975,7 +947,6 @@ public class EquipmentDriverServerTast {
 		public float lastRunTimeEfficiency;
 		public String lastRunRange;
 		
-		public int runTimeEfficiencySource;
 		public  int acqCycle_Discrete=1000*60*2;//离散数据以及心跳读取周期,单位毫秒
 		public  int saveCycle_Discrete=1000*60*5;//离散数据保存间隔,单位毫秒
 		
@@ -1196,14 +1167,6 @@ public class EquipmentDriverServerTast {
 
 		public void setUnitId(int unitId) {
 			UnitId = unitId;
-		}
-
-		public int getRunTimeEfficiencySource() {
-			return runTimeEfficiencySource;
-		}
-
-		public void setRunTimeEfficiencySource(int runTimeEfficiencySource) {
-			this.runTimeEfficiencySource = runTimeEfficiencySource;
 		}
 
 		public int getAcqCycle_Discrete() {

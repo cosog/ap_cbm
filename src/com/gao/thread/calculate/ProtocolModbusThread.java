@@ -1202,7 +1202,7 @@ public class ProtocolModbusThread extends Thread{
     	        					
     							}
         					}
-    					}else if(clientUnit.unitDataList.get(i).type==2){//55kW增压泵
+    					}else if(clientUnit.unitDataList.get(i).type==3){//55kW增压泵
     						//读取数据
         					long readTime=0;
     						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime())){
@@ -1407,21 +1407,21 @@ public class ProtocolModbusThread extends Thread{
     	        						//入库
         	        					Connection conn=OracleJdbcUtis.getConnection();
                 						Statement stmt=null;
-                						String saveBoosterPumpDiscreteData="insert into tbl_BoosterPump_discrete_hist("
+                						String saveBoosterPumpDiscreteData="insert into tbl_bp_discrete_hist("
                 								+ "wellid,acquisitiontime,"
                 								+ "commstatus,commtimeefficiency,commtime,commrange,"
-                								+ "InletGasPressure,OutletGasPressure,SupplyOilPressure,InletGasPressureDifference,OilBranchCorePressureDifference,"
+                								+ "InletGasPressure,OutletGasPressure,SupplyOilPressure,InletGasPressureDifference,OilBranchCorePressDifference,"
                 								+ "OilFilterPressureDifference,OilBranchTankLiquidLevel,FlammableGasConcentration,SupplyGasPressure,SupplyGasTemperature,"
                 								+ "MainMotorFrequency,MainMotorCurrent,InletGasTemperature,OutletGasTemperature,OilBranchTankTemperature,"
                 								+ "SupplyOilTemperature,LubricatingOilServiceTime,GreaseServiceTime,OilFilterServiceTime,OilBranchCoreServiceTime,"
-                								+ "InletGasFilterServiceTime,MechanicalSealServiceTime,HostTotalRunTime,HostCurrentRunTime "
+                								+ "InletGasFilterServiceTime,MechanicalSealServiceTime,HostTotalRunTime,HostCurrentRunTime) "
                 								+ "select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
                 								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
                 								+ InletGasPressure+","+OutletGasPressure+","+SupplyOilPressure+","+InletGasPressureDifference+","+OilBranchCorePressureDifference+","
                 								+ OilFilterPressureDifference+","+OilBranchTankLiquidLevel+","+FlammableGasConcentration+","+SupplyGasPressure+","+SupplyGasTemperature+","
                 								+ MainMotorFrequency+","+MainMotorCurrent+","+InletGasTemperature+","+OutletGasTemperature+","+OilBranchTankTemperature+","
                 								+ SupplyOilTemperature+","+LubricatingOilServiceTime+","+GreaseServiceTime+","+OilFilterServiceTime+","+OilBranchCoreServiceTime+","
-                								+ InletGasFilterServiceTime+","+MechanicalSealServiceTime+","+HostTotalRunTime
+                								+ InletGasFilterServiceTime+","+MechanicalSealServiceTime+","+HostTotalRunTime+","+HostCurrentRunTime
                 								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"'";
                 						try {
             								stmt = conn.createStatement();

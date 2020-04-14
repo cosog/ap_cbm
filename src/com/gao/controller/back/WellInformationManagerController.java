@@ -99,7 +99,7 @@ public class WellInformationManagerController extends BaseController {
 		//wellInformationName = new String(wellInformationName.getBytes("iso-8859-1"), "utf-8");
 //		String orgId=this.findCurrentUserOrgIdInfo("");
 		wellInformationName = ParamUtils.getParameter(request, "wellInformationName");
-		liftingType=ParamUtils.getParameter(request, "liftingType");
+		String unitType=ParamUtils.getParameter(request, "unitType");
 		orgId=ParamUtils.getParameter(request, "orgId");
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {
@@ -116,7 +116,7 @@ public class WellInformationManagerController extends BaseController {
 		map.put(PagingConstants.PAGE_SIZE, pageSize);
 		map.put(PagingConstants.OFFSET, offset);
 		map.put("wellInformationName", wellInformationName);
-		map.put("liftingType", liftingType);
+		map.put("unitType", unitType);
 		map.put("orgCode", orgCode);
 		map.put("resCode", resCode);
 		map.put("orgId", orgId);
@@ -141,7 +141,8 @@ public class WellInformationManagerController extends BaseController {
 		int offset = (intPage - 1) * pageSize + 1;
 		//wellInformationName = new String(wellInformationName.getBytes("iso-8859-1"), "utf-8");
 //		String orgId=this.findCurrentUserOrgIdInfo("");
-		String jh = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "jh"),"utf-8");
+		wellInformationName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "wellName"),"utf-8");
+		String unitType=ParamUtils.getParameter(request, "unitType");
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");
 		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
@@ -156,14 +157,11 @@ public class WellInformationManagerController extends BaseController {
 			}
 		}
 		
-		orgCode = ParamUtils.getParameter(request, "orgCode");
-		resCode = ParamUtils.getParameter(request, "resCode");
 		map.put(PagingConstants.PAGE_NO, intPage);
 		map.put(PagingConstants.PAGE_SIZE, pageSize);
 		map.put(PagingConstants.OFFSET, offset);
 		map.put("wellInformationName", wellInformationName);
-		map.put("orgCode", orgCode);
-		map.put("resCode", resCode);
+		map.put("unitType", unitType);
 		map.put("orgId", orgId);
 		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
 		this.pager = new Page("pagerForm", request);// 新疆分页Page 工具类
@@ -370,8 +368,8 @@ public class WellInformationManagerController extends BaseController {
 		pw.flush();
 		pw.close();
 		
-//		EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
-//		beeTechDriverServerTast.updateWellConfif(wellHandsontableChangedData);
+		EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
+		beeTechDriverServerTast.updateWellConfig(wellHandsontableChangedData);
 		
 		return null;
 	}

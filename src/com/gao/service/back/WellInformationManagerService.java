@@ -332,23 +332,22 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		}
 		String wellInformationName = (String) map.get("wellInformationName");
-		String liftingType = (String) map.get("liftingType");
+		String unitType = (String) map.get("unitType");
 		String orgId = (String) map.get("orgId");
 		String WellInformation_Str = "";
-		String liftingType_Str = "";
+		String unitType_Str = "";
 		if (StringManagerUtils.isNotNull(wellInformationName)) {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
-		if (StringManagerUtils.isNotNull(liftingType)) {
-			liftingType_Str = " and t.liftingtype like '%" + liftingType.substring(0, 1)+ "%'";
+		if (StringManagerUtils.isNotNull(unitType)) {
+			unitType_Str = " and t.UnitType = " + unitType+ "";
 		}
-		String sql = "select t.id,t.orgname,t.resname,t.wellname,t.liftingtype,t.liftingtypename,"
-				+ " t.drivercode,t.acquisitionunit,t.driveraddr,t.driverid,t.acqcycle_diagram,t.acqcycle_discrete,t.savecycle_discrete,"
-				+ " t.runtimeefficiencysource,t.videourl,t.sortnum,"
-				+ " t.acqCycleSetStatus_diagram,t.acqCycleSetStatus_discrete "
+		String sql = "select t.id,t.orgname,t.wellname,t.unitType,t.unitTypeName,"
+				+ " t.drivercode,t.driveraddr,t.driverid,t.acqcycle_diagram,t.acqcycle_discrete,t.savecycle_discrete,"
+				+ " t.videourl,t.sortnum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str
-				+ liftingType_Str
+				+ unitType_Str
 				+ "  and t.orgid in ("+orgId+" )  "
 			    + " order by t.sortnum,t.wellname ";
 		String unitSql="select t.unit_name from tbl_acq_group_conf t order by t.id";
@@ -381,7 +380,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
 			String driverName="";
-			String driverCode=obj[6]+"";
+			String driverCode=obj[5]+"";
 			for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
 				RTUDriveConfig driveConfig=(RTUDriveConfig)entry.getValue();
 				if(driverCode.equals(driveConfig.getDriverCode())){
@@ -391,23 +390,18 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			}
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
-			result_json.append("\"resName\":\""+obj[2]+"\",");
-			result_json.append("\"wellName\":\""+obj[3]+"\",");
-			result_json.append("\"liftingType\":\""+obj[4]+"\",");
-			result_json.append("\"liftingTypeName\":\""+obj[5]+"\",");
-			result_json.append("\"driverCode\":\""+obj[6]+"\",");
+			result_json.append("\"wellName\":\""+obj[2]+"\",");
+			result_json.append("\"unitType\":\""+obj[3]+"\",");
+			result_json.append("\"unitTypeName\":\""+obj[4]+"\",");
+			result_json.append("\"driverCode\":\""+obj[5]+"\",");
 			result_json.append("\"driverName\":\""+driverName+"\",");
-			result_json.append("\"acquisitionUnit\":\""+obj[7]+"\",");
-			result_json.append("\"driverAddr\":\""+obj[8]+"\",");
-			result_json.append("\"driverId\":\""+obj[9]+"\",");
-			result_json.append("\"acqcycle_diagram\":\""+obj[10]+"\",");
-			result_json.append("\"acqcycle_discrete\":\""+obj[11]+"\",");
-			result_json.append("\"savecycle_discrete\":\""+obj[12]+"\",");
-			result_json.append("\"runtimeEfficiencySource\":\""+obj[13]+"\",");
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\",");
-			result_json.append("\"acqCycleSetStatus_diagram\":\""+obj[16]+"\",");
-			result_json.append("\"acqCycleSetStatus_discrete\":\""+obj[17]+"\"},");
+			result_json.append("\"driverAddr\":\""+obj[6]+"\",");
+			result_json.append("\"driverId\":\""+obj[7]+"\",");
+			result_json.append("\"acqcycle_diagram\":\""+obj[8]+"\",");
+			result_json.append("\"acqcycle_discrete\":\""+obj[9]+"\",");
+			result_json.append("\"savecycle_discrete\":\""+obj[10]+"\",");
+			result_json.append("\"videoUrl\":\""+obj[11]+"\",");
+			result_json.append("\"sortNum\":\""+obj[12]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
@@ -417,12 +411,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}
 		result_json.append("]}");
 		json=result_json.toString().replaceAll("null", "");
-//		try {
-//			String columns=service.showTableHeadersColumns("wellInfo");
-//			json=this.findPageBySqlEntity(recordCount,sql, columns, pager);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 		return json;
 	}
 	
@@ -433,33 +421,30 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			EquipmentDriverServerTast.initDriverConfig();
 		}
 		String wellInformationName = (String) map.get("wellInformationName");
-		String liftingType = (String) map.get("liftingType");
-		String orgCode = (String) map.get("orgCode");
-		String resCode = (String) map.get("resCode");
+		String unitType = (String) map.get("unitType");
 		String orgId = (String) map.get("orgId");
 		String WellInformation_Str = "";
-		String liftingType_Str = "";
+		String unitType_Str = "";
 		if (StringManagerUtils.isNotNull(wellInformationName)) {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
-		if (StringManagerUtils.isNotNull(liftingType)) {
-			liftingType_Str = " and t.liftingtype like '%" + liftingType.substring(0, 1)+ "%'";
+		if (StringManagerUtils.isNotNull(unitType)) {
+			unitType_Str = " and t.unitType = " + unitType+ "";
 		}
-		String sql = "select t.id,t.orgname,t.resname,t.wellname,t.liftingtype,t.liftingtypename,"
-				+ " t.drivercode,t.acquisitionunit,t.driveraddr,t.driverid,t.acqcycle_diagram,t.acqcycle_discrete,t.savecycle_discrete,"
-				+ " t.runtimeefficiencysource,t.videourl,t.sortnum "
+		String sql = "select t.id,t.orgname,t.wellname,t.unitType,t.unitTypeName,"
+				+ " t.drivercode,t.driveraddr,t.driverid,t.acqcycle_diagram,t.acqcycle_discrete,t.savecycle_discrete,"
+				+ " t.videourl,t.sortnum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str
-				+ liftingType_Str
+				+ unitType_Str
 				+ "  and t.orgid in ("+orgId+" )  "
 			    + " order by t.sortnum,t.wellname ";
-		String unitSql="select t.unit_name from tbl_acq_group_conf t order by t.id";
 		List<?> list = this.findCallSql(sql);
 		result_json.append("[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
 			String driverName="";
-			String driverCode=obj[6]+"";
+			String driverCode=obj[5]+"";
 			for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
 				RTUDriveConfig driveConfig=(RTUDriveConfig)entry.getValue();
 				if(driverCode.equals(driveConfig.getDriverCode())){
@@ -469,21 +454,18 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			}
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
-			result_json.append("\"resName\":\""+obj[2]+"\",");
-			result_json.append("\"wellName\":\""+obj[3]+"\",");
-			result_json.append("\"liftingType\":\""+obj[4]+"\",");
-			result_json.append("\"liftingTypeName\":\""+obj[5]+"\",");
-			result_json.append("\"driverCode\":\""+obj[6]+"\",");
+			result_json.append("\"wellName\":\""+obj[2]+"\",");
+			result_json.append("\"unitType\":\""+obj[3]+"\",");
+			result_json.append("\"unitTypeName\":\""+obj[4]+"\",");
+			result_json.append("\"driverCode\":\""+obj[5]+"\",");
 			result_json.append("\"driverName\":\""+driverName+"\",");
-			result_json.append("\"acquisitionUnit\":\""+obj[7]+"\",");
-			result_json.append("\"driverAddr\":\""+obj[8]+"\",");
-			result_json.append("\"driverId\":\""+obj[9]+"\",");
-			result_json.append("\"acqcycle_diagram\":\""+obj[10]+"\",");
-			result_json.append("\"acqcycle_discrete\":\""+obj[11]+"\",");
-			result_json.append("\"savecycle_discrete\":\""+obj[12]+"\",");
-			result_json.append("\"runtimeEfficiencySource\":\""+obj[13]+"\",");
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
+			result_json.append("\"driverAddr\":\""+obj[6]+"\",");
+			result_json.append("\"driverId\":\""+obj[7]+"\",");
+			result_json.append("\"acqcycle_diagram\":\""+obj[8]+"\",");
+			result_json.append("\"acqcycle_discrete\":\""+obj[9]+"\",");
+			result_json.append("\"savecycle_discrete\":\""+obj[10]+"\",");
+			result_json.append("\"videoUrl\":\""+obj[11]+"\",");
+			result_json.append("\"sortNum\":\""+obj[12]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);

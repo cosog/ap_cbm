@@ -39,7 +39,7 @@ public class WellHandsontableChangedData {
 
 	    private String wellName="";
 
-	    private String liftingTypeName="抽油机";
+	    private String unitTypeName="煤层气井";
 
 	    private String driverName="";
 
@@ -93,12 +93,12 @@ public class WellHandsontableChangedData {
 			this.wellName = wellName;
 		}
 
-		public String getLiftingTypeName() {
-			return liftingTypeName;
+		public String getUnitTypeName() {
+			return unitTypeName;
 		}
 
-		public void setLiftingTypeName(String liftingTypeName) {
-			this.liftingTypeName = liftingTypeName;
+		public void setUnitTypeName(String unitTypeName) {
+			this.unitTypeName = unitTypeName;
 		}
 
 		public String getDriverName() {

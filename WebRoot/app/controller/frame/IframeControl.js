@@ -170,7 +170,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		&& module_Code != "balance_BalanceMonitor"
 		&& module_Code != "balance_BalanceTotal"
 		&& module_Code != "balance_BalanceCycle"
-		&& module_Code != "FSDiagramAnalysis_FSDiagramAnalysisSingleDetails"
+		&& module_Code != "RealTimeEvaluation_Well"
 		&& module_Code != "graphicalQuery_SurfaceCardQuery"
 		&& module_Code != "diagnosisTotal_DiagnosisTotalData"
 		&& module_Code != "calculate_calculateManager"
@@ -313,16 +313,9 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		CreateAndLoadWellInfoTable(true);
 	}else if(module_Code == "blockdata_Ids"){
 		CreateAndLoadReservoirPropertyTable(true);
-	}else if(module_Code == "FSDiagramAnalysis_FSDiagramAnalysisSingleDetails"){
-		var tabPanel = Ext.getCmp("ProductionWellRealtimeAnalisisPanel");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="RPCSingleDetailsInfoPanel_Id"){
-			Ext.getCmp('FSDiagramAnalysisSingleDetailsWellCom_Id').setValue("");
-			loadFSDiagramAnalysisSingleStatData();
-		}else if(activeId=="PCPSingleDetailsInfoPanel_Id"){
-			Ext.getCmp('ScrewPumpRealtimeAnalysisWellCom_Id').setValue("");
-			loadPCPRPMAnalysisSingleStatData();
-		}
+	}else if(module_Code == "RealTimeEvaluation_Well"){
+		Ext.getCmp('CBMWellRealtimeAnalysisWellCom_Id').setValue("");
+		loadCBMWellSingleStatData();
 	}else if(module_Code=="graphicalQuery_SurfaceCardQuery"){
 		loadSurfaceCardList(1);
 	}else if(module_Code == "diagnosisTotal_DiagnosisTotalData"){

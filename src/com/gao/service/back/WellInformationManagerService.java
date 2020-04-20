@@ -30,10 +30,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		StringBuffer sqlCuswhere = new StringBuffer();
 		String sql = " select  t.wellName as wellName,t.wellName as dm from  tbl_wellinformation t  ,tbl_org  g where 1=1 and  t.orgId=g.org_id  and g.org_id in ("
 				+ orgId + ")";
-		if (wellType.trim().equalsIgnoreCase("200")) {
-			sql += " and t.liftingtype like '2%'";
-		}else if (wellType.trim().equalsIgnoreCase("400")) {
-			sql += " and t.liftingtype like '4%'";
+		if (StringManagerUtils.isNotNull(wellType)) {
+			sql += " and t.unittype ="+wellType;
 		}
 		
 		if (StringManagerUtils.isNotNull(wellName)) {

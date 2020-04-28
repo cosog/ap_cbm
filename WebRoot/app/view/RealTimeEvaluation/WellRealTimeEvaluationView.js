@@ -82,7 +82,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                         Ext.getCmp("CBMWellRealtimeAnalysisAllBtn_Id").show();
                     	Ext.getCmp(statPanelId).collapse();
                     }
-                    Ext.getCmp('CBMWellRTAnalysisWellList_Id').getStore().loadPage(1);
+                    Ext.getCmp('CBMWellAnalysisSingleDetails_Id').getStore().loadPage(1);
                 }
             }
         });
@@ -103,6 +103,21 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                             value: '',
                             hidden: true
                         }, {
+                            id: 'CBMWellRealtimeTableColumnStr_Id',//选择查看曲线的数据项代码
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        },{
+                            id: 'CBMWellAnalysisCurveItem_Id',//选择查看曲线的数据项名称
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        }, {
+                            id: 'CBMWellAnalysisCurveItemCode_Id',//选择查看曲线的数据项代码
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        }, {
                             xtype: 'datefield',
                             anchor: '100%',
                             hidden: true,
@@ -114,7 +129,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                             value: '',
                             listeners: {
                                 select: function (combo, record, index) {
-                                	Ext.getCmp('CBMWellRTAnalysisWellList_Id').getStore().loadPage(1);
+                                	Ext.getCmp('CBMWellAnalysisSingleDetails_Id').getStore().loadPage(1);
                                 }
                             }
                         }, {
@@ -129,7 +144,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                             value: new Date(),
                             listeners: {
                                 select: function (combo, record, index) {
-                                	Ext.getCmp('CBMWellRTAnalysisWellList_Id').getStore().loadPage(1);
+                                	Ext.getCmp('CBMWellAnalysisSingleDetails_Id').getStore().loadPage(1);
                                 }
                             }
                         }, {
@@ -155,10 +170,10 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                 Ext.getCmp("CBMWellRealtimeAnalysisAllBtn_Id").show();
                             	Ext.getCmp(statPanelId).collapse();
                                 
-                                var wellName  = Ext.getCmp("CBMWellRTAnalysisWellList_Id").getSelectionModel().getSelection()[0].data.wellName;
+                                var wellName  = Ext.getCmp("CBMWellAnalysisSingleDetails_Id").getSelectionModel().getSelection()[0].data.wellName;
                                 Ext.getCmp("CBMWellRealtimeAnalysisWellCom_Id").setValue(wellName);
                                 Ext.getCmp("CBMWellRealtimeAnalysisWellCom_Id").setRawValue(wellName);
-                                Ext.getCmp('CBMWellRTAnalysisWellList_Id').getStore().loadPage(1);
+                                Ext.getCmp('CBMWellAnalysisSingleDetails_Id').getStore().loadPage(1);
                             }
                       }, {
                             xtype: 'button',
@@ -177,7 +192,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                 
                                 Ext.getCmp("CBMWellRealtimeAnalysisWellCom_Id").setValue('');
                                 Ext.getCmp("CBMWellRealtimeAnalysisWellCom_Id").setRawValue('');
-                                Ext.getCmp('CBMWellRTAnalysisWellList_Id').getStore().loadPage(1);
+                                Ext.getCmp('CBMWellAnalysisSingleDetails_Id').getStore().loadPage(1);
                             }
                       }, {
                             id: 'CBMWellRealtimeAnalysisCount_Id',
@@ -397,6 +412,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                 padding: 0,
                                 autoScroll: true,
                                 scrollable: true,
+                                hidden:true,
                                 layout: {
                                     type: 'hbox',
                                     pack: 'start',
@@ -455,7 +471,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                         xtype: 'tabpanel',
                                         id: 'CBMWellRealtimeAnalysisAndAcqDataTabpanel_Id',
                                         flex: 1,
-                                        activeTab: 0,
+                                        activeTab: 1,
                                         header: false,
                                         collapsible: true,
                                         split: true,
@@ -469,6 +485,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                                 border: false,
                                                 layout: 'fit',
                                                 autoScroll: true,
+                                                hidden:true,
                                                 scrollable: true
                                             }, {
                                                 title: '采集',
@@ -484,16 +501,6 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                                 hideMode:'offsets',
                                                 id:'CBMWellRTAnalysisTableControlDataPanel_Id',
                                                 items: [{
-                                                	region: 'north',
-                                                	layout: 'fit',
-                                                	height: '40%',
-                                                	id:'CBMWellRTAnalysisControlVideoPanel_Id',
-                                                	collapsible: true, // 是否折叠
-                                                	header: false,
-                                                    split: true, // 竖折叠条
-                                                    autoRender:true,
-                                                	html: ''
-                                                },{
                                                 	region: 'center',
                                                     height: '60%',
                                                     id:'CBMWellRTAnalysisControlDataPanel_Id',
@@ -507,44 +514,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                                 }]
                                 			}],
                                 			listeners: {
-                                            	tabchange: function (tabPanel, newCard, oldCard,obj) {
-                                            		var selectedLength=Ext.getCmp("CBMWellRTAnalysisWellList_Id").getSelectionModel().getSelection().length;
-                                            		if(newCard.id=="CBMWellRTAnalysisTableControlDataPanel_Id"){
-                                            			if(selectedLength>0){
-                                            				var videoUrl=Ext.getCmp("CBMWellRTAnalysisWellList_Id").getSelectionModel().getSelection()[0].data.videourl;
-                                            				if(videoUrl!=undefined&&videoUrl!=""){
-                                            					var videoUrl_rtmp=""; 
-                                            	            	var videoUrl_hls=""; 
-                                            	            	if(videoUrl.indexOf("http")>=0){//hls模式
-                                            	            		videoUrl_hls=videoUrl;
-                                            	            		videoUrl_rtmp=videoUrl.replace("https","http").replace("http://hls","rtmp://rtmp").replace(".m3u8","");
-                                            	            	}else{
-                                            	            		videoUrl_hls=videoUrl.replace("rtmp://rtmp","http://hls")+".m3u8";
-                                            	            		videoUrl_rtmp=videoUrl;
-                                            	            	}
-                                            	        		
-                                            	        		
-                                            	            	Ext.getCmp("CBMWellRTAnalysisControlVideoPanel_Id").expand(true);
-                                            	            	var videohtml='<video id="CBMWellRTAnalysisControlVideoDiv_Id" style="width:100%;height:100%;"  poster="" controls playsInline webkit-playsinline autoplay><source src="'+videoUrl_rtmp+'" type="rtmp/flv" /><source src="'+videoUrl_hls+'" type="application/x-mpegURL" /></video>';   
-                                            	            	Ext.getCmp("CBMWellRTAnalysisControlVideoPanel_Id").update(videohtml);
-                                            	            	if(document.getElementById("CBMWellRTAnalysisControlVideoDiv_Id")!=null){
-                                            	            		var player = new EZUIPlayer('CBMWellRTAnalysisControlVideoDiv_Id');
-                                            	            	}
-                                            				}else{
-                                            	            	Ext.getCmp("CBMWellRTAnalysisControlVideoPanel_Id").update('');
-                                            	            	Ext.getCmp("CBMWellRTAnalysisControlVideoPanel_Id").collapse();
-                                            	            }
-                                            			}else{
-                                            				Ext.getCmp("CBMWellRTAnalysisControlVideoPanel_Id").removeAll();
-                                            				if($("#CBMWellRTAnalysisControlVideoDiv_Id")!=null){
-                                                        		$("#CBMWellRTAnalysisControlVideoDiv_Id").html('');
-                                                        	}
-                                            			}
-                                            			
-                                            		}else{
-                                            			Ext.getCmp("CBMWellRTAnalysisControlVideoPanel_Id").update('');
-                                            		}
-                                                }
+                                            	tabchange: function (tabPanel, newCard, oldCard,obj) {}
                                             }
                                     }
                                 ]
@@ -565,6 +535,56 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
     }
 });
 
+function createCBMWellRealtimeTableColumn(columnInfo) {
+    var myArr = columnInfo;
+
+    var myColumns = "[";
+    for (var i = 0; i < myArr.length; i++) {
+        var attr = myArr[i];
+        var width_ = "";
+        var lock_ = "";
+        var hidden_ = "";
+        if (attr.hidden == true) {
+            hidden_ = ",hidden:true";
+        }
+        if (isNotVal(attr.lock)) {
+            //lock_ = ",locked:" + attr.lock;
+        }
+        if (isNotVal(attr.width)) {
+            width_ = ",width:" + attr.width;
+        }
+        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' ";
+        if (attr.dataIndex.toUpperCase() == 'workingConditionName'.toUpperCase()) {
+            myColumns += ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceColor(value,o,p,e);}";
+        } else if (attr.dataIndex.toUpperCase()=='workingConditionName_Elec'.toUpperCase()||attr.dataIndex.toUpperCase()=='workingConditionName_E'.toUpperCase()) {
+            myColumns += ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceElecWorkingConditionColor(value,o,p,e);}";
+        } else if (attr.dataIndex.toUpperCase()=='commStatusName'.toUpperCase()) {
+            myColumns += ",width:" + attr.width + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceCommStatusColor(value,o,p,e);}";
+        } else if (attr.dataIndex.toUpperCase()=='runStatusName'.toUpperCase()) {
+            myColumns += ",width:" + attr.width + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceRunStatusColor(value,o,p,e);}";
+        } else if (attr.dataIndex.toUpperCase()=='iDegreeBalanceName'.toUpperCase()) {
+            myColumns += ",width:" + attr.width + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceBalanceStatusColor(value,o,p,e);}";
+        } else if (attr.dataIndex.toUpperCase()=='wattDegreeBalanceName'.toUpperCase()) {
+            myColumns += ",width:" + attr.width + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return advicePowerBalanceStatusColor(value,o,p,e);}";
+        } else if (attr.dataIndex == 'id') {
+            myColumns += ",width:" + attr.width + ",xtype: 'rownumberer',sortable : false,locked:true";
+        } else if (attr.dataIndex.toUpperCase()=='wellName'.toUpperCase()) {
+            myColumns += width_ + ",sortable : false,locked:true,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
+        } else if (attr.dataIndex.toUpperCase() == 'acquisitionTime'.toUpperCase()) {
+            myColumns += width_ + ",sortable : false,locked:false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceTimeFormat(value,o,p,e);}";
+        } else {
+            myColumns += hidden_ + lock_ + width_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
+            //        	myColumns += hidden_ + lock_ + width_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "'";
+        }
+        myColumns += "}";
+        if (i < myArr.length - 1) {
+            myColumns += ",";
+        }
+    }
+    myColumns += "]";
+    return myColumns;
+};
+
 function getCBMWellSingleStatType() {
 	var type=1;
 	panelId="CBMWellSingleRunStatusDataListPanel_Id";
@@ -574,28 +594,28 @@ function getCBMWellSingleStatType() {
 	exportExcelTitle='煤层气井实时评价-运行状态';
 	var activeTabId= Ext.getCmp(Ext.getCmp("CBMWellSingleDetailsStatTabpanel_Id").getActiveTab().id).getActiveTab().id;
 	if(activeTabId=="CBMWellSingleRunStatusStatPanel_Id"){//运行状态
-		type=5;
+		type=1;
 		panelId="CBMWellSingleRunStatusDataListPanel_Id";
 		piePanelId="CBMWellSingleRunStatusStatGraphPanel_Id";
 		pieDivId="CBMWellSingleRunStatusStatGraphPieDiv_Id";
 		pieChartTitle="运行状态";
 		exportExcelTitle='煤层气井实时评价-运行状态';
 	}else if(activeTabId=="CBMWellSingleRunTimeEffStatPanel_Id"){//运行时率
-		type=6;
+		type=2;
 		panelId="CBMWellSingleRunTimeEffDataListPanel_Id";
 		piePanelId="CBMWellSingleRunTimeEffStatGraphPanel_Id";
 		pieDivId="CBMWellSingleRunTimeEffStatGraphPieDiv_Id";
 		pieChartTitle="运行时率";
 		exportExcelTitle='煤层气井实时评价-运行时率';
 	}else if(activeTabId=="CBMWellSingleCommStatusStatPanel_Id"){//通信状态
-		type=11;
+		type=3;
 		panelId="CBMWellSingleCommStatusDataListPanel_Id";
 		piePanelId="CBMWellSingleCommStatusStatGraphPanel_Id";
 		pieDivId="CBMWellSingleCommStatusStatGraphPieDiv_Id";
 		pieChartTitle="通信状态";
 		exportExcelTitle='煤层气井实时评价-通信状态';
 	}else if(activeTabId=="CBMWellSingleCommEffStatPanel_Id"){//在线时率
-		type=12;
+		type=4;
 		panelId="CBMWellSingleCommEffDataListPanel_Id";
 		piePanelId="CBMWellSingleCommEffStatGraphPanel_Id";
 		pieDivId="CBMWellSingleCommEffStatGraphPieDiv_Id";
@@ -667,7 +687,7 @@ function ShowCBMWellRTStatPieChat(title,divid, name, data) {
 						}
 						Ext.getCmp("CBMWellRealtimeAnalysisWellCom_Id").setValue("");
 	            		Ext.getCmp("CBMWellRealtimeAnalysisWellCom_Id").setRawValue("");
-	            		var gridPanel = Ext.getCmp("CBMWellRTAnalysisWellList_Id");
+	            		var gridPanel = Ext.getCmp("CBMWellAnalysisSingleDetails_Id");
 	                    if (isNotVal(gridPanel)) {
 	                    	gridPanel.getSelectionModel().clearSelections();
 	                    	gridPanel.getStore().loadPage(1);
@@ -711,7 +731,7 @@ function loadCBMWellSingleStatData() {
     }
 	Ext.getCmp("CBMWellSingleDetailsSelectedStatValue_Id").setValue("");
 	
-	var gridPanel=Ext.getCmp("CBMWellRTAnalysisWellList_Id");
+	var gridPanel=Ext.getCmp("CBMWellAnalysisSingleDetails_Id");
 	if(isNotVal(gridPanel)){
 		gridPanel.destroy();
 	}
@@ -719,7 +739,7 @@ function loadCBMWellSingleStatData() {
 }
 
 function exportCBMWellRTAnalisiDataExcel() {
-	var gridId = "CBMWellRTAnalysisWellList_Id";
+	var gridId = "CBMWellAnalysisSingleDetails_Id";
     var url = context + '/diagnosisAnalysisOnlyController/exportProductionWellRTAnalysisDataExcel';
     var fileName = getCBMWellSingleStatType().exportExcelTitle;
     var title =  getCBMWellSingleStatType().exportExcelTitle;
@@ -738,7 +758,7 @@ function exportCBMWellRTAnalisiDataExcel() {
     var unlockedheads = "";
     var lockedfields = "";
     var unlockedfields = "";
-    var columns_ = Ext.JSON.decode(Ext.getCmp("DiagnosisAnalysisColumnStr_Id").getValue());
+    var columns_ = Ext.JSON.decode(Ext.getCmp("CBMWellRealtimeTableColumnStr_Id").getValue());
     
     Ext.Array.each(columns_, function (name, index, countriesItSelf) {
         var column = columns_[index];
@@ -776,512 +796,211 @@ function exportCBMWellRTAnalisiDataExcel() {
     openExcelWindow(url + '?flag=true' + param);
 };
 
+WellHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, divId) {
+    var tickInterval = 1;
+    var data = get_rawData.totalRoot;
+    tickInterval = Math.floor(data.length / 10) + 1;
+    var upline = 0,
+        downline = 0;
+    var uplineName = '',
+        downlineName = '';
+    var limitlinewidth = 0;
+    if (itemCode == 'currenta' || itemCode == 'currentb' || itemCode == 'currentc' || itemCode == 'voltagea' || itemCode == 'voltageb' || itemCode == 'voltagec') {
+        upline = parseFloat(get_rawData.uplimit);
+        downline = parseFloat(get_rawData.downlimit);
+        uplineName = '上限:' + upline;
+        downlineName = '下限:' + downline;
+        limitlinewidth = 3;
+    } else {
+        upline = 0;
+        downline = 0;
+        uplineName = '';
+        downlineName = '';
+        limitlinewidth = 0;
+    }
 
-initCBMWellRTCurveChartFn = function (get_rawData, divId) {
-	var items=get_rawData.totalRoot;
-	var RPM=[];
-	var Ia=[];
-	var Ib=[];
-	var Ic=[];
-	var Va=[];
-	var Vb=[];
-	var Vc=[];
-	
-	var IaMax,IbMax,IcMax,VaMax,VbMax,VcMax;
-	var IaMin,IbMin,IcMin,VaMin,VbMin,VcMin;
-	IaMax=IbMax=IcMax=VaMax=VbMax=VcMax=2000;
-	IaMin=IbMin=IcMin=VaMin=VbMin=VcMin=0;
-	for(var i=0;i<items.length;i++){
-		if(i==0){
-			IaMax=IaMin=items[i].ia;
-			IbMax=IbMin=items[i].ib;
-			IcMax=IcMin=items[i].ic;
-			VaMax=VaMin=items[i].va;
-			VbMax=VbMin=items[i].vb;
-			VcMax=VcMin=items[i].vc;
-		}else{
-			if(items[i].ia>IaMax){
-				IaMax=items[i].ia;
-			}
-			if(items[i].ia<IaMin){
-				IaMin=items[i].ia;
-			}
-			
-			if(items[i].ib>IbMax){
-				IbMax=items[i].ib;
-			}
-			if(items[i].ib<IbMin){
-				IbMin=items[i].ib;
-			}
-			
-			if(items[i].ic>IcMax){
-				IcMax=items[i].ic;
-			}
-			if(items[i].ic<IcMin){
-				IcMin=items[i].ic;
-			}
-			
-			if(items[i].va>VaMax){
-				VaMax=items[i].va;
-			}
-			if(items[i].va<VaMin){
-				VaMin=items[i].va;
-			}
-			
-			if(items[i].vb>VbMax){
-				VbMax=items[i].vb;
-			}
-			if(items[i].vb<VbMin){
-				VbMin=items[i].vb;
-			}
-			
-			if(items[i].vc>VcMax){
-				VcMax=items[i].vc;
-			}
-			if(items[i].vc<VcMin){
-				VcMin=items[i].vc;
-			}
-		}
-		RPM.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].rpm)
-        ]);
-		Ia.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].ia)
-        ]);
-		Ib.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].ib)
-        ]);
-		Ic.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].ic)
-        ]);
-		Va.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].va)
-        ]);
-		Vb.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].vb)
-        ]);
-		Vc.push([
-            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-            parseFloat(items[i].vc)
-        ]);
-	}
-	
-	Highcharts.setOptions({
+    var catagories = "[";
+    var title = get_rawData.wellName + "井" + itemName.split("(")[0] + "曲线";
+    for (var i = 0; i < data.length; i++) {
+        catagories += "\"" + data[i].acquisitionTime + "\"";
+        if (i < data.length - 1) {
+            catagories += ",";
+        }
+    }
+    catagories += "]";
+    var legendName = [itemName];
+    var series = "[";
+    for (var i = 0; i < legendName.length; i++) {
+        series += "{\"name\":\"" + legendName[i] + "\",";
+        series += "\"data\":[";
+        for (var j = 0; j < data.length; j++) {
+            var year = parseInt(data[j].acquisitionTime.split(" ")[0].split("-")[0]);
+            var month = parseInt(data[j].acquisitionTime.split(" ")[0].split("-")[1]);
+            var day = parseInt(data[j].acquisitionTime.split(" ")[0].split("-")[2]);
+            var hour = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[0]);
+            var minute = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[1]);
+            var second = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[2]);
+//            series += "[" + Date.UTC(year, month - 1, day, hour, minute, second) + "," + data[j].value + "]";
+            series += "[" + Date.parse(data[j].acquisitionTime.replace(/-/g, '/')) + "," + data[j].value + "]";
+            if (j != data.length - 1) {
+                series += ",";
+            }
+        }
+        series += "]}";
+        if (i != legendName.length - 1) {
+            series += ",";
+        }
+    }
+    series += "]";
+    var cat = Ext.JSON.decode(catagories);
+    var ser = Ext.JSON.decode(series);
+    var color = ['#800000', // 红
+       '#008C00', // 绿
+       '#000000', // 黑
+       '#0000FF', // 蓝
+       '#F4BD82', // 黄
+       '#FF00FF' // 紫
+     ];
+
+    initWellHistoryDataCurveChartFn(cat, ser, tickInterval, divId, title, "[" + get_rawData.startDate + "~" + get_rawData.endDate + "]", "时间", itemName, color, upline, downline, uplineName, downlineName, limitlinewidth);
+
+    return false;
+};
+
+function initWellHistoryDataCurveChartFn(catagories, series, tickInterval, divId, title, subtitle, xtitle, ytitle, color, upline, downline, uplineName, downlineName, limitlinewidth) {
+    var max = null;
+    var min = null;
+    if (upline != 0) {
+        max = upline + 10;
+    }
+    if (downline != 0) {
+        min = downline - 10;
+    }
+    Highcharts.setOptions({
         global: {
             useUTC: false
         }
     });
-	mychart = new Highcharts.StockChart({
-		chart: {
-            renderTo : divId
-        }, 
-        exporting:{    
-            enabled:true,    
-            filename:'class-booking-chart',    
-            url:context + '/exportHighcharsPicController/export'
-       },
-        legend: {
-        	enabled:false,
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0
-        },
-		rangeSelector: {
-            selected: 1
-        },
-        title: {
-            text: get_rawData.wellName+'井实时曲线'
-        },
-        tooltip:{  
-            // 日期时间格式化  
-            xDateFormat: '%Y-%m-%d %H:%M:%S',
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
-            footerFormat: '</table>',
-//            shared: true,
-            useHTML: true
+
+    mychart = new Highcharts.Chart({
+        chart: {
+            renderTo: divId,
+            type: 'spline',
+            shadow: true,
+            borderWidth: 0,
+            zoomType: 'xy'
         },
         credits: {
             enabled: false
         },
-        plotOptions:{
-        	series:{
-        		dataGrouping:{
-        			groupPixelWidth:0.1
-        		}
-        	}
+        title: {
+            text: title
         },
-        xAxis: {  
-            //tickPixelInterval: 200,//x轴上的间隔  
-        	title:{
-        		text:'时间'
-        	},
-            type: 'datetime', //定义x轴上日期的显示格式  
-            labels: {  
-            formatter: function() {  
-                var vDate=new Date(this.value);
-                //return vDate.getFullYear()+"-"+(vDate.getMonth()+1)+"-"+vDate.getDate()+" "+vDate.getDay()+":"+vDate.getMinutes()+":"+vDate.getSeconds();  
-                return vDate.getFullYear()+"-"+(vDate.getMonth()+1)+"-"+vDate.getDate(); 
-                },  
-            align: 'center'  
+        subtitle: {
+            text: subtitle
+        },
+        colors: color,
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: xtitle
+            },
+            labels: {
+                formatter: function () {
+                    return Highcharts.dateFormat("%Y-%m-%d", this.value);
+                },
+                rotation: 0, //倾斜度，防止数量过多显示不全  
+                step: 2
             }
         },
         yAxis: [{
-        	opposite:false,
-            labels: {
-                align: 'left',
-                x: 0
-            },
+            lineWidth: 1,
             title: {
-                text: '转速(r/min)',
+                text: ytitle,
                 style: {
                     color: '#000000',
                     fontWeight: 'bold'
                 }
             },
-            endOnTick: false,
-//            min:0,
-            height: '13%',
-            offset: 0,
-            lineWidth: 1
-        },{
-        	opposite:false,
+            max: max,
+            min: min,
             labels: {
-                align: 'left',
-                x: 0
+                formatter: function () {
+                    return Highcharts.numberFormat(this.value, 2);
+                }
             },
-            title: {
-                text: 'A相电流(A)'
-            },
-            endOnTick: false,
-            max:IaMax>get_rawData.iauplimit?IaMax+10:get_rawData.iauplimit+10,
-            min:IaMin<get_rawData.iadownlimit?(IaMin<5?0:IaMin-5):(get_rawData.iadownlimit<5?0:get_rawData.iadownlimit-5),
-            height: '13%',
-            top: '14.5%',
-            offset: 0,
-            lineWidth: 1,
             plotLines: [{ //一条延伸到整个绘图区的线，标志着轴中一个特定值。
                 color: 'red',
                 dashStyle: 'shortdash', //Dash,Dot,Solid,shortdash,默认Solid
                 label: {
-                    text: '上限:'+get_rawData.iauplimit,
+                    text: uplineName,
                     align: 'right',
                     x: -10
                 },
-                width: 3,
+                width: limitlinewidth,
                 zIndex:10,
-                value: get_rawData.iauplimit //y轴显示位置
-           }, {
+                value: upline //y轴显示位置
+                   }, {
                 color: 'green',
                 dashStyle: 'shortdash',
                 label: {
-                	text: '下限:'+get_rawData.iadownlimit,
+                    text: downlineName,
                     align: 'right',
                     x: -10
                 },
-                width: 3,
+                width: limitlinewidth,
                 zIndex:10,
-                value: get_rawData.iadownlimit //y轴显示位置
-            }]
-        },{
-        	opposite:false,
-            labels: {
-                align: 'left',
-                x: 0
+                value: downline //y轴显示位置
+                   }]
+      }],
+        tooltip: {
+            crosshairs: true, //十字准线
+            style: {
+                color: '#333333',
+                fontSize: '12px',
+                padding: '8px'
             },
-            title: {
-                text: 'B相电流(A)'
-            },
-            endOnTick: false,
-            max:IbMax>get_rawData.ibuplimit?IbMax+10:get_rawData.ibuplimit+10,
-            min:IbMin<get_rawData.ibdownlimit?(IbMin<5?0:IbMin-5):(get_rawData.ibdownlimit<5?0:get_rawData.ibdownlimit-5),
-            height: '13%',
-            top: '29%',
-            offset: 0,
-            lineWidth: 1,
-            plotLines: [{ //一条延伸到整个绘图区的线，标志着轴中一个特定值。
-                color: 'red',
-                dashStyle: 'shortdash', //Dash,Dot,Solid,shortdash,默认Solid
-                label: {
-                    text: '上限:'+get_rawData.ibuplimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.ibuplimit //y轴显示位置
-           }, {
-                color: 'green',
-                dashStyle: 'shortdash',
-                label: {
-                	text: '下限:'+get_rawData.ibdownlimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.ibdownlimit //y轴显示位置
-            }]
-        },{
-        	opposite:false,
-            labels: {
-                align: 'left',
-                x: 0
-            },
-            title: {
-                text: 'C相电流(A)'
-            },
-            endOnTick: false,
-            max:IcMax>get_rawData.icuplimit?IcMax+10:get_rawData.icuplimit+10,
-            min:IcMin<get_rawData.icdownlimit?(IcMin<5?0:IcMin-5):(get_rawData.icdownlimit<5?0:get_rawData.icdownlimit-5),
-            height: '13%',
-            top: '43.5%',
-            offset: 0,
-            lineWidth: 1,
-            plotLines: [{ //一条延伸到整个绘图区的线，标志着轴中一个特定值。
-                color: 'red',
-                dashStyle: 'shortdash', //Dash,Dot,Solid,shortdash,默认Solid
-                label: {
-                    text: '上限:'+get_rawData.icuplimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.icuplimit //y轴显示位置
-           }, {
-                color: 'green',
-                dashStyle: 'shortdash',
-                label: {
-                	text: '下限:'+get_rawData.icdownlimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.icdownlimit //y轴显示位置
-            }]
-        },{
-        	opposite:false,
-            labels: {
-                align: 'left',
-                x: 0
-            },
-            title: {
-                text: 'A相电压(V)'
-            },
-            endOnTick: false,
-            max:VaMax>get_rawData.vauplimit?VaMax+10:get_rawData.vauplimit+10,
-            min:VaMin<get_rawData.vadownlimit?(VaMin<5?0:VaMin-5):(get_rawData.vadownlimit<5?0:get_rawData.vadownlimit-5),
-            height: '13%',
-            top: '58%',
-            offset: 0,
-            lineWidth: 1,
-            plotLines: [{ //一条延伸到整个绘图区的线，标志着轴中一个特定值。
-                color: 'red',
-                dashStyle: 'shortdash', //Dash,Dot,Solid,shortdash,默认Solid
-                label: {
-                    text: '上限:'+get_rawData.vauplimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.vauplimit //y轴显示位置
-           }, {
-                color: 'green',
-                dashStyle: 'shortdash',
-                label: {
-                	text: '下限:'+get_rawData.vadownlimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.vadownlimit //y轴显示位置
-            }]
-        },{
-        	opposite:false,
-            labels: {
-                align: 'left',
-                x: 0
-            },
-            title: {
-                text: 'B相电压(V)'
-            },
-            endOnTick: false,
-            max:VbMax>get_rawData.vbuplimit?VbMax+10:get_rawData.vbuplimit+10,
-            min:VbMin<get_rawData.vbdownlimit?(VbMin<5?0:VbMin-5):(get_rawData.vbdownlimit<5?0:get_rawData.vbdownlimit-5),
-            height: '13%',
-            top: '72.5%',
-            offset: 0,
-            lineWidth: 1,
-            plotLines: [{ //一条延伸到整个绘图区的线，标志着轴中一个特定值。
-                color: 'red',
-                dashStyle: 'shortdash', //Dash,Dot,Solid,shortdash,默认Solid
-                label: {
-                    text: '上限:'+get_rawData.vbuplimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.vbuplimit //y轴显示位置
-           }, {
-                color: 'green',
-                dashStyle: 'shortdash',
-                label: {
-                	text: '下限:'+get_rawData.vbdownlimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.vbdownlimit //y轴显示位置
-            }]
-        },{
-        	opposite:false,
-            labels: {
-                align: 'left',
-                x: 0
-            },
-            title: {
-                text: 'C相电压(V)'
-            },
-            endOnTick: false,
-            max:VcMax>get_rawData.vcuplimit?VcMax+10:get_rawData.vcuplimit+10,
-            min:VcMin<get_rawData.vcdownlimit?(VcMin<5?0:VcMin-5):(get_rawData.vcdownlimit<5?0:get_rawData.vcdownlimit-5),
-            height: '13%',
-            top: '87%',
-            offset: 0,
-            lineWidth: 1,
-            plotLines: [{ //一条延伸到整个绘图区的线，标志着轴中一个特定值。
-                color: 'red',
-                dashStyle: 'shortdash', //Dash,Dot,Solid,shortdash,默认Solid
-                label: {
-                    text: '上限:'+get_rawData.vcuplimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.vcuplimit //y轴显示位置
-           }, {
-                color: 'green',
-                dashStyle: 'shortdash',
-                label: {
-                	text: '下限:'+get_rawData.vcdownlimit,
-                    align: 'right',
-                    x: -10
-                },
-                width: 3,
-                zIndex:10,
-                value: get_rawData.vcdownlimit //y轴显示位置
-            }]
-        }],
-        rangeSelector: {  
-        	enabled:false,
-            buttons: [{//定义一组buttons,下标从0开始  
-            type: 'week',  
-            count: 1,  
-            text: '一周'  
-        },{  
-        	type: 'week',  
-            count: 2,  
-            text: '两周'   
-        }, {  
-        	type: 'week',  
-            count: 3,  
-            text: '三周' 
-        }, {  
-            type: 'month',  
-            count: 1,  
-            text: '一月'  
-        },{  
-            type: 'all',  
-            text: '全部'  
-        }],  
-            selected: 4,//表示以上定义button的index,从0开始  
-            inputDateFormat:'%Y-%m-%d'
-        },  
-        navigator:{
-        	enabled:false
-        },
-        scrollbar:{
-        	enabled:false
-        },
-        series: [{
-        		type: 'spline',
-        		name: '转速(r/min)',
-        		data: RPM,
-        		marker:{
-        			enabled:true,
-        			radius: 3
-        		},
-        		yAxis: 0
-        	},{
-            	type: 'spline',
-            	name: 'A相电流(A)',
-            	data: Ia,
-            	marker:{
-            		enabled:true,
-            		radius: 3
-            	},
-            	yAxis: 1
-            },{
-            	type: 'spline',
-            	name: 'B相电流(A)',
-            	data: Ib,
-            	marker:{
-            		enabled:true,
-            		radius: 3
-            	},
-            	yAxis: 2
-            },{
-            	type: 'spline',
-            	name: 'C相电流(A)',
-            	data: Ic,
-            	marker:{
-            		enabled:true,
-            		radius: 3
-            	},
-            	yAxis: 3
-            },{
-            	type: 'spline',
-            	name: 'A相电压(V)',
-            	data: Va,
-            	marker:{
-            		enabled:true,
-            		radius: 3
-            	},
-            	yAxis: 4
-            },{
-            	type: 'spline',
-            	name: 'B相电压(V)',
-            	data: Vb,
-            	marker:{
-            		enabled:true,
-            		radius: 3
-            	},
-            	yAxis: 5
-            },{
-            	type: 'spline',
-            	name: 'C相电压(V)',
-            	data: Vc,
-            	marker:{
-            		enabled:true,
-            		radius: 3
-            	},
-            	yAxis: 6
+            dateTimeLabelFormats: {
+                millisecond: '%Y-%m-%d %H:%M:%S.%L',
+                second: '%Y-%m-%d %H:%M:%S',
+                minute: '%Y-%m-%d %H:%M',
+                hour: '%Y-%m-%d %H',
+                day: '%Y-%m-%d',
+                week: '%m-%d',
+                month: '%Y-%m',
+                year: '%Y'
             }
-            ]
-	});
-}
+        },
+        exporting: {
+            enabled: true,
+            filename: 'class-booking-chart',
+            url: context + '/exportHighcharsPicController/export'
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 1,
+                fillOpacity: 0.3,
+                marker: {
+                    enabled: true,
+                    radius: 3, //曲线点半径，默认是4
+                    //                            symbol: 'triangle' ,//曲线点类型："circle", "square", "diamond", "triangle","triangle-down"，默认是"circle"
+                    states: {
+                        hover: {
+                            enabled: true,
+                            radius: 6
+                        }
+                    }
+                },
+                shadow: true
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            enabled: false,
+            borderWidth: 0
+        },
+        series: series
+    });
+};

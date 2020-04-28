@@ -53,7 +53,7 @@ public class EquipmentDriverServerTast {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 //		Gson gson = new Gson();
 //		StringManagerUtils stringManagerUtils=new StringManagerUtils();
@@ -918,6 +918,7 @@ public class EquipmentDriverServerTast {
 		public float SPMSetValueControl=0;
 		public float SPMBy10HzControl=0;
 		public float SPMBy50HzControl=0;
+		public int vfdManufacture=0;
 		public int RTUAddrControl=0;
 		public int RTUProgramVersionControl=0;
 		public int setWellNameControl=0;
@@ -1295,6 +1296,14 @@ public class EquipmentDriverServerTast {
 
 		public void setGroupValveInstrumentCombinationMode4Control(int groupValveInstrumentCombinationMode4Control) {
 			this.groupValveInstrumentCombinationMode4Control = groupValveInstrumentCombinationMode4Control;
+		}
+
+		public int getVfdManufacture() {
+			return vfdManufacture;
+		}
+
+		public void setVfdManufacture(int vfdManufacture) {
+			this.vfdManufacture = vfdManufacture;
 		}
 		
 	}

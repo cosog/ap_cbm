@@ -528,12 +528,12 @@ iconGtsj = function(value, e, o) {
 	return resultstring;
 }
 
-iconDiagnoseAnalysisCurve = function(value, e, o) {
+iconCBMAnalysisCurve = function(value, e, o) {
 	var itemCode = o.data.itemCode;
 	var item=o.data.item;
 	var index=o.internalId%2;
 	var resultstring='';
-	if(itemCode.toUpperCase() == 'acquisitionTime_d'.toUpperCase()){
+	if(itemCode.toUpperCase() == 'acquisitionTime'.toUpperCase()){
 		resultstring=o.data.value;
 	}else{
 		resultstring = "<img src='"
@@ -629,9 +629,9 @@ var callBackGraphical = function(type,id) {
 }
 
 var callBackHistoryData = function(item,itemCode) {
-    Ext.getCmp('DiagnosisAnalysisCurveItem_Id').setValue(item);
-    Ext.getCmp('DiagnosisAnalysisCurveItemCode_Id').setValue(itemCode);
-    var HistoryCurveOnclickWindow=Ext.create("AP.view.diagnosis.HistoryCurveOnclickWindow", {
+    Ext.getCmp('CBMWellAnalysisCurveItem_Id').setValue(item);
+    Ext.getCmp('CBMWellAnalysisCurveItemCode_Id').setValue(itemCode);
+    var HistoryCurveOnclickWindow=Ext.create("AP.view.RealTimeEvaluation.WellHistoryCurveOnclickWindow", {
 				    html:'<div id="HistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
 			   });
     HistoryCurveOnclickWindow.show();

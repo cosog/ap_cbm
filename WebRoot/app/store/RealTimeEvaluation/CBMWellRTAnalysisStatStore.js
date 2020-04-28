@@ -4,8 +4,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellRTAnalysisStatStore', {
 	pageSize : defaultPageSize,
 	proxy : {
 		type : 'ajax',
-		url : context
-				+ '/diagnosisAnalysisOnlyController/statisticsData',
+		url : context + '/realTimeEvaluationController/statisticsData',
 		actionMethods : {
 			read : 'POST'
 		},
@@ -24,12 +23,12 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellRTAnalysisStatStore', {
 		load:function(store,record,f,op,o){
 			initCBMWellRTStatPieChat(store);
 			
-//			var gridPanel = Ext.getCmp("FSDiagramAnalysisSingleDetails_Id");
-//            if (isNotVal(gridPanel)) {
-//            	gridPanel.getStore().load();
-//            }else{
-//            	Ext.create('AP.store.diagnosis.SingleAnalysisiListStore');
-//            }
+			var gridPanel = Ext.getCmp("CBMWellAnalysisSingleDetails_Id");
+            if (isNotVal(gridPanel)) {
+            	gridPanel.getStore().load();
+            }else{
+            	Ext.create('AP.store.RealTimeEvaluation.CBMWellSingleAnalysisiListStore');
+            }
 		},
 		beforeload : function(store, options) {
 			var type=getCBMWellSingleStatType().type;

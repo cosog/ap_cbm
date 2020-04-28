@@ -313,6 +313,32 @@ public class ProtocolModbusThread extends Thread{
     	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
     	    				}
         					
+        					
+        					//变频器厂家设置
+        					if(clientUnit.unitDataList.get(i).vfdManufacture!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerManufacturerCode()!=null){
+        						wellReaded=true;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFrequencyChangerManufacturerCode().getAddress(), clientUnit.unitDataList.get(i).vfdManufacture,driveConfig.getProtocol());
+    							clientUnit.unitDataList.get(i).setRTUAddrControl(0);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"变频器厂家设置指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取变频器厂家设置返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
+        					
+        					
+        					
         					//RTU地址设置
         					if(clientUnit.unitDataList.get(i).RTUAddrControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getRTUAddr()!=null){
         						wellReaded=true;
@@ -768,7 +794,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ "vfdcommstatus,vfdstatus,vfdstatus2,runfrequency,"
                 								+ "vfdbusbarvoltage,vfdoutputvoltage,vfdoutputcurrent,setfrequencyfeedback,"
                 								+ "vfdfaultcode,vfdposition,vfdmanufacturercode,"
-                								+ "frequencyorrpmcontrolsign,frequencysetvalue,spmsetvalue,spmby10hz,spmby50hz,"
+                								+ "frequencyorspmcontrolsign,frequencysetvalue,spmsetvalue,spmby10hz,spmby50hz,"
                 								+ "rtuaddr,rtuprogramversion,setwellname)"
                 								+ "select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
                 								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
@@ -1511,7 +1537,7 @@ public class ProtocolModbusThread extends Thread{
 				String commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
 				java.lang.reflect.Type type = new TypeToken<CommResponseData>() {}.getType();
 				CommResponseData commResponseData=gson.fromJson(commResponse, type);
-				String updateCommStatus="update tbl_rpc_discrete_latest t set t.commStatus=0,t.acquisitionTime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss') ";
+				String updateCommStatus="update tbl_cbm_discrete_latest t set t.commStatus=0,t.acquisitionTime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss') ";
 				if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 					updateCommStatus+=" ,t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
 							+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime()

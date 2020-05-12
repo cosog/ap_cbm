@@ -133,7 +133,7 @@ Ext.define("AP.view.diagnosis.RPCSingleDetailsInfoView", {
                             }
                         }, '->', {
                             xtype: 'button',
-                            text:'查看历史',
+                            text:'单井历史',
                             tooltip:'点击按钮或者双击表格，查看单井历史数据',
                             id:'FSDiagramAnalysisSingleDetailsHisBtn_Id',
                             pressed: true,
@@ -739,7 +739,7 @@ Ext.define("AP.view.diagnosis.RPCSingleDetailsInfoView", {
                       }
                 }, {
                 	region: 'east',
-                	title:'数据详情',
+                	title:'单井详情',
                     width: '65%',
                     border: false,
                     collapsible: true, // 是否可折叠

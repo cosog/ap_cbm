@@ -25,8 +25,8 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     		
     		var acqSataStr="{\"items\":[";
     		acqSataStr+="{\"item\":\"采集时间:"+get_rawData.acquisitionTime+"\",\"itemCode\":\"acquisitionTime\",\"value\":\"\",\"curve\":\"\"},";
-    		acqSataStr+="{\"item\":\"通信状态\",\"itemCode\":\"commStatus\",\"value\":\""+get_rawData.commStatusName+"\",\"curve\":\"\"},";
-    		acqSataStr+="{\"item\":\"运行状态\",\"itemCode\":\"runStatus\",\"value\":\""+get_rawData.runStatusName+"\",\"curve\":\"\"},";
+    		acqSataStr+="{\"item\":\"通信状态\",\"itemCode\":\"commStatus\",\"value\":\""+get_rawData.commStatusName+"\",\"alarmLevel\":"+get_rawData.commAlarmLevel+",\"curve\":\"\"},";
+    		acqSataStr+="{\"item\":\"运行状态\",\"itemCode\":\"runStatus\",\"value\":\""+get_rawData.runStatusName+"\",\"alarmLevel\":"+get_rawData.runAlarmLevel+",\"curve\":\"\"},";
     		
     		acqSataStr+="{\"item\":\"气体质量流量计通讯状态\",\"itemCode\":\"gasFlowmeterCommStatus\",\"value\":\""+get_rawData.gasFlowmeterCommName+"\",\"curve\":\"\"},";
     		acqSataStr+="{\"item\":\"瞬时流量(m^3/h)\",\"itemCode\":\"gasInstantaneousFlow\",\"value\":\""+get_rawData.gasInstantaneousFlow+"\",\"curve\":\"\"},";
@@ -55,6 +55,11 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     		acqSataStr+="{\"item\":\"设定频率反馈(Hz)\",\"itemCode\":\"setFrequencyFeedback\",\"value\":\""+get_rawData.setFrequencyFeedback+"\",\"curve\":\"\"},";
     		acqSataStr+="{\"item\":\"故障代码\",\"itemCode\":\"vfdFaultCode\",\"value\":\""+get_rawData.vfdFaultCode+"\",\"curve\":\"\"},";
     		acqSataStr+="{\"item\":\"本地旋钮位置\",\"itemCode\":\"vfdPosition\",\"value\":\""+get_rawData.vfdPositionName+"\",\"curve\":\"\"}";
+    		
+    		if(get_rawData.vfdManufacturerCode==0){//如果没有变频器，显示AI1
+    			acqSataStr+=",{\"item\":\"电流AI1(A)\",\"itemCode\":\"AI1\",\"value\":\""+get_rawData.AI1+"\",\"curve\":\"\"}";
+    		}
+    		
     		acqSataStr+="]}";
     		
     		var controlSataStr="{\"items\":[";
@@ -160,7 +165,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			        	dataIndex: 'item',
     			        	align:'left',
     			        	flex:3,
-    			        	renderer:function(value){
+    			        	renderer:function(value,o,p,e){
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
     			        },
@@ -169,8 +174,53 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			        	dataIndex: 'value',
     			        	align:'center',
     			        	flex:1,
-    			        	renderer:function(value){
-    			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
+    			        	renderer:function(value,o,p,e){
+    			        		var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
+    			        		var BackgroundColor='#FFFFFF';
+    			        	 	var Color='#000000';
+    			        	 	var Opacity=1;
+    			        	 	var alarmLevel=p.data.alarmLevel;
+    			        	 	if(value==undefined||value=="undefined"){
+    			        	 		value="";
+    			        		}
+    			        	 	var tipval=value;
+    			        		if(p.data.itemCode=="commStatus"||p.data.itemCode=="runStatus"){
+    			        			if(p.data.itemCode=="runStatus"&&value=="离线"){
+    			        				return '';
+    			        			}
+    			        			if (alarmLevel == 0) {
+    			        		 		BackgroundColor='#'+AlarmShowStyle.Normal.BackgroundColor;
+    			        		 		Color='#'+AlarmShowStyle.Normal.Color;
+    			        		 		Opacity=AlarmShowStyle.Normal.Opacity
+    			        			}else if (alarmLevel == 100) {
+    			        				BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+    			        		 		Color='#'+AlarmShowStyle.FirstLevel.Color;
+    			        		 		Opacity=AlarmShowStyle.FirstLevel.Opacity
+    			        			}else if (alarmLevel == 200) {
+    			        				BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+    			        		 		Color='#'+AlarmShowStyle.SecondLevel.Color;
+    			        		 		Opacity=AlarmShowStyle.SecondLevel.Opacity
+    			        			}else if (alarmLevel == 300) {
+    			        				BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+    			        		 		Color='#'+AlarmShowStyle.ThirdLevel.Color;
+    			        		 		Opacity=AlarmShowStyle.ThirdLevel.Opacity
+    			        			}
+    			        		}else if(p.data.itemCode=="gasFlowmeterCommStatus"||p.data.itemCode=="liquidFlowmeterCommStatus"||p.data.itemCode=="fluidLevelIndicatorCommStatus"||p.data.itemCode=="vfdCommStatus"){
+    			        			if(value!="正常"&&value!=""){
+    			        				BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+    			        		 		Color='#'+AlarmShowStyle.ThirdLevel.Color;
+    			        		 		Opacity=AlarmShowStyle.ThirdLevel.Opacity
+    			        			}
+    			        		}else if(p.data.itemCode=="vfdStatus"){
+    			        			if(value!="运行"&value!=""){
+    			        				BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+    			        		 		Color='#'+AlarmShowStyle.ThirdLevel.Color;
+    			        		 		Opacity=AlarmShowStyle.ThirdLevel.Opacity
+    			        			}
+    			        		}
+    			        		var rgba=color16ToRgba(BackgroundColor,Opacity);
+    			        	 	o.style='background-color:'+rgba+';color:'+Color+';';
+    			        	 	return '<span data-qtip="'+tipval+'" data-dismissDelay=10000>'+value+'</span>';
     			        	}
     			        },
     			        { header: '曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMAnalysisCurve(value,e,o)} }

@@ -65,7 +65,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellSingleAnalysisiListStore', {
                         itemdblclick: function (view,record,item,index,e,eOpts) {
                         	var wellName=Ext.getCmp('CBMWellRealtimeAnalysisWellCom_Id').getValue();
                     		if(wellName==null||wellName==""){
-                    			Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("历史数据");
+                    			Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("单井历史");
                     			Ext.getCmp("CBMWellRealtimeAnalysisStartDate_Id").show();
                             	Ext.getCmp("CBMWellRealtimeAnalysisEndDate_Id").show();
                             	Ext.getCmp("CBMWellRealtimeAnalysisHisBtn_Id").hide();

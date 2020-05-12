@@ -155,7 +155,7 @@ Ext.define('AP.view.diagnosis.SinglePanel', {
                     }
                 }, '->', {
                     xtype: 'button',
-                    text:'查看历史',
+                    text:'单井历史',
                     tooltip:'点击按钮或者双击表格，查看单井历史数据',
                     id:'DiagnosisAnalysisHisBtn_Id',
                     pressed: true,

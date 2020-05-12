@@ -75,7 +75,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                   	  	Ext.getCmp("CBMWellRealtimeAnalysisAllBtn_Id").hide();
                     	Ext.getCmp(statPanelId).expand(true);
                     }else{
-                    	Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("历史数据");
+                    	Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("单井历史");
             			Ext.getCmp("CBMWellRealtimeAnalysisStartDate_Id").show();
                     	Ext.getCmp("CBMWellRealtimeAnalysisEndDate_Id").show();
                     	Ext.getCmp("CBMWellRealtimeAnalysisHisBtn_Id").hide();
@@ -156,14 +156,14 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                             }
                         }, '->', {
                             xtype: 'button',
-                            text: '查看历史',
+                            text: '单井历史',
                             tooltip: '点击按钮或者双击表格，查看单井历史数据',
                             id: 'CBMWellRealtimeAnalysisHisBtn_Id',
                             pressed: true,
                             hidden: false,
                             handler: function (v, o) {
                             	var statPanelId=getCBMWellSingleStatType().piePanelId;
-                            	Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("历史数据");
+                            	Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("单井历史");
                     			Ext.getCmp("CBMWellRealtimeAnalysisStartDate_Id").show();
                             	Ext.getCmp("CBMWellRealtimeAnalysisEndDate_Id").show();
                             	Ext.getCmp("CBMWellRealtimeAnalysisHisBtn_Id").hide();
@@ -394,7 +394,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                         region: 'east',
                         id: 'CBMWellRealtimeAnalysisDataPanel_Id',
                         width: '65%',
-                        title: '单井数据',
+                        title: '单井详情',
                         collapsible: true, // 是否折叠
                         split: true, // 竖折叠条
                         border: false,
@@ -722,7 +722,7 @@ function loadCBMWellSingleStatData() {
   	  	Ext.getCmp("CBMWellRealtimeAnalysisAllBtn_Id").hide();
     	Ext.getCmp(statPanelId).expand(true);
     }else{
-    	Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("历史数据");
+    	Ext.getCmp("CBMWellRealtimeAnalysisWellListPanel_Id").setTitle("单井历史");
 		Ext.getCmp("CBMWellRealtimeAnalysisStartDate_Id").show();
     	Ext.getCmp("CBMWellRealtimeAnalysisEndDate_Id").show();
     	Ext.getCmp("CBMWellRealtimeAnalysisHisBtn_Id").hide();

@@ -11,7 +11,7 @@ Ext.define('AP.view.Viewport', {
         	'z-index':10
         },
 //        bodyStyle: 'background-color:#4a96d9;',
-        html: '<div id="imgTitle"><img id="logoImg" src="../images/logo/ytlogo.png" /><span id="bannertitle">' +viewInformation.title+ '</span>' +
+        html: '<div id="imgTitle"><img id="logoImg" src="../images/logo/cnooclogo.png" /><span id="bannertitle">' +viewInformation.title+ '</span>' +
         		
         		"<div id='passAndExitButton'><a href='#' id='logon_a1' onclick='resetPwdFn()'><span id='logon_a1_text'>修改密码</span></a></div> " +
         		"<div id='passAndExitButton'><a href='#' id='logon_a2' onclick='userLoginOut()'><span id='logon_a2_text'>退出</span></a></div>" +

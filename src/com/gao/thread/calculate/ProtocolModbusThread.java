@@ -93,6 +93,20 @@ public class ProtocolModbusThread extends Thread{
     					for(int i=0;i<EquipmentDriverServerTast.units.size();i++){
     						if(revMacStr.equalsIgnoreCase(beeTechDriverServerTast.units.get(i).driverAddr)){
     							System.out.println(beeTechDriverServerTast.units.get(i).wellName+"上线");
+    							
+    							for(int j=0;j<EquipmentDriverServerTast.clientUnitList.size();j++){//遍历已连接的客户端
+    								if(EquipmentDriverServerTast.clientUnitList.get(j).socket!=null){//如果已连接
+    									for(int k=0;k<EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.size();k++){
+    										if(revMacStr.equals(EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.get(k).driverAddr)){//查询原有设备地址和新地址的连接，如存在断开资源，释放资源
+    											if(EquipmentDriverServerTast.clientUnitList.get(j).thread!=null){
+    												EquipmentDriverServerTast.clientUnitList.get(j).thread.interrupt();
+    												break;
+    											}
+    										}
+    									}
+    								}
+    							}
+    							
     							clientUnit.unitDataList.add(beeTechDriverServerTast.units.get(i));
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).setCommStatus(1);
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageCount+=1;
@@ -552,6 +566,9 @@ public class ProtocolModbusThread extends Thread{
     	    	    	    	    		+getUnsignedShort(recByte,
     	    	    	    	    				(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelAcquisitionTime().getAddress()%10000+4)*2, 
     	    	    	    	    	    		driveConfig.getProtocol());
+    								if(!StringManagerUtils.isValidDate(fluidLevelAcquisitionTime, "yyyy-MM-dd HH:mm:ss")){
+    									fluidLevelAcquisitionTime="";
+    								}
     								//液面仪音速
     								fluidLevelIndicatorSoundVelocity=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getFluidLevelIndicatorSoundVelocity().getAddress()%10000-1)*2, 
@@ -666,6 +683,9 @@ public class ProtocolModbusThread extends Thread{
     	    	    	    	    		+getUnsignedShort(recByte,
     	    	    	    	    				(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getRTUSystemTime().getAddress()%10000+4)*2, 
     	    	    	    	    	    		driveConfig.getProtocol());
+    								if(!StringManagerUtils.isValidDate(RTUSystemTime, "yyyy-MM-dd HH:mm:ss")){
+    									RTUSystemTime="";
+    								}
     								//RTU地址
     								RTUAddr=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getRTUAddr().getAddress()%10000-1)*2, 
@@ -1753,7 +1773,7 @@ public class ProtocolModbusThread extends Thread{
 		if(rc==-1){//断开连接
 			return -2;//读取数据失败
 		}
-		if(recByte[7]==0x83){//读取异常
+		if(recByte[2]==0x83){//读取异常
 			return -3;//读取异常
 		}
 		return rc;

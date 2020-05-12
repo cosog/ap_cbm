@@ -78,17 +78,17 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 			typeColumnName="runStatusName";
 		}else if("2".equalsIgnoreCase(type)){
 			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeRunStatus";
+				ddicName="CBMWellRealtimeRunEff";
 			}
 			typeColumnName="runtimeEfficiencyLevel";
 		}else if("3".equalsIgnoreCase(type)){
 			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeRunStatus";
+				ddicName="CBMWellRealtimeCommStatus";
 			}
 			typeColumnName="commStatusName";
 		}else if("4".equalsIgnoreCase(type)){
 			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeRunStatus";
+				ddicName="CBMWellRealtimeCommEff";
 			}
 			typeColumnName="commtimeefficiencyLevel";
 		}
@@ -137,13 +137,16 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
 		
 		String sql="select to_char(acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
-				+ " commStatus,commStatusName,runStatus,runStatusName,"
+				+ " commStatus,commStatusName,commAlarmLevel,"
+				+ " runStatus,runStatusName,runAlarmLevel,"
 				+ " gasFlowmeterCommStatus,gasFlowmeterCommName,gasInstantaneousFlow,gasCumulativeFlow,gasTodayProd,gasFlowmeterPress,"
 				+ " liquidFlowmeterCommStatus,liquidFlowmeterCommName,liquidInstantaneousflow,liquidCumulativeflow,liquidFlowmeterProd,"
 				+ " fluidLevelIndicatorCommStatus,fluidLevelIndicatorCommName,to_char(fluidLevelAcquisitionTime,'yyyy-mm-dd hh24:mi:ss'),soundVelocity,fluidLevel,fluidLevelIndicatorPress,"
 				+ " vfdCommStatus,vfdCommName,vfdStatus,vfdStatusName,vfdStatus2,vfdStatus2Name,"
 				+ " runFrequency,SPM,vfdBusbarVoltage,vfdOutputVoltage,vfdOutputCurrent,setFrequencyFeedback,"
-				+ " vfdFaultCode,vfdPosition,vfdPositionName,vfdManufacturerCode,vfdManufacturerName,"
+				+ " vfdFaultCode,vfdPosition,vfdPositionName,"
+				+ " AI1,"
+				+ " vfdManufacturerCode,vfdManufacturerName,"
 				+ " frequencyOrSPMcontrolSign, frequencyOrSPMcontrol,"
 				+ " frequencySetValue, SPMSetValue, SPMBy10hz, SPMBy50hz,"
 				+ " rtuAddr,rtuProgramVersion,setWellname"
@@ -155,62 +158,68 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		if(list.size()>0){
 			Object[] obj=(Object[]) list.get(0);
 			result_json.append(",\"acquisitionTime\":\""+obj[0]+"\",");
+			
 			result_json.append("\"commStatus\":\""+obj[1]+"\",");
 			result_json.append("\"commStatusName\":\""+obj[2]+"\",");
-			result_json.append("\"runStatus\":\""+obj[3]+"\",");
-			result_json.append("\"runStatusName\":\""+obj[4]+"\",");
+			result_json.append("\"commAlarmLevel\":\""+obj[3]+"\",");
 			
-			result_json.append("\"gasFlowmeterCommStatus\":\""+obj[5]+"\",");
-			result_json.append("\"gasFlowmeterCommName\":\""+obj[6]+"\",");
-			result_json.append("\"gasInstantaneousFlow\":\""+obj[7]+"\",");
-			result_json.append("\"gasCumulativeFlow\":\""+obj[8]+"\",");
-			result_json.append("\"gasTodayProd\":\""+obj[9]+"\",");
-			result_json.append("\"gasFlowmeterPress\":\""+obj[10]+"\",");
+			result_json.append("\"runStatus\":\""+obj[4]+"\",");
+			result_json.append("\"runStatusName\":\""+obj[5]+"\",");
+			result_json.append("\"runAlarmLevel\":\""+obj[6]+"\",");
 			
-			result_json.append("\"liquidFlowmeterCommStatus\":\""+obj[11]+"\",");
-			result_json.append("\"liquidFlowmeterCommName\":\""+obj[12]+"\",");
-			result_json.append("\"liquidInstantaneousflow\":\""+obj[13]+"\",");
-			result_json.append("\"liquidCumulativeflow\":\""+obj[14]+"\",");
-			result_json.append("\"liquidFlowmeterProd\":\""+obj[15]+"\",");
+			result_json.append("\"gasFlowmeterCommStatus\":\""+obj[7]+"\",");
+			result_json.append("\"gasFlowmeterCommName\":\""+obj[8]+"\",");
+			result_json.append("\"gasInstantaneousFlow\":\""+obj[9]+"\",");
+			result_json.append("\"gasCumulativeFlow\":\""+obj[10]+"\",");
+			result_json.append("\"gasTodayProd\":\""+obj[11]+"\",");
+			result_json.append("\"gasFlowmeterPress\":\""+obj[12]+"\",");
 			
-			result_json.append("\"fluidLevelIndicatorCommStatus\":\""+obj[16]+"\",");
-			result_json.append("\"fluidLevelIndicatorCommName\":\""+obj[17]+"\",");
-			result_json.append("\"fluidLevelAcquisitionTime\":\""+obj[18]+"\",");
-			result_json.append("\"soundVelocity\":\""+obj[19]+"\",");
-			result_json.append("\"fluidLevel\":\""+obj[20]+"\",");
-			result_json.append("\"fluidLevelIndicatorPress\":\""+obj[21]+"\",");
+			result_json.append("\"liquidFlowmeterCommStatus\":\""+obj[13]+"\",");
+			result_json.append("\"liquidFlowmeterCommName\":\""+obj[14]+"\",");
+			result_json.append("\"liquidInstantaneousflow\":\""+obj[15]+"\",");
+			result_json.append("\"liquidCumulativeflow\":\""+obj[16]+"\",");
+			result_json.append("\"liquidFlowmeterProd\":\""+obj[17]+"\",");
 			
-			result_json.append("\"vfdCommStatus\":\""+obj[22]+"\",");
-			result_json.append("\"vfdCommName\":\""+obj[23]+"\",");
-			result_json.append("\"vfdStatus\":\""+obj[24]+"\",");
-			result_json.append("\"vfdStatusName\":\""+obj[25]+"\",");
-			result_json.append("\"vfdStatus2\":\""+obj[26]+"\",");
-			result_json.append("\"vfdStatus2Name\":\""+obj[27]+"\",");
+			result_json.append("\"fluidLevelIndicatorCommStatus\":\""+obj[18]+"\",");
+			result_json.append("\"fluidLevelIndicatorCommName\":\""+obj[19]+"\",");
+			result_json.append("\"fluidLevelAcquisitionTime\":\""+obj[20]+"\",");
+			result_json.append("\"soundVelocity\":\""+obj[21]+"\",");
+			result_json.append("\"fluidLevel\":\""+obj[22]+"\",");
+			result_json.append("\"fluidLevelIndicatorPress\":\""+obj[23]+"\",");
 			
-			result_json.append("\"runFrequency\":\""+obj[28]+"\",");
-			result_json.append("\"SPM\":\""+obj[29]+"\",");
-			result_json.append("\"vfdBusbarVoltage\":\""+obj[30]+"\",");
-			result_json.append("\"vfdOutputVoltage\":\""+obj[31]+"\",");
-			result_json.append("\"vfdOutputCurrent\":\""+obj[32]+"\",");
-			result_json.append("\"setFrequencyFeedback\":\""+obj[33]+"\",");
+			result_json.append("\"vfdCommStatus\":\""+obj[24]+"\",");
+			result_json.append("\"vfdCommName\":\""+obj[25]+"\",");
+			result_json.append("\"vfdStatus\":\""+obj[26]+"\",");
+			result_json.append("\"vfdStatusName\":\""+obj[27]+"\",");
+			result_json.append("\"vfdStatus2\":\""+obj[28]+"\",");
+			result_json.append("\"vfdStatus2Name\":\""+obj[29]+"\",");
 			
-			result_json.append("\"vfdFaultCode\":\""+obj[34]+"\",");
-			result_json.append("\"vfdPosition\":\""+obj[35]+"\",");
-			result_json.append("\"vfdPositionName\":\""+obj[36]+"\",");
-			result_json.append("\"vfdManufacturerCode\":\""+obj[37]+"\",");
-			result_json.append("\"vfdManufacturerName\":\""+obj[38]+"\",");
+			result_json.append("\"runFrequency\":\""+obj[30]+"\",");
+			result_json.append("\"SPM\":\""+obj[31]+"\",");
+			result_json.append("\"vfdBusbarVoltage\":\""+obj[32]+"\",");
+			result_json.append("\"vfdOutputVoltage\":\""+obj[33]+"\",");
+			result_json.append("\"vfdOutputCurrent\":\""+obj[34]+"\",");
+			result_json.append("\"setFrequencyFeedback\":\""+obj[35]+"\",");
 			
-			result_json.append("\"frequencyOrSPMcontrolSign\":\""+obj[39]+"\",");
-			result_json.append("\"frequencyOrSPMcontrol\":\""+obj[40]+"\",");
+			result_json.append("\"vfdFaultCode\":\""+obj[36]+"\",");
+			result_json.append("\"vfdPosition\":\""+obj[37]+"\",");
+			result_json.append("\"vfdPositionName\":\""+obj[38]+"\",");
+			result_json.append("\"AI1\":\""+obj[39]+"\",");
 			
-			result_json.append("\"frequencySetValue\":\""+obj[41]+"\",");
-			result_json.append("\"SPMSetValue\":\""+obj[42]+"\",");
-			result_json.append("\"SPMBy10hz\":\""+obj[43]+"\",");
-			result_json.append("\"SPMBy50hz\":\""+obj[44]+"\",");
+			result_json.append("\"vfdManufacturerCode\":\""+obj[40]+"\",");
+			result_json.append("\"vfdManufacturerName\":\""+obj[41]+"\",");
 			
-			result_json.append("\"rtuAddr\":\""+obj[45]+"\",");
-			result_json.append("\"rtuProgramVersion\":\""+obj[46]+"\",");
-			result_json.append("\"setWellname\":\""+obj[47]+"\"");
+			result_json.append("\"frequencyOrSPMcontrolSign\":\""+obj[42]+"\",");
+			result_json.append("\"frequencyOrSPMcontrol\":\""+obj[43]+"\",");
+			
+			result_json.append("\"frequencySetValue\":\""+obj[44]+"\",");
+			result_json.append("\"SPMSetValue\":\""+obj[45]+"\",");
+			result_json.append("\"SPMBy10hz\":\""+obj[46]+"\",");
+			result_json.append("\"SPMBy50hz\":\""+obj[47]+"\",");
+			
+			result_json.append("\"rtuAddr\":\""+obj[48]+"\",");
+			result_json.append("\"rtuProgramVersion\":\""+obj[49]+"\",");
+			result_json.append("\"setWellname\":\""+obj[50]+"\"");
 		}
 		result_json.append("}");
 		return result_json.toString().replaceAll("null", "");

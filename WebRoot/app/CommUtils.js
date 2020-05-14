@@ -544,6 +544,22 @@ iconCBMAnalysisCurve = function(value, e, o) {
 	return resultstring;
 }
 
+iconGroupValveAnalysisCurve = function(value, e, o) {
+	var itemCode = o.data.itemCode;
+	var item=o.data.item;
+	var index=o.internalId%2;
+	var resultstring='';
+	if(itemCode.toUpperCase() == 'acquisitionTime'.toUpperCase()){
+		resultstring=o.data.value;
+	}else{
+		resultstring = "<img src='"
+			+ context
+			+ "/images/icon/curvetest"+index+".png' style='cursor:pointer' onclick=callBackGroupValveHistoryData(\""+item+"\",\""+itemCode+"\") />";
+	}
+	
+	return resultstring;
+}
+
 iconDiagnoseTotalCurve = function(value, e, o) {
 	var itemCode = o.data.itemCode;
 	var item=o.data.item;
@@ -632,6 +648,15 @@ var callBackHistoryData = function(item,itemCode) {
     Ext.getCmp('CBMWellAnalysisCurveItem_Id').setValue(item);
     Ext.getCmp('CBMWellAnalysisCurveItemCode_Id').setValue(itemCode);
     var HistoryCurveOnclickWindow=Ext.create("AP.view.RealTimeEvaluation.WellHistoryCurveOnclickWindow", {
+				    html:'<div id="HistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
+			   });
+    HistoryCurveOnclickWindow.show();
+}
+
+var callBackGroupValveHistoryData = function(item,itemCode) {
+    Ext.getCmp('GroupValveAnalysisCurveItem_Id').setValue(item);
+    Ext.getCmp('GroupValveAnalysisCurveItemCode_Id').setValue(itemCode);
+    var HistoryCurveOnclickWindow=Ext.create("AP.view.RealTimeEvaluation.GroupValveHistoryCurveOnclickWindow", {
 				    html:'<div id="HistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
 			   });
     HistoryCurveOnclickWindow.show();

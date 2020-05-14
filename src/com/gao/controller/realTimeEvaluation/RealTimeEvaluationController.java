@@ -42,7 +42,6 @@ public class RealTimeEvaluationController<T> extends BaseController{
 	 * 描述：工况统计饼图、柱状图json数据
 	 * </p>
 	 * 
-	 * @author zhao 2016-06-23
 	 * @return
 	 * @throws Exception
 	 */
@@ -76,8 +75,42 @@ public class RealTimeEvaluationController<T> extends BaseController{
 	}
 	
 	/**
+	 * <p>
+	 * 描述：阀组统计json数据
+	 * </p>
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/groupValveStatisticsData")
+	public String groupValveStatisticsData() throws Exception {
+		orgId=ParamUtils.getParameter(request, "orgId");
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			User user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		String type = ParamUtils.getParameter(request, "type");
+		String json = "";
+		
+		/******
+		 * 饼图及柱状图需要的data信息
+		 * ***/
+		json = realTimeEvaluationService.groupValveStatisticsData(orgId,type);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	/**
 	 * <P>
-	 * 描述:煤层气井井实时评价数据表
+	 * 描述:煤层气井实时评价数据表
 	 * </p>
 	 * 
 	 */
@@ -142,6 +175,68 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
+	/**
+	 * <P>
+	 * 描述:阀组实时评价数据表
+	 * </p>
+	 * 
+	 */
+	@RequestMapping("/getRealtimeAnalysisGroupValveList")
+	public String getRealtimeAnalysisGroupValveList() throws Exception {
+		orgId = ParamUtils.getParameter(request, "orgId");
+		orgId = findCurrentUserOrgIdInfo(orgId);
+		String name = ParamUtils.getParameter(request, "name");
+		
+		String type = ParamUtils.getParameter(request, "type");
+		String unitType = ParamUtils.getParameter(request, "unitType");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		String statValue = ParamUtils.getParameter(request, "statValue");
+		String tableName="tbl_groupvalve_discrete_hist";
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		if(StringManagerUtils.isNotNull(name)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+name+"' ) ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+		}
+		
+		if(!StringManagerUtils.isNotNull(startDate)){
+			startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
+		}
+		
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		
+		String json = realTimeEvaluationService.getRealtimeAnalysisWellList(orgId, name, pager,type,unitType,startDate,endDate,statValue);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.print(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	
 	@RequestMapping("/getCBMWellAnalysisAndAcqAndControlData")
 	public String getCBMWellAnalysisAndAcqAndControlData() throws Exception {
 		HttpSession session=request.getSession();
@@ -167,6 +262,31 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
+	@RequestMapping("/getGroupValveAnalysisAndAcqAndControlData")
+	public String getGroupValveAnalysisAndAcqAndControlData() throws Exception {
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		String recordId = ParamUtils.getParameter(request, "id");
+		wellName = ParamUtils.getParameter(request, "wellName");
+		String selectedWellName = ParamUtils.getParameter(request, "selectedWellName");
+		this.pager = new Page("pagerForm", request);
+		
+		String json =realTimeEvaluationService.getGroupValveAnalysisAndAcqAndControlData(recordId,wellName,selectedWellName,user.getUserNo());
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.print(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	@RequestMapping("/getWellHistoryDataCurveData")
 	public String getWellHistoryDataCurveData() throws Exception {
@@ -177,10 +297,7 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		String itemName = ParamUtils.getParameter(request, "itemName");
 		String itemCode = ParamUtils.getParameter(request, "itemCode");
 		String wellType = ParamUtils.getParameter(request, "wellType");
-		String tableName="viw_rpc_diagram_hist";
-		if("400".equals(wellType)){//螺杆泵
-			tableName="viw_pcp_rpm_hist";
-		}
+		String tableName="viw_cbm_discrete_hist";
 		this.pager = new Page("pagerForm", request);
 		if(!StringManagerUtils.isNotNull(endDate)){
 			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
@@ -200,6 +317,54 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		pager.setEnd_date(endDate);
 		if("1".equals(wellType)){//井
 			json =  realTimeEvaluationService.getWellHistoryDataCurveData(wellName, startDate,endDate,itemName,itemCode);
+		}
+		
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.write(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping("/getGroupValveHistoryDataCurveData")
+	public String getGroupValveHistoryDataCurveData() throws Exception {
+		String json = "";
+		wellName = ParamUtils.getParameter(request, "wellName");
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String itemName = ParamUtils.getParameter(request, "itemName");
+		String itemCode = ParamUtils.getParameter(request, "itemCode");
+		String wellType = ParamUtils.getParameter(request, "wellType");
+		String tableName="viw_groupvalve_discrete_hist";
+		this.pager = new Page("pagerForm", request);
+		if(!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+		}
+		
+		if(!StringManagerUtils.isNotNull(startDate)){
+			startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
+		}
+		
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		if("1".equals(wellType)){//井
+			json =  realTimeEvaluationService.getGroupValveHistoryDataCurveData(wellName, startDate,endDate,itemName,itemCode);
 		}
 		
 		//HttpServletResponse response = ServletActionContext.getResponse();

@@ -1027,6 +1027,7 @@ public class ProtocolModbusThread extends Thread{
         						
         						int DeviceId;
         						int BaudRate;
+        						int BaudRate2;
         						int InstrumentCombinationMode1;
         						int InstrumentCombinationMode2;
         						int InstrumentCombinationMode3;
@@ -1133,9 +1134,21 @@ public class ProtocolModbusThread extends Thread{
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getDeviceId().getAddress()-40101)*2, 
     										driveConfig.getProtocol());
 									//通讯波特率
-									BaudRate=getUnsignedShort(recByte,
-    										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress()-40101)*2, 
-    										driveConfig.getProtocol());
+									BaudRate=(short) (0x0000 | (0x01 & recByte[(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress()-40101)*2+1]));  
+									BaudRate2=(short) (0x0000 | (0x02 & recByte[(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress()-40101)*2+1])>>1);  
+									
+									if(BaudRate==0){
+										BaudRate=9600;
+									}else if(BaudRate==1){
+										BaudRate=19200;
+									}
+									
+									if(BaudRate2==0){
+										BaudRate2=9600;
+									}else if(BaudRate2==1){
+										BaudRate2=19200;
+									}
+									
 									//仪表组合方式-1#从站
 									InstrumentCombinationMode1=getUnsignedShort(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getInstrumentCombinationMode1().getAddress()-40101)*2, 
@@ -1216,7 +1229,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ "CumulativeFlow2,FlowmeterBackupPoint2,InstantaneousFlow2,FlowmeterTemperature2,FlowmeterPress2,"
                 								+ "CumulativeFlow3,FlowmeterBackupPoint3,InstantaneousFlow3,FlowmeterTemperature3,FlowmeterPress3,"
                 								+ "CumulativeFlow4,FlowmeterBackupPoint4,InstantaneousFlow4,FlowmeterTemperature4,FlowmeterPress4,"
-                								+ "DeviceId,BaudRate,"
+                								+ "DeviceId,BaudRate,BaudRate2,"
                 								+ "InstrumentCombinationMode1,InstrumentCombinationMode2,InstrumentCombinationMode3,InstrumentCombinationMode4) "
                 								+ " select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
                 								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
@@ -1224,7 +1237,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ CumulativeFlow2+","+FlowmeterBackupPoint2+","+InstantaneousFlow2+","+FlowmeterTemperature2+","+FlowmeterPress2+","
                 								+ CumulativeFlow3+","+FlowmeterBackupPoint3+","+InstantaneousFlow3+","+FlowmeterTemperature3+","+FlowmeterPress3+","
                 								+ CumulativeFlow4+","+FlowmeterBackupPoint4+","+InstantaneousFlow4+","+FlowmeterTemperature4+","+FlowmeterPress4+","
-                								+ DeviceId+","+BaudRate+","
+                								+ DeviceId+","+BaudRate+","+BaudRate2+","
                 								+ InstrumentCombinationMode1+","+InstrumentCombinationMode2+","+InstrumentCombinationMode3+","+InstrumentCombinationMode4
                 								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"'";
                 						try {

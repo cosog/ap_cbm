@@ -58,6 +58,37 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
+	public String groupValveStatisticsData(String orgId,String type){
+		StringBuffer result_json = new StringBuffer();
+		String sql="";
+		String statType="commStatusName";
+		if("1".equalsIgnoreCase(type)){
+			statType="commStatusName";
+		}else if("2".equalsIgnoreCase(type)){
+			statType="commtimeefficiencyLevel";
+		}
+		sql="select "+statType+",count(1) from viw_groupvalve_discrete_latest t where  t.org_id in("+orgId+")";
+		
+		sql+=" group by "+statType;
+		
+		List<?> list = this.findCallSql(sql);
+		result_json.append("{ \"success\":true,");
+		result_json.append("\"List\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			if(StringManagerUtils.isNotNull(obj[0]+"")){
+//				result_json.append("{\"id\":"+obj[0]+",");
+				result_json.append("{\"item\":\""+obj[0]+"\",");
+				result_json.append("\"count\":"+obj[1]+"},");
+			}
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString();
+	}
+	
 	public String getRealtimeAnalysisWellList(String orgId, String wellName, Page pager,String type,String unitType,String startDate,String endDate,String statValue)
 			throws Exception {
 		DataDictionary ddic = null;
@@ -66,30 +97,16 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		String sqlHis="";
 		String finalSql="";
 		String sqlAll="";
-		String ddicName="";
-		String tableName_latest="viw_cbm_discrete_latest";
-		String tableName_hist="viw_cbm_discrete_hist";
-		String typeColumnName="runStatusName";
+		String ddicName="GroupValveRealtimeCommStatus";
+		String tableName_latest="viw_groupvalve_discrete_latest";
+		String tableName_hist="viw_groupvalve_discrete_hist";
+		String typeColumnName="commStatusName";
 		
 		if("1".equalsIgnoreCase(type)){
-			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeRunStatus";
-			}
-			typeColumnName="runStatusName";
-		}else if("2".equalsIgnoreCase(type)){
-			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeRunEff";
-			}
-			typeColumnName="runtimeEfficiencyLevel";
-		}else if("3".equalsIgnoreCase(type)){
-			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeCommStatus";
-			}
+			ddicName="GroupValveRealtimeCommStatus";
 			typeColumnName="commStatusName";
-		}else if("4".equalsIgnoreCase(type)){
-			if("1".equals(unitType)){//煤层气井
-				ddicName="CBMWellRealtimeCommEff";
-			}
+		}else if("2".equalsIgnoreCase(type)){
+			ddicName="GroupValceRealtimeCommEff";
 			typeColumnName="commtimeefficiencyLevel";
 		}
 		
@@ -97,12 +114,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		
 		columns = ddic.getTableHeader();
 		
-		if("1".equals(unitType)){//螺杆泵井
-			tableName_latest="viw_cbm_discrete_latest";
-			tableName_hist="viw_cbm_discrete_hist";
-			sql=ddic.getSql()+",commStatus,runStatus,commAlarmLevel,runAlarmLevel ";
-			sqlHis=ddic.getSql()+",commStatus,runStatus,commAlarmLevel,runAlarmLevel ";
-		}
+		sql=ddic.getSql()+",commStatus,commAlarmLevel";
+		sqlHis=ddic.getSql()+",commStatus,commAlarmLevel ";
 		
 		
 		sql+= " from "+tableName_latest+" t where t.org_id in("+orgId+")";
@@ -225,11 +238,115 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
+	public String getGroupValveAnalysisAndAcqAndControlData(String recordId,String wellName,String selectedWellName,int userId)throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		String tableName="viw_groupvalve_discrete_latest";
+		if(StringManagerUtils.isNotNull(wellName)){
+			tableName="viw_groupvalve_discrete_hist";
+		}
+		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
+		
+		String sql="select to_char(acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+				+ " commStatus,commStatusName,commAlarmLevel,"
+				+ " cumulativeFlow1,flowmeterBackupPoint1,instantaneousFlow1,flowmeterTemperature1,flowmeterPress1,"
+				+ " cumulativeFlow2,flowmeterBackupPoint2,instantaneousFlow2,flowmeterTemperature2,flowmeterPress2,"
+				+ " cumulativeFlow3,flowmeterBackupPoint3,instantaneousFlow3,flowmeterTemperature3,flowmeterPress3,"
+				+ " cumulativeFlow4,flowmeterBackupPoint4,instantaneousFlow4,flowmeterTemperature4,flowmeterPress4,"
+				+ " deviceId,baudrate,baudrate2,"
+				+ " instrumentCombinationMode1,instrumentCombinationModeName1,"
+				+ " instrumentCombinationMode2,instrumentCombinationModeName2,"
+				+ " instrumentCombinationMode3,instrumentCombinationModeName3,"
+				+ " instrumentCombinationMode4,instrumentCombinationModeName4"
+				+ " from "+tableName+" t where id="+recordId;
+		List<?> isControlList = this.findCallSql(isControlSql);
+		List<?> list = this.findCallSql(sql);
+		String isControl=isControlList.size()>0?isControlList.get(0).toString():"0";
+		result_json.append("{ \"success\":true,\"isControl\":"+isControl);
+		if(list.size()>0){
+			Object[] obj=(Object[]) list.get(0);
+			result_json.append(",\"acquisitionTime\":\""+obj[0]+"\",");
+			
+			result_json.append("\"commStatus\":\""+obj[1]+"\",");
+			result_json.append("\"commStatusName\":\""+obj[2]+"\",");
+			result_json.append("\"commAlarmLevel\":\""+obj[3]+"\",");
+			
+			result_json.append("\"cumulativeFlow1\":\""+obj[4]+"\",");
+			result_json.append("\"flowmeterBackupPoint1\":\""+obj[5]+"\",");
+			result_json.append("\"instantaneousFlow1\":\""+obj[6]+"\",");
+			result_json.append("\"flowmeterTemperature1\":\""+obj[7]+"\",");
+			result_json.append("\"flowmeterPress1\":\""+obj[8]+"\",");
+			
+			result_json.append("\"cumulativeFlow2\":\""+obj[9]+"\",");
+			result_json.append("\"flowmeterBackupPoint2\":\""+obj[10]+"\",");
+			result_json.append("\"instantaneousFlow2\":\""+obj[11]+"\",");
+			result_json.append("\"flowmeterTemperature2\":\""+obj[12]+"\",");
+			result_json.append("\"flowmeterPress2\":\""+obj[13]+"\",");
+			
+			result_json.append("\"cumulativeFlow3\":\""+obj[14]+"\",");
+			result_json.append("\"flowmeterBackupPoint3\":\""+obj[15]+"\",");
+			result_json.append("\"instantaneousFlow3\":\""+obj[16]+"\",");
+			result_json.append("\"flowmeterTemperature3\":\""+obj[17]+"\",");
+			result_json.append("\"flowmeterPress3\":\""+obj[18]+"\",");
+			
+			result_json.append("\"cumulativeFlow4\":\""+obj[19]+"\",");
+			result_json.append("\"flowmeterBackupPoint4\":\""+obj[20]+"\",");
+			result_json.append("\"instantaneousFlow4\":\""+obj[21]+"\",");
+			result_json.append("\"flowmeterTemperature4\":\""+obj[22]+"\",");
+			result_json.append("\"flowmeterPress4\":\""+obj[23]+"\",");
+			
+			result_json.append("\"deviceId\":\""+obj[24]+"\",");
+			result_json.append("\"baudrate\":\""+obj[25]+"\",");
+			result_json.append("\"baudrate2\":\""+obj[26]+"\",");
+			
+			result_json.append("\"instrumentCombinationMode1\":\""+obj[27]+"\",");
+			result_json.append("\"instrumentCombinationModeName1\":\""+obj[28]+"\",");
+			
+			result_json.append("\"instrumentCombinationMode2\":\""+obj[29]+"\",");
+			result_json.append("\"instrumentCombinationModeName2\":\""+obj[30]+"\",");
+			
+			result_json.append("\"instrumentCombinationMode3\":\""+obj[31]+"\",");
+			result_json.append("\"instrumentCombinationModeName3\":\""+obj[32]+"\",");
+			
+			result_json.append("\"instrumentCombinationMode4\":\""+obj[33]+"\",");
+			result_json.append("\"instrumentCombinationModeName4\":\""+obj[34]+"\"");
+		}
+		result_json.append("}");
+		return result_json.toString().replaceAll("null", "");
+	}
+	
 	public String getWellHistoryDataCurveData(String wellName,String startDate,String endDate,String itemName,String itemCode) throws SQLException, IOException {
 		StringBuffer dynSbf = new StringBuffer();
 		String uplimit="";
 		String downlimit="";
 		String sql="select to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),t."+itemCode+" from viw_cbm_discrete_hist t "
+				+ " where t.wellName='"+wellName+"' and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') order by t.acquisitionTime";
+		
+		
+		int totals = getTotalCountRows(sql);//获取总记录数
+		List<?> list=this.findCallSql(sql);
+		
+		dynSbf.append("{\"success\":true,\"totalCount\":" + totals + ",\"wellName\":\""+wellName+"\",\"startDate\":\""+startDate+"\",\"endDate\":\""+endDate+"\",\"totalRoot\":[");
+		if (list.size() > 0) {
+			for (int i = 0; i < list.size(); i++) {
+				Object[] obj = (Object[]) list.get(i);
+				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+				dynSbf.append("\"value\":\""+obj[1]+"\"},");
+				if(obj.length==4&&i==list.size()-1){
+					uplimit=obj[2]+"";
+					downlimit=obj[3]+"";
+				}
+			}
+			dynSbf.deleteCharAt(dynSbf.length() - 1);
+		}
+		dynSbf.append("],\"uplimit\":\""+uplimit+"\",\"downlimit\":\""+downlimit+"\"}");
+		return dynSbf.toString();
+	}
+	
+	public String getGroupValveHistoryDataCurveData(String wellName,String startDate,String endDate,String itemName,String itemCode) throws SQLException, IOException {
+		StringBuffer dynSbf = new StringBuffer();
+		String uplimit="";
+		String downlimit="";
+		String sql="select to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),t."+itemCode+" from viw_groupvalve_discrete_hist t "
 				+ " where t.wellName='"+wellName+"' and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') order by t.acquisitionTime";
 		
 		

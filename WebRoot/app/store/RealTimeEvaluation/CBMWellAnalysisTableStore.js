@@ -116,10 +116,10 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
 			    }
 			});
     		
-    		var GridPanel=Ext.getCmp("DiagnosisAnalysisDataGridPanel_Id");
+    		var GridPanel=Ext.getCmp("CBMWellAnalysisDataGridPanel_Id");
     		if(!isNotVal(GridPanel)){
     			GridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'DiagnosisAnalysisDataGridPanel_Id',
+    				id:'CBMWellAnalysisDataGridPanel_Id',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -151,10 +151,10 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			GridPanel.reconfigure(store);
     		}
     		
-    		var acqGridPanel=Ext.getCmp("DiagnosisAcqDataGridPanel_Id");
+    		var acqGridPanel=Ext.getCmp("CBMWellAcqDataGridPanel_Id");
     		if(!isNotVal(acqGridPanel)){
     			acqGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'DiagnosisAcqDataGridPanel_Id',
+    				id:'CBMWellAcqDataGridPanel_Id',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -231,10 +231,10 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			acqGridPanel.reconfigure(acqStore);
     		}
     		
-    		var controlGridPanel=Ext.getCmp("DiagnosisControlDataGridPanel_Id");
+    		var controlGridPanel=Ext.getCmp("CBMWellControlDataGridPanel_Id");
     		if(!isNotVal(controlGridPanel)){
     			controlGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'DiagnosisControlDataGridPanel_Id',
+    				id:'CBMWellControlDataGridPanel_Id',
     				requires: [
                        	'Ext.grid.selection.SpreadsheetModel',
                        	'Ext.grid.plugin.Clipboard'

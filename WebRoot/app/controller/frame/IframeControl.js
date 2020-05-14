@@ -163,24 +163,10 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 	
 	var panel_Id = "";
 	if (module_Code != "video" && module_Code != "map_MapDraw" && module_Code != "realtime_RealtimeMonitor"
-		&& module_Code != "report_DiagnosisDayReport"
-		&& module_Code != "outWellProduce_ProductionOutInfoGridPanel"
 		&& module_Code != "well_wellPanel"
 		&& module_Code != "blockdata_Ids"
-		&& module_Code != "balance_BalanceMonitor"
-		&& module_Code != "balance_BalanceTotal"
-		&& module_Code != "balance_BalanceCycle"
 		&& module_Code != "RealTimeEvaluation_Well"
-		&& module_Code != "graphicalQuery_SurfaceCardQuery"
-		&& module_Code != "diagnosisTotal_DiagnosisTotalData"
-		&& module_Code != "calculate_calculateManager"
-		&& module_Code != "PSToFS_PumpingUnitInfo"
-		&& module_Code != "PSToFS_MotorInfo"
-		&& module_Code != "PSToFS_InverOptimizeInfo"
-		&& module_Code != "ElectricAnalysis_ElectricAnalysisRealtimeProfile"
-		&& module_Code != "ElectricAnalysis_ElectricAnalysisRealtimeDetails"
-		&& module_Code != "ElectricAnalysis_ElectricAnalysisRealtimeDiagram"
-		&& module_Code !="ElectricAnalysis_ElectricAnalysisDailyProfile") {
+		&& module_Code !="RealTimeEvaluation_GroupValve") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -293,22 +279,6 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		} else {
 			// Ext.Msg.alert("info", '抱歉，该模块正在开发中... ');
 		}
-	}else if(module_Code == "report_DiagnosisDayReport"){
-		var tabPanel = Ext.getCmp("ProductionWellDailyReportPanel_Id");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="ReportPumpingUnitDayReport"){
-			CreateDiagnosisDailyReportTable();
-		}else if(activeId=="screwPumpDailyReportPanel_Id"){
-			CreateScrewPumpDailyReportTable();
-		}
-	}else if(module_Code == "outWellProduce_ProductionOutInfoGridPanel"){
-		var tabPanel = Ext.getCmp("ProductionWellProductionPanel");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="PumpingUnitProductionDataPanel"){
-			CreateAndLoadWellProTable(true);
-		}else if(activeId=="ScrewPumpProductionDataPanel"){
-			CreateAndLoadScrewPumpProTable(true);
-		}
 	}else if(module_Code == "well_wellPanel"){
 		CreateAndLoadWellInfoTable(true);
 	}else if(module_Code == "blockdata_Ids"){
@@ -316,60 +286,9 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 	}else if(module_Code == "RealTimeEvaluation_Well"){
 		Ext.getCmp('CBMWellRealtimeAnalysisWellCom_Id').setValue("");
 		loadCBMWellSingleStatData();
-	}else if(module_Code=="graphicalQuery_SurfaceCardQuery"){
-		loadSurfaceCardList(1);
-	}else if(module_Code == "diagnosisTotal_DiagnosisTotalData"){
-		var tabPanel = Ext.getCmp("ProductionWellDailyAnalisisPanel");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="pumpUnitDailyAnalysisPanel_Id"){
-			Ext.getCmp('FSDiagramAnalysisDailyDetailsWellCom_Id').setValue("");
-			loadTotalStatData();
-		}else if(activeId=="screwPumpDailyAnalysisPanel_Id"){
-			Ext.getCmp('ScrewPumpDailyAnalysisWellCom_Id').setValue("");
-			loadScrewPumpDailyStatData();
-		}
-	}else if(module_Code == "calculate_calculateManager"){
-		var bbarId="pumpingCalculateManagerBbar";
-        var tabPanelId = Ext.getCmp("CalculateManagerTabPanel").getActiveTab().id;
-        if(tabPanelId=="PumpingUnitCalculateManagerPanel"){
-        	bbarId="pumpingCalculateManagerBbar";
-		}else if(tabPanelId=="ScrewPumpCalculateManagerPanel"){
-			bbarId="screwPumpCalculateManagerBbar";
-		}
-        var bbar=Ext.getCmp(bbarId);
-        if (isNotVal(bbar)) {
-        	bbar.getStore().loadPage(1)
-        }
-	}else if(module_Code=="PSToFS_PumpingUnitInfo"){//反演抽油机数据
-		CreateAndLoadFSToPSPumpingUnitTable(true);
-	}else if(module_Code=="PSToFS_MotorInfo"){//反演电机数据
-		CreateAndLoadFSToPSMotorTable(true);
-	}else if(module_Code=="PSToFS_InverOptimizeInfo"){//反演参数优化
-		CreateAndLoadInverOptimizeTable(true);
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisRealtimeProfile"){
-		getElectricAnalysisRealtimeProfileData();
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisRealtimeDetails"){//电参分析详情
-		var tabPanel = Ext.getCmp("electricAnalysisRealtimeDetailsTabpanel_Id");
-        var activeId = tabPanel.getActiveTab().id;
-    	  if(activeId=="electricAnalysisRealtimeDetailsDiscretePanel_Id"){
-    		  var gridPanel=Ext.getCmp('ElectricAnalysisRealtimeDiscreteDetails_Id');
-    		  if(isNotVal(gridPanel)){
-    			  gridPanel.getStore().loadPage(1);
-    		  }else{
-    			  Ext.create('AP.store.electricAnalysis.ElectricAnalysisRealtimeDetailsListStore');
-    		  }
-    	  }else if(activeId=="electricAnalysisRealtimeDetailsDiagramPanel_Id"){
-    		  var gridPanel=Ext.getCmp('ElectricAnalysisRealtimeDiagramDetails_Id');
-    		  if(isNotVal(gridPanel)){
-    			  gridPanel.getStore().loadPage(1);
-    		  }else{
-    			  Ext.create('AP.store.electricAnalysis.ElectricAnalysisRealtimeDetailsDiagramListStore');
-    		  }
-    	  }
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisRealtimeDiagram"){
-		loadElectricInverDiagramList(1);
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisDailyProfile"){
-		getElectricAnalysisDailyProfileData();
+	}else if(module_Code == "RealTimeEvaluation_GroupValve"){
+		Ext.getCmp('GroupValveRealtimeAnalysisGroupValveCom_Id').setValue("");
+		loadGroupValveSingleStatData();
 	}else {
 		return false;
 	}

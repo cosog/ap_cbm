@@ -644,7 +644,7 @@ function loadGroupValveSingleStatData() {
 
 function exportGroupValveRTAnalisiDataExcel() {
 	var gridId = "GroupValveAnalysisSingleDetails_Id";
-    var url = context + '/diagnosisAnalysisOnlyController/exportProductionGroupValveRTAnalysisDataExcel';
+    var url = context + '/realTimeEvaluationController/exportGroupValveRTAnalisiDataExcel';
     var fileName = getGroupValveSingleStatType().exportExcelTitle;
     var title =  getGroupValveSingleStatType().exportExcelTitle;
     
@@ -654,7 +654,7 @@ function exportGroupValveRTAnalisiDataExcel() {
     var endDate=Ext.getCmp('GroupValveRealtimeAnalysisEndDate_Id').rawValue;
     var statValue = Ext.getCmp('GroupValveSingleDetailsSelectedStatValue_Id').getValue();
     var type=getGroupValveSingleStatType().type;
-    var wellType=400;
+    
     
     var fields = "";
     var heads = "";
@@ -689,12 +689,11 @@ function exportGroupValveRTAnalisiDataExcel() {
     heads = "序号," + lockedheads+","+unlockedheads;
     var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
     + "&orgId=" + orgId 
-    + "&wellName=" + URLencode(URLencode(wellName))
+    + "&name=" + URLencode(URLencode(wellName))
     + "&statValue=" + URLencode(URLencode(statValue)) 
     + "&fileName=" + URLencode(URLencode(fileName)) 
     + "&title=" + URLencode(URLencode(title))
     + "&type=" + type 
-    + "&wellType=" + wellType 
     + "&startDate=" + startDate 
     + "&endDate=" + endDate ;
     openExcelWindow(url + '?flag=true' + param);
@@ -724,7 +723,7 @@ GroupValveHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, d
     }
 
     var catagories = "[";
-    var title = get_rawData.wellName + "井" + itemName.split("(")[0] + "曲线";
+    var title = get_rawData.wellName + "阀组" + itemName.split("(")[0] + "趋势曲线";
     for (var i = 0; i < data.length; i++) {
         catagories += "\"" + data[i].acquisitionTime + "\"";
         if (i < data.length - 1) {

@@ -53,7 +53,7 @@ public class EquipmentDriverServerTast {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 //		Gson gson = new Gson();
 //		StringManagerUtils stringManagerUtils=new StringManagerUtils();
@@ -97,16 +97,33 @@ public class EquipmentDriverServerTast {
 	public static boolean init(){
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		Map<String, Object> acquisitionUnitMap = AcquisitionUnitMap.getMapObject();
-		String sql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
+		String wellInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
 				+ " t.drivercode,"
 				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
 				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange,"
-				+ " t3.runstatus,t3.runtime,t3.runtimeefficiency,t3.runrange"
-				+ " from tbl_wellinformation t "
-				+ " left outer join  tbl_cbm_discrete_latest  t3 on t3.wellId=t.id"
+				+ " t3.runstatus,t3.runtime,t3.runtimeefficiency,t3.runrange,"
+				+ " t3.gascumulativeflow,t3.gastodayprod"
+				+ " from tbl_wellinformation t ,tbl_cbm_discrete_latest  t3 "
+				+ " where t3.wellId=t.id"
+				+ " order by t.sortNum";
+		String groupValveInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
+				+ " t.drivercode,"
+				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
+				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange"
+				+ " from tbl_wellinformation t ,tbl_groupValve_discrete_latest  t3 "
+				+ " where t3.wellId=t.id"
+				+ " order by t.sortNum";
+		String BPInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
+				+ " t.drivercode,"
+				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
+				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange"
+				+ " from tbl_wellinformation t ,tbl_bp_discrete_latest  t3 "
+				+ " where t3.wellId=t.id"
 				+ " order by t.sortNum";
 		String AcquisitionTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 		String resetCommStatus="update tbl_cbm_discrete_latest t set t.commstatus=0  ";
+		String resetGroupValveCommStatus="update tbl_GroupValve_discrete_latest t set t.commstatus=0  ";
+		String resetBPCommStatus="update tbl_bp_discrete_latest t set t.commstatus=0  ";
 		if(clientUnitList!=null){
 			for(int i=0;i<clientUnitList.size();i++){
 				if(clientUnitList.get(i).thread!=null){
@@ -136,7 +153,11 @@ public class EquipmentDriverServerTast {
 		try {
 			stmt=conn.createStatement();
 			int result=stmt.executeUpdate(resetCommStatus);
-			pstmt = conn.prepareStatement(sql); 
+			result=stmt.executeUpdate(resetGroupValveCommStatus);
+			result=stmt.executeUpdate(resetBPCommStatus);
+			
+			System.out.println("煤层气井初始化");
+			pstmt = conn.prepareStatement(wellInitsql); 
 			rs=pstmt.executeQuery();
 			while(rs.next()){
 				UnitData unit=new UnitData();
@@ -168,6 +189,76 @@ public class EquipmentDriverServerTast {
 				unit.lastRunTime=rs.getFloat(14);
 				unit.lastRunTimeEfficiency=rs.getFloat(15);
 				unit.lastRunRange=rs.getString(16);
+				unit.lastGasCumulativeflow=rs.getFloat(17);
+				unit.lastGasTodayProd=rs.getFloat(18);
+				
+				units.add(unit);
+				clientUnitList.add(clientUnit);
+			}
+			
+			System.out.println("阀组初始化");
+			pstmt = conn.prepareStatement(groupValveInitsql); 
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				UnitData unit=new UnitData();
+				ClientUnit clientUnit=new ClientUnit();
+				unit.wellName=rs.getString(1);
+				unit.type=Integer.parseInt(rs.getString(2)==null?"1":rs.getString(2));
+				unit.driverAddr=rs.getString(3)==null?"":rs.getString(3);
+				unit.dirverId=rs.getString(4)==null?"":rs.getString(4);
+				unit.UnitId=Integer.parseInt(rs.getString(4)==null?"0":rs.getString(4));
+				unit.commStatus=0;
+				unit.acquisitionData=new AcquisitionData();
+				unit.acquisitionData.setRunStatus(0);
+				unit.acqCycle_Discrete=60*1000*rs.getInt(5);
+				unit.saveCycle_Discrete=60*1000*rs.getInt(6);//离散数据保存间隔,单位毫秒
+				for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
+					RTUDriveConfig driveConfig=(RTUDriveConfig)entry.getValue();
+					if(driveConfig.getDriverCode().equalsIgnoreCase(rs.getString(7))){
+						unit.setRtuDriveConfig(driveConfig);
+						unit.setDirverName(driveConfig.getDriverName());
+						break;
+					}
+				}
+				unit.lastDisAcquisitionTime=rs.getString(8);
+				unit.lastCommStatus=rs.getInt(9);
+				unit.lastCommTime=rs.getFloat(10);
+				unit.lastCommTimeEfficiency=rs.getFloat(11);
+				unit.lastCommRange=rs.getString(12);
+				
+				units.add(unit);
+				clientUnitList.add(clientUnit);
+			}
+			
+			System.out.println("增压泵初始化");
+			pstmt = conn.prepareStatement(BPInitsql); 
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				UnitData unit=new UnitData();
+				ClientUnit clientUnit=new ClientUnit();
+				unit.wellName=rs.getString(1);
+				unit.type=Integer.parseInt(rs.getString(2)==null?"1":rs.getString(2));
+				unit.driverAddr=rs.getString(3)==null?"":rs.getString(3);
+				unit.dirverId=rs.getString(4)==null?"":rs.getString(4);
+				unit.UnitId=Integer.parseInt(rs.getString(4)==null?"0":rs.getString(4));
+				unit.commStatus=0;
+				unit.acquisitionData=new AcquisitionData();
+				unit.acquisitionData.setRunStatus(0);
+				unit.acqCycle_Discrete=60*1000*rs.getInt(5);
+				unit.saveCycle_Discrete=60*1000*rs.getInt(6);//离散数据保存间隔,单位毫秒
+				for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
+					RTUDriveConfig driveConfig=(RTUDriveConfig)entry.getValue();
+					if(driveConfig.getDriverCode().equalsIgnoreCase(rs.getString(7))){
+						unit.setRtuDriveConfig(driveConfig);
+						unit.setDirverName(driveConfig.getDriverName());
+						break;
+					}
+				}
+				unit.lastDisAcquisitionTime=rs.getString(8);
+				unit.lastCommStatus=rs.getInt(9);
+				unit.lastCommTime=rs.getFloat(10);
+				unit.lastCommTimeEfficiency=rs.getFloat(11);
+				unit.lastCommRange=rs.getString(12);
 				
 				units.add(unit);
 				clientUnitList.add(clientUnit);
@@ -924,7 +1015,8 @@ public class EquipmentDriverServerTast {
 		public int setWellNameControl=0;
 		//阀组控制标志
 		public int groupValveDeviceIdControl=0;
-		public int groupValveBaudRateControl=0;
+		public int groupValveBaudRate1Control=-99;
+		public int groupValveBaudRate2Control=-99;
 		public int groupValveInstrumentCombinationMode1Control=0;
 		public int groupValveInstrumentCombinationMode2Control=0;
 		public int groupValveInstrumentCombinationMode3Control=0;
@@ -947,6 +1039,8 @@ public class EquipmentDriverServerTast {
 		public float lastRunTime;
 		public float lastRunTimeEfficiency;
 		public String lastRunRange;
+		public float lastGasCumulativeflow;
+		public float lastGasTodayProd;
 		
 		public  int acqCycle_Discrete=1000*60*2;//离散数据以及心跳读取周期,单位毫秒
 		public  int saveCycle_Discrete=1000*60*5;//离散数据保存间隔,单位毫秒
@@ -1258,12 +1352,20 @@ public class EquipmentDriverServerTast {
 			this.groupValveDeviceIdControl = groupValveDeviceIdControl;
 		}
 
-		public int getGroupValveBaudRateControl() {
-			return groupValveBaudRateControl;
+		public int getGroupValveBaudRate1Control() {
+			return groupValveBaudRate1Control;
 		}
 
-		public void setGroupValveBaudRateControl(int groupValveBaudRateControl) {
-			this.groupValveBaudRateControl = groupValveBaudRateControl;
+		public void setGroupValveBaudRate1Control(int groupValveBaudRate1Control) {
+			this.groupValveBaudRate1Control = groupValveBaudRate1Control;
+		}
+		
+		public int getGroupValveBaudRate2Control() {
+			return groupValveBaudRate2Control;
+		}
+
+		public void setGroupValveBaudRate2Control(int groupValveBaudRate2Control) {
+			this.groupValveBaudRate2Control = groupValveBaudRate2Control;
 		}
 
 		public int getGroupValveInstrumentCombinationMode1Control() {
@@ -1304,6 +1406,22 @@ public class EquipmentDriverServerTast {
 
 		public void setVfdManufacture(int vfdManufacture) {
 			this.vfdManufacture = vfdManufacture;
+		}
+
+		public float getLastGasCumulativeflow() {
+			return lastGasCumulativeflow;
+		}
+
+		public void setLastGasCumulativeflow(float lastGasCumulativeflow) {
+			this.lastGasCumulativeflow = lastGasCumulativeflow;
+		}
+
+		public float getLastGasTodayProd() {
+			return lastGasTodayProd;
+		}
+
+		public void setLastGasTodayProd(float lastGasTodayProd) {
+			this.lastGasTodayProd = lastGasTodayProd;
 		}
 		
 	}

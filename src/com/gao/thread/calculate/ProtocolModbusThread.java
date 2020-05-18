@@ -787,6 +787,41 @@ public class ProtocolModbusThread extends Thread{
     	        						System.out.println("时率请求数据："+tiemEffRequest);
     	    							System.out.println("时率返回数据："+timeEffResponse);
     	        					}
+    	        					
+    	        					//进行电量计算
+    	        					EnergyCalculateResponseData energyCalculateResponseData=null;
+    	        					String energyRequest="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
+    	        						energyRequest+= "\"Last\":{"
+    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"Total\":{"
+    	    									+ "\"Watt\":"+clientUnit.unitDataList.get(i).lastGasCumulativeflow
+    	    									+ "},\"Today\":{"
+    	    									+ "\"Watt\":"+clientUnit.unitDataList.get(i).lastGasTodayProd
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					energyRequest+= "\"Current\": {"
+    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"Total\":{"
+    										+ "\"Watt\":"+gasCumulativeFlow
+    										+ "}"
+    										+ "}"
+    										+ "}";
+    	        					String energyResponse=StringManagerUtils.sendPostMethod(energyUrl, energyRequest,"utf-8");
+    	        					type = new TypeToken<EnergyCalculateResponseData>() {}.getType();
+    	        					energyCalculateResponseData=gson.fromJson(energyResponse, type);
+    	        					if(energyCalculateResponseData!=null&&energyCalculateResponseData.getResultStatus()==1){
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastGasCumulativeflow=energyCalculateResponseData.getCurrent().getTotal().getWatt();
+    	        						clientUnit.unitDataList.get(i).lastGasTodayProd=energyCalculateResponseData.getCurrent().getToday().getWatt();
+    	        					}else{
+    	        						System.out.println("energy error");
+    	        						System.out.println("请求数据："+energyRequest);
+    	    							System.out.println("返回数据："+energyResponse);
+    	        					}
     	        					clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
     	        					//判断是否保存数据
     	        					long hisDataInterval=0;
@@ -795,6 +830,7 @@ public class ProtocolModbusThread extends Thread{
     	    						}
     	    						if(commResponseData!=null&&commResponseData.getResultStatus()==1
     	    								&&timeEffResponseData!=null&&timeEffResponseData.getResultStatus()==1
+    	    								&&energyCalculateResponseData!=null&&energyCalculateResponseData.getResultStatus()==1
     	    								&&
     	        							(runStatus!=clientUnit.unitDataList.get(i).acquisitionData.runStatus//运行状态发生改变
     	        							||format.parse(AcquisitionTime).getTime()-hisDataInterval>=clientUnit.unitDataList.get(i).getSaveCycle_Discrete()//比上次保存时间大于5分钟
@@ -808,7 +844,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ "commstatus,commtimeefficiency,commtime,commrange,"
                 								+ "runstatus,runtimeefficiency,runtime,runrange,"
                 								+ "rtustatus,spm,ai1,ai2,ai3,ai4,"
-                								+ "gasflowmetercommstatus,gasinstantaneousflow,gascumulativeflow,gasflowmeterpress,"
+                								+ "gasflowmetercommstatus,gasinstantaneousflow,gascumulativeflow,gasflowmeterpress,gastodayprod,"
                 								+ "liquidflowmetercommstatus,liquidinstantaneousflow,liquidcumulativeflow,liquidflowmeterprod,"
                 								+ "fluidlevelindicatorcommstatus,fluidlevelacquisitiontime,soundvelocity,fluidlevel,fluidlevelindicatorpress,"
                 								+ "vfdcommstatus,vfdstatus,vfdstatus2,runfrequency,"
@@ -820,7 +856,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
                 								+ runStatus+","+timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency()+","+timeEffResponseData.getCurrent().getRunEfficiency().getTime()+",'"+timeEffResponseData.getCurrent().getRunEfficiency().getRangeString()+"',"
                 								+ RTUStatus+","+SPM+","+AI1+","+AI2+","+AI3+","+AI4+","
-                								+ gasFlowmeterCommStatus+","+gasInstantaneousFlow+","+gasCumulativeFlow+","+gasFlowmeterPress+","
+                								+ gasFlowmeterCommStatus+","+gasInstantaneousFlow+","+gasCumulativeFlow+","+gasFlowmeterPress+","+energyCalculateResponseData.getCurrent().getToday().getWatt()+","
                 								+ liquidFlowmeterCommStatus+","+liquidInstantaneousFlow+","+liquidCumulativeFlow+","+liquidFlowmeterProd+","
                 								+ fluidLevelIndicatorCommStatus+",to_date('"+fluidLevelAcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"+fluidLevelIndicatorSoundVelocity+","+fluidLevel+","+fluidLevelIndicatorPress+","
                 								+ frequencyChangerCommStatus+","+frequencyChangerStatus+","+frequencyChangerStatus2+","+runFrequency+","
@@ -875,11 +911,41 @@ public class ProtocolModbusThread extends Thread{
     	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
     	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
         					}
-        					//设置波特率
-        					if(clientUnit.unitDataList.get(i).groupValveBaudRateControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate()!=null){
+        					//设置A1B1口波特率
+        					if(clientUnit.unitDataList.get(i).groupValveBaudRate1Control!=-99&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate()!=null){
         						wellReaded=true;
-    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress(), clientUnit.unitDataList.get(i).groupValveBaudRateControl,driveConfig.getProtocol());
-    							clientUnit.unitDataList.get(i).setGroupValveBaudRateControl(0);
+        						//先将目前的两个波特率读取回来
+        						int BaudRate;
+        						int BaudRate2;
+        						rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
+        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress(),
+        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getLength(),
+        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
+    							if(rc==-1||rc==-2){
+    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取阀组波特率发送或接收失败,rc="+rc);
+    								this.releaseResource(is,os);
+                    				wellReaded=false;
+                    				break;
+    							}else if(rc==-3){
+    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取阀组波特率数据异常,rc="+rc);
+    								break;
+    							}else{
+    								int index=0;
+    								if(clientUnit.unitDataList.get(i).getRtuDriveConfig().getProtocol()==1){
+    									index=10;
+    								}else{
+    									index=4;
+    								}
+    								//通讯波特率
+    								BaudRate=(short) (0x0000 | (0x01 & recByte[index]));  
+    								BaudRate2=(short) (0x0000 | (0x02 & recByte[index])>>1);  
+    								
+    							}
+        						
+        						int controlValue=BaudRate2*2+clientUnit.unitDataList.get(i).groupValveBaudRate1Control;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress(),controlValue,driveConfig.getProtocol());
+    							
+    							clientUnit.unitDataList.get(i).setGroupValveBaudRate1Control(-99);
     							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
     							if(rc==-1){//断开连接
     	    						System.out.println("线程"+this.threadId+",阀组:"+clientUnit.unitDataList.get(i).getWellName()+"设置波特率指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
@@ -897,6 +963,62 @@ public class ProtocolModbusThread extends Thread{
     	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
     	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
         					}
+        					
+        					//设置A2B2口波特率
+        					if(clientUnit.unitDataList.get(i).groupValveBaudRate2Control!=-99&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate()!=null){
+        						wellReaded=true;
+        						//先将目前的两个波特率读取回来
+        						int BaudRate;
+        						int BaudRate2;
+        						rc=sendAndReadData(is,os,readTimeout,clientUnit.unitDataList.get(i).UnitId,03,
+        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress(),
+        								clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getLength(),
+        								recByte,clientUnit.unitDataList.get(i),driveConfig.getProtocol());
+    							if(rc==-1||rc==-2){
+    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取阀组波特率发送或接收失败,rc="+rc);
+    								this.releaseResource(is,os);
+                    				wellReaded=false;
+                    				break;
+    							}else if(rc==-3){
+    								System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取阀组波特率数据异常,rc="+rc);
+    								break;
+    							}else{
+    								int index=0;
+    								if(clientUnit.unitDataList.get(i).getRtuDriveConfig().getProtocol()==1){
+    									index=10;
+    								}else{
+    									index=4;
+    								}
+    								//通讯波特率
+    								BaudRate=(short) (0x0000 | (0x01 & recByte[index]));  
+    								BaudRate2=(short) (0x0000 | (0x02 & recByte[index])>>1);  
+    								
+    							}
+        						
+        						int controlValue=clientUnit.unitDataList.get(i).groupValveBaudRate2Control*2+BaudRate;
+    							readByte=this.getWriteSingleRegisterByteData(clientUnit.unitDataList.get(i).UnitId,6, clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getBaudRate().getAddress(),controlValue,driveConfig.getProtocol());
+    							
+    							clientUnit.unitDataList.get(i).setGroupValveBaudRate2Control(-99);
+    							rc=this.writeSocketData(clientUnit.socket, readByte,os,clientUnit.unitDataList.get(i));
+    							if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",阀组:"+clientUnit.unitDataList.get(i).getWellName()+"设置波特率指令发送失败:"+StringManagerUtils.bytesToHexString(readByte,readByte.length));
+    	        					this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    							rc=this.readSocketData(clientUnit.socket, readTimeout, recByte,is,clientUnit.unitDataList.get(i));
+    	    					if(rc==-1){//断开连接
+    	    						System.out.println("线程"+this.threadId+",井:"+clientUnit.unitDataList.get(i).getWellName()+"读取设置波特率返回数据读取失败，断开连接,释放资源");
+    	            				this.releaseResource(is,os);
+    	            				wellReaded=false;
+    	            				break;
+    	            			}
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
+        					
+        					
+        					
         					//设置仪表组合方式-1#从站
         					if(clientUnit.unitDataList.get(i).groupValveInstrumentCombinationMode1Control!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getInstrumentCombinationMode1()!=null){
         						wellReaded=true;
@@ -1545,6 +1667,15 @@ public class ProtocolModbusThread extends Thread{
 				clientUnit.unitDataList.get(i).RTUAddrControl=0;
 				clientUnit.unitDataList.get(i).RTUProgramVersionControl=0;
 				clientUnit.unitDataList.get(i).setWellNameControl=0;
+				
+				//阀组控制标志
+				clientUnit.unitDataList.get(i).groupValveDeviceIdControl=0;
+				clientUnit.unitDataList.get(i).groupValveBaudRate1Control=-99;
+				clientUnit.unitDataList.get(i).groupValveBaudRate2Control=-99;
+				clientUnit.unitDataList.get(i).groupValveInstrumentCombinationMode1Control=0;
+				clientUnit.unitDataList.get(i).groupValveInstrumentCombinationMode2Control=0;
+				clientUnit.unitDataList.get(i).groupValveInstrumentCombinationMode3Control=0;
+				clientUnit.unitDataList.get(i).groupValveInstrumentCombinationMode4Control=0;
 				
 				clientUnit.unitDataList.get(i).acquisitionData.runStatus=0;
 				//进行通信计算

@@ -412,7 +412,7 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                 padding: 0,
                                 autoScroll: true,
                                 scrollable: true,
-                                hidden:true,
+                                hidden:false,
                                 layout: {
                                     type: 'hbox',
                                     pack: 'start',
@@ -740,7 +740,7 @@ function loadCBMWellSingleStatData() {
 
 function exportCBMWellRTAnalisiDataExcel() {
 	var gridId = "CBMWellAnalysisSingleDetails_Id";
-    var url = context + '/diagnosisAnalysisOnlyController/exportProductionWellRTAnalysisDataExcel';
+    var url = context + '/realTimeEvaluationController/exportCBMWellRTAnalisiDataExcel';
     var fileName = getCBMWellSingleStatType().exportExcelTitle;
     var title =  getCBMWellSingleStatType().exportExcelTitle;
     
@@ -820,7 +820,7 @@ WellHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, divId) 
     }
 
     var catagories = "[";
-    var title = get_rawData.wellName + "井" + itemName.split("(")[0] + "曲线";
+    var title = get_rawData.wellName + "井" + itemName.split("(")[0] + "趋势曲线";
     for (var i = 0; i < data.length; i++) {
         catagories += "\"" + data[i].acquisitionTime + "\"";
         if (i < data.length - 1) {

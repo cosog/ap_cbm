@@ -43,7 +43,7 @@ Ext.define('AP.view.well.WellInfoPanel', {
         });
         var unitTypeStoreDate=[
         	{"boxkey":'', "boxval":"选择全部"},
-        	{"boxkey":'1', "boxval":"煤层气井"},
+        	{"boxkey":'1', "boxval":"气井"},
         	{"boxkey":'2', "boxval":"阀组"},
         	{"boxkey":'3', "boxval":"增压泵"}
         ];
@@ -55,10 +55,10 @@ Ext.define('AP.view.well.WellInfoPanel', {
         
         var simpleCombo = Ext.create(
             'Ext.form.field.ComboBox', {
-                fieldLabel: cosog.string.wellName,
+                fieldLabel: '单元名称',
                 id: "wellInfoPanel_jh_Id",
-                labelWidth: 35,
-                width: 145,
+                labelWidth: 60,
+                width: 170,
                 labelAlign: 'left',
                 queryMode: 'remote',
                 typeAhead: true,
@@ -215,7 +215,7 @@ function CreateAndLoadWellInfoTable(isNew){
 	            for(var i=0;i<result.columns.length;i++){
 	            	colHeaders+="'"+result.columns[i].header+"'";
 	            	if(result.columns[i].dataIndex==="unitTypeName"){
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['煤层气井', '阀组','增压泵']}";
+	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['气井', '阀组','增压泵']}";
 	            	}else if(result.columns[i].dataIndex==="driverName"){
 	            		var source="[";
 	            		for(var j=0;j<result.driverDropdownData.length;j++){

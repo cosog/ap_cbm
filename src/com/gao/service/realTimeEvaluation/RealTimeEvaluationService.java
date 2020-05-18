@@ -97,6 +97,122 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		String sqlHis="";
 		String finalSql="";
 		String sqlAll="";
+		String ddicName="CBMWellRealtimeRunStatus";
+		String tableName_latest="viw_cbm_discrete_latest";
+		String tableName_hist="viw_cbm_discrete_hist";
+		String typeColumnName="runStatusName";
+		
+		if("1".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeRunStatus";
+			typeColumnName="runStatusName";
+		}else if("2".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeRunEff";
+			typeColumnName="runtimeefficiencyLevel";
+		}else if("3".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeCommStatus";
+			typeColumnName="commStatusName";
+		}else if("4".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeCommEff";
+			typeColumnName="commtimeefficiencyLevel";
+		}
+		
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		
+		columns = ddic.getTableHeader();
+		
+		sql=ddic.getSql()+",commStatus,commAlarmLevel,runStatus,runAlarmLevel";
+		sqlHis=ddic.getSql()+",commStatus,commAlarmLevel,runStatus,runAlarmLevel ";
+		
+		
+		sql+= " from "+tableName_latest+" t where t.org_id in("+orgId+")";
+		sqlHis+= " from "+tableName_hist+" t where t.org_id in("+orgId+")";
+		
+		
+		if(StringManagerUtils.isNotNull(statValue)){
+			sql+=" and "+typeColumnName+"='"+statValue+"' ";
+		}
+		sql+=" order by t.sortNum, t.wellName";
+		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		
+		if(StringManagerUtils.isNotNull(wellName.trim())){
+			sqlAll=sqlHis;
+		}else{
+			sqlAll=sql;
+		}
+		
+		int maxvalue=pager.getLimit()+pager.getStart();
+		finalSql="select * from   ( select a.*,rownum as rn from ("+sqlAll+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		String getResult = this.findCustomPageBySqlEntity(sqlAll,finalSql, columns, 20 + "", pager);
+		return getResult;
+	}
+	
+	public String exportCBMWellRTAnalisiDataExcel(String orgId, String wellName, Page pager,String type,String unitType,String startDate,String endDate,String statValue)
+			throws Exception {
+		DataDictionary ddic = null;
+		String columns= "";
+		String sql="";
+		String sqlHis="";
+		String finalSql="";
+		String sqlAll="";
+		String ddicName="CBMWellRealtimeRunStatus";
+		String tableName_latest="viw_cbm_discrete_latest";
+		String tableName_hist="viw_cbm_discrete_hist";
+		String typeColumnName="runStatusName";
+		
+		if("1".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeRunStatus";
+			typeColumnName="runStatusName";
+		}else if("2".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeRunEff";
+			typeColumnName="runtimeefficiencyLevel";
+		}else if("3".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeCommStatus";
+			typeColumnName="commStatusName";
+		}else if("4".equalsIgnoreCase(type)){
+			ddicName="CBMWellRealtimeCommEff";
+			typeColumnName="commtimeefficiencyLevel";
+		}
+		
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		
+		columns = ddic.getTableHeader();
+		
+		sql=ddic.getSql()+",commStatus,commAlarmLevel,runStatus,runAlarmLevel";
+		sqlHis=ddic.getSql()+",commStatus,commAlarmLevel,runStatus,runAlarmLevel ";
+		
+		
+		sql+= " from "+tableName_latest+" t where t.org_id in("+orgId+")";
+		sqlHis+= " from "+tableName_hist+" t where t.org_id in("+orgId+")";
+		
+		
+		if(StringManagerUtils.isNotNull(statValue)){
+			sql+=" and "+typeColumnName+"='"+statValue+"' ";
+		}
+		sql+=" order by t.sortNum, t.wellName";
+		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		
+		if(StringManagerUtils.isNotNull(wellName.trim())){
+			sqlAll=sqlHis;
+		}else{
+			sqlAll=sql;
+		}
+		
+		int maxvalue=pager.getLimit()+pager.getStart();
+//		finalSql="select * from   ( select a.*,rownum as rn from ("+sqlAll+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		String getResult = this.findExportDataBySqlEntity(sqlAll,sqlAll, columns, 20 + "", pager);
+		return getResult;
+	}
+	
+	public String getRealtimeAnalysisGroupValveList(String orgId, String wellName, Page pager,String type,String unitType,String startDate,String endDate,String statValue)
+			throws Exception {
+		DataDictionary ddic = null;
+		String columns= "";
+		String sql="";
+		String sqlHis="";
+		String finalSql="";
+		String sqlAll="";
 		String ddicName="GroupValveRealtimeCommStatus";
 		String tableName_latest="viw_groupvalve_discrete_latest";
 		String tableName_hist="viw_groupvalve_discrete_hist";
@@ -138,6 +254,58 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		int maxvalue=pager.getLimit()+pager.getStart();
 		finalSql="select * from   ( select a.*,rownum as rn from ("+sqlAll+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		String getResult = this.findCustomPageBySqlEntity(sqlAll,finalSql, columns, 20 + "", pager);
+		return getResult;
+	}
+	
+	public String exportGroupValveRTAnalisiDataExcel(String orgId, String wellName, Page pager,String type,String unitType,String startDate,String endDate,String statValue)
+			throws Exception {
+		DataDictionary ddic = null;
+		String columns= "";
+		String sql="";
+		String sqlHis="";
+		String finalSql="";
+		String sqlAll="";
+		String ddicName="GroupValveRealtimeCommStatus";
+		String tableName_latest="viw_groupvalve_discrete_latest";
+		String tableName_hist="viw_groupvalve_discrete_hist";
+		String typeColumnName="commStatusName";
+		
+		if("1".equalsIgnoreCase(type)){
+			ddicName="GroupValveRealtimeCommStatus";
+			typeColumnName="commStatusName";
+		}else if("2".equalsIgnoreCase(type)){
+			ddicName="GroupValceRealtimeCommEff";
+			typeColumnName="commtimeefficiencyLevel";
+		}
+		
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		
+		columns = ddic.getTableHeader();
+		
+		sql=ddic.getSql()+",commStatus,commAlarmLevel";
+		sqlHis=ddic.getSql()+",commStatus,commAlarmLevel ";
+		
+		
+		sql+= " from "+tableName_latest+" t where t.org_id in("+orgId+")";
+		sqlHis+= " from "+tableName_hist+" t where t.org_id in("+orgId+")";
+		
+		
+		if(StringManagerUtils.isNotNull(statValue)){
+			sql+=" and "+typeColumnName+"='"+statValue+"' ";
+		}
+		sql+=" order by t.sortNum, t.wellName";
+		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		
+		if(StringManagerUtils.isNotNull(wellName.trim())){
+			sqlAll=sqlHis;
+		}else{
+			sqlAll=sql;
+		}
+		
+		int maxvalue=pager.getLimit()+pager.getStart();
+//		finalSql="select * from   ( select a.*,rownum as rn from ("+sqlAll+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		String getResult = this.findExportDataBySqlEntity(sqlAll,sqlAll, columns, 20 + "", pager);
 		return getResult;
 	}
 	

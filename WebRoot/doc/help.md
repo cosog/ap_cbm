@@ -53,9 +53,9 @@
 >4. 统计区：信息统计图表；  
 >5. 单井数据区：单井采集及控制详细信息。
 
-&emsp;&emsp;通过点击界面中缝位置的图标![伸缩按钮](../images/helpdoc/PNG/025.png?t=202005111111&raw=true)或![伸缩按钮](../images/helpdoc/PNG/026.png?raw=true)可实现界面伸缩。
+&emsp;&emsp;通过点击界面中缝位置的图标![伸缩按钮](../images/helpdoc/PNG/025.png?t=202005140953&raw=true)或![伸缩按钮](../images/helpdoc/PNG/026.png?t=202005140953&raw=true)可实现界面伸缩。
 
-![列表伸缩](../images/helpdoc/PNG/001.png?raw=true)
+![列表伸缩](../images/helpdoc/PNG/001.png?t=202005140953&raw=true)
 
 <h2><a name="2.2实时评价"></a>2.2 实时评价</h2>  
 
@@ -67,7 +67,7 @@
 >2. 统计子标签：各主标签包含的子项，如时率包括运行状态和运行时率；  
 >3. 统计表/图：根据选择的各主标签、子标签显示相关统计信息。
 
-![统计数据](../images/helpdoc/PNG/002.png?raw=true)
+![统计数据](../images/helpdoc/PNG/002.png?t=202005140953&raw=true)
 
 <h4><a name="2.2.1.2目标井"></a>2.2.1.2 目标井</h4>
 
@@ -77,9 +77,9 @@
 >3. 右侧单井详情中显示该井的详细信息；
 >4. 选择一行后点击**查看历史**或**双击**该行可查看该井的历史信息。
 
-![目标井](../images/helpdoc/PNG/003.png?raw=true)  
+![目标井](../images/helpdoc/PNG/003.png?t=202005140953&raw=true)  
   
-![单井历史](../images/helpdoc/PNG/004.png?raw=true)  
+![单井历史](../images/helpdoc/PNG/004.png?t=202005140953&raw=true)  
 
 <h4><a name="2.2.1.3单井数据"></a>2.2.1.3 单井数据</h4>
 
@@ -88,12 +88,12 @@
 **1、采集**  
 &emsp;&emsp;显示传感器采集数据，包括气体质量流量计数据、量水仪数据、液面仪数据、变频器数据等。  
 
-![采集](../images/helpdoc/PNG/005.png?raw=true)  
+![采集](../images/helpdoc/PNG/005.png?t=202005140953&raw=true)  
 
 **2、控制**  
 &emsp;&emsp;井场设备控制。  
 
-![控制](../images/helpdoc/PNG/006.png?raw=true)
+![控制](../images/helpdoc/PNG/006.png?t=202005140953&raw=true)
 
 <h2><a name="2.3权限管理"></a>2.3 权限管理</h2>
 
@@ -103,49 +103,49 @@
 
 1. 使用系统管理员账号登录系统。  
 2. 进入**单位管理**模块创建单位组织。如模拟煤层气公司—模拟采气厂—模拟工区。  
-3. 点击![创建按钮](../images/helpdoc/PNG/015.png?raw=true)，创建模拟煤层气公司；填写完成后，点击![保存按钮](../images/helpdoc/PNG/016.png?raw=true)，完成创建。  
+3. 点击![创建按钮](../images/helpdoc/PNG/015.png?t=202005140953&raw=true)，创建模拟煤层气公司；填写完成后，点击![保存按钮](../images/helpdoc/PNG/016.png?t=202005140953&raw=true)，完成创建。  
 >- 上级单位：由于模拟煤层气公司为根节点，上级单位不选择；  
 >- 单位类别：按实际选择，局级；  
 >- 单位名称：模拟煤层气公司；  
 >- 单位编码、单位级别：确定上级单位、单位类别后自动生成；  
 >- 单位说明：可不填写。  
 
-![创建模拟煤层气公司](../images/helpdoc/PNG/007.png?raw=true)
+![创建模拟煤层气公司](../images/helpdoc/PNG/007.png?t=202005140953&raw=true)
 
-4. 点击![创建按钮](../images/helpdoc/PNG/015.png?raw=true)，创建模拟采气厂；填写完成后，点击![保存按钮](../images/helpdoc/PNG/016.png?raw=true)，完成创建。  
+4. 点击![创建按钮](../images/helpdoc/PNG/015.png?t=202005140953&raw=true)，创建模拟采气厂；填写完成后，点击![保存按钮](../images/helpdoc/PNG/016.png?t=202005140953&raw=true)，完成创建。  
 >- 上级单位：已创建根节点，选择模拟煤层气公司；  
 >- 单位类别：按实际选择，厂级；
 >- 单位名称：模拟采气厂。 
 
-![创建模拟采气厂](../images/helpdoc/PNG/008.png?raw=true)
+![创建模拟采气厂](../images/helpdoc/PNG/008.png?t=202005140953&raw=true)
 
 5. 依次完成各级单位组织创建。  
 
-![单位管理](../images/helpdoc/PNG/009.png?raw=true) 
+![单位管理](../images/helpdoc/PNG/009.png?t=202005140953&raw=true) 
 
 
 <h3><a name="2.3.2用户管理"></a>2.3.2 用户管理</h3>
 
-&emsp;&emsp;接下来进入**用户管理**模块，为不同的单位组织创建用户。点击![创建按钮](../images/helpdoc/PNG/015.png?raw=true)，创建新用户；填写完成后，点击![保存按钮](../images/helpdoc/PNG/016.png?raw=true)，完成创建。  
+&emsp;&emsp;接下来进入**用户管理**模块，为不同的单位组织创建用户。点击![创建按钮](../images/helpdoc/PNG/015.png?t=202005140953&raw=true)，创建新用户；填写完成后，点击![保存按钮](../images/helpdoc/PNG/016.png?t=202005140953&raw=true)，完成创建。  
 >- 单位名称：选择已创建的单位组织，确定组织的用户登录后，只能看到该组织及该组织的下属单位对应的信息；  
 >- 角色：包括层气软件管理员、煤层气软件分析员，不同的角色拥有不同的权限;  
 >- 用户名称、用户账号、用户密码：按实际填写;
 >- 用户电话、内部邮箱：可不填写;  
 >- 快捷登录：在登录界面是否可以免密登录，一般用于数据查询人员。
 
-![创建用户](../images/helpdoc/PNG/010.png?raw=true)
+![创建用户](../images/helpdoc/PNG/010.png?t=202005140953&raw=true)
 
 <h3><a name="2.3.3角色管理"></a>2.3.3 角色管理</h3>
 
 &emsp;&emsp;进入**角色管理**模块，创建不同的角色，通过权限授予为不同的角色设置模块访问权限。  
-1. 点击![创建按钮](../images/helpdoc/PNG/015.png?raw=true)，创建新角色。  
+1. 点击![创建按钮](../images/helpdoc/PNG/015.png?t=202005140953&raw=true)，创建新角色。  
 >- 角色名称：自定义，便于识别角色；  
 >- 角色编码：自定义，用于开发人员识别，用户不会用到；  
 >- 角色描述：角色具体功能描述。
 
-2. 在右侧权限角色授予界面为新角色配置可访问的模块，点击![保存按钮](../images/helpdoc/PNG/033.png?raw=true)，完成权限授予。  
+2. 在右侧权限角色授予界面为新角色配置可访问的模块，点击![保存按钮](../images/helpdoc/PNG/033.png?t=202005140953&raw=true)，完成权限授予。  
 
-![创建角色](../images/helpdoc/PNG/011.png?raw=true)
+![创建角色](../images/helpdoc/PNG/011.png?t=202005140953&raw=true)
 
 <h2><a name="2.4数据配置"></a>2.4 数据配置</h2>
 
@@ -176,23 +176,23 @@
 
 <h4><a name="2.4.1.3修改井名"></a>2.4.1.3 修改井名</h4>
 
-&emsp;&emsp;在列表中修改井名，完成后点击![修改井名按钮](../images/helpdoc/PNG/012.png?raw=true)。  
+&emsp;&emsp;在列表中修改井名，完成后点击![修改井名按钮](../images/helpdoc/PNG/012.png?t=202005140953&raw=true)。  
 **注意：**  
 **（1）不要删除修改井，再重新录入新井，会导致历史数据丢失；**  
 **（2）修改完成后，点击“修改井名”按钮，不要点击“保存”按钮。**
 
 <h4><a name="2.4.1.4删除数据"></a>2.4.1.4 删除数据</h4>
 
-&emsp;&emsp;选中一行或多行，右键，选择删除行，然后点击![保存按钮](../images/helpdoc/PNG/033.png?raw=true)。
+&emsp;&emsp;选中一行或多行，右键，选择删除行，然后点击![保存按钮](../images/helpdoc/PNG/033.png?t=202005140953&raw=true)。
 
-![删除数据](../images/helpdoc/PNG/013.png?raw=true)
+![删除数据](../images/helpdoc/PNG/013.png?t=202005140953&raw=true)
 
 <h3><a name="2.4.2驱动配置"></a>2.4.2 驱动配置</h3>
 
 &emsp;&emsp;针对不同的设备安装情况设置不同的采集项和控制项。  
-&emsp;&emsp;点击![创建按钮](../images/helpdoc/PNG/015.png?raw=true)创建采控类型，如类型名称“类型一”，类型编码“type1”，类型描述按实际填写，创建完成后，在右侧列表中勾选实际采集项和控制项，点击![保存按钮](../images/helpdoc/PNG/033.png?raw=true)完成配置。后续在**井名信息**模块数据录入时按照单井实际采控项选择不同的采控类型。
+&emsp;&emsp;点击![创建按钮](../images/helpdoc/PNG/015.png?t=202005140953&raw=true)创建采控类型，如类型名称“类型一”，类型编码“type1”，类型描述按实际填写，创建完成后，在右侧列表中勾选实际采集项和控制项，点击![保存按钮](../images/helpdoc/PNG/033.png?t=202005140953&raw=true)完成配置。后续在**井名信息**模块数据录入时按照单井实际采控项选择不同的采控类型。
 
-![驱动配置](../images/helpdoc/PNG/014.png?raw=true)
+![驱动配置](../images/helpdoc/PNG/014.png?t=202005140953&raw=true)
 
 <h2><a name="2.5系统配置"></a>2.5 系统配置</h2>
 
@@ -200,16 +200,16 @@
 
 &emsp;&emsp;对各模块显示的字段进行管理，主要修改字段名称、显示顺序、是否显示等。
 
-![字典配置](../images/helpdoc/PNG/017.png?raw=true)
+![字典配置](../images/helpdoc/PNG/017.png?t=202005140953&raw=true)
 
 <h3><a name="2.5.2统计配置"></a>2.5.2 统计配置</h3>
 
 &emsp;&emsp;配置各项参数的统计级别。
 
-![统计配置](../images/helpdoc/PNG/018.png?raw=true)
+![统计配置](../images/helpdoc/PNG/018.png?t=202005140953&raw=true)
 
 <h3><a name="2.5.3报警配置"></a>2.5.3 报警配置</h3>
 
 &emsp;&emsp;设置报警级别、开关、颜色等。
 
-![报警配置](../images/helpdoc/PNG/019.png?raw=true)
+![报警配置](../images/helpdoc/PNG/019.png?t=202005140953&raw=true)

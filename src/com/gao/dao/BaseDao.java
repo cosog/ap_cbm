@@ -1178,6 +1178,36 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
+	public Boolean saveCBMDailyCalculationData(TimeEffResponseData timeEffResponseData,CommResponseData commResponseData) throws SQLException {
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		try {
+			cs = conn.prepareCall("{call prd_save_cbmDailyData(?,?,?,?,?,?,?,?,?)}");
+			cs.setString(1,timeEffResponseData.getWellName());
+			
+			cs.setInt(2, commResponseData.getDaily().getCommStatus()?1:0);
+			cs.setFloat(3, commResponseData.getDaily().getCommEfficiency().getTime());
+			cs.setFloat(4, commResponseData.getDaily().getCommEfficiency().getEfficiency());
+			cs.setString(5, commResponseData.getDaily().getCommEfficiency().getRangeString());
+			
+			cs.setInt(6, timeEffResponseData.getDaily().getRunStatus()?1:0);
+			cs.setFloat(7, timeEffResponseData.getDaily().getRunEfficiency().getTime());
+			cs.setFloat(8, timeEffResponseData.getDaily().getRunEfficiency().getEfficiency());
+			cs.setString(9, timeEffResponseData.getDaily().getRunEfficiency().getRangeString());
+			
+			cs.setString(10, timeEffResponseData.getDaily().getDate());
+			cs.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
 	public Boolean savePumpEditerGridData(PumpGridPanelData p, String ids, String comandType) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;

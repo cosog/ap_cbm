@@ -79,21 +79,6 @@ public class SessionTimeOutFilter extends HttpServlet implements Filter {
 //		request.setAttribute("locale", browserLang);
 		String urlString = loginUrl[loginUrl.length - 1];
 		if (uck.equalsIgnoreCase("God bless you!")) {
-//			if (urlString.equals("toLogin")
-//					||urlString.equals("toBackMain")
-//					||urlString.equals("toMain")
-//					||urlString.equals("getUserList")||urlString.equals("userLogin")
-//					||urlString.endsWith(".js")||urlString.endsWith(".css")||urlString.endsWith(".jsp")
-//					||urlString.endsWith(".html")||urlString.endsWith(".htm")||urlString.endsWith(".dhtml")||urlString.endsWith(".xhtml")||urlString.endsWith(".shtml")||urlString.endsWith(".shtm")
-//					||urlString.endsWith(".ico")||urlString.endsWith(".jpg")||urlString.endsWith(".png")||urlString.endsWith(".gif")
-//					||urlString.endsWith(".jpeg")||urlString.endsWith(".svg")||urlString.endsWith(".bmp")
-//					||urlString.endsWith(".json")
-//					||urlString.equals("getBatchCalculateTime")||urlString.equals("totalCalculation")
-//					||urlString.equals("getBalanceTorqueCalulate")||urlString.equals("balanceTotalCalculation")
-//					||urlString.equals("saveRTUAcquisitionData")
-//					){
-//				chain.doFilter(request, response);
-//			} 
 			
 			
 			if (!path.contains("Controller")){//只过滤Controller
@@ -102,13 +87,8 @@ public class SessionTimeOutFilter extends HttpServlet implements Filter {
 				//对外开放端口
 				if(urlString.equals("toLogin")||urlString.equals("toMain")||urlString.equals("toBackMain")
 						||urlString.equals("getUserList")||urlString.equals("userLogin")
-						||urlString.equals("getBatchCalculateTime")
 						||urlString.equals("totalCalculation")
-						||urlString.indexOf("FSDiagramDailyCalculation")>=0
-						||urlString.indexOf("DiscreteDailyCalculation")>=0
-						||urlString.indexOf("PCPRPMDailyCalculation")>=0
-						||urlString.indexOf("PCPDiscreteDailyCalculation")>=0
-						||urlString.equals("getBalanceTorqueCalulate")||urlString.equals("balanceTotalCalculation")
+						||urlString.indexOf("CBMDailyCalculation")>=0
 						||urlString.equals("saveRTUAcquisitionData")||urlString.equals("getOuterSurfaceCardData")
 						||urlString.equals("saveMQTTTransferElecDiscreteData")||urlString.equals("saveMQTTTransferElecDiagramData")||urlString.equals("saveMQTTTransferElecDailyData")
 						||urlString.equals("reTotalCalculation")

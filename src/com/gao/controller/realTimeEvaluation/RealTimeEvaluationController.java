@@ -175,6 +175,72 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
+	@RequestMapping("/exportCBMWellRTAnalisiDataExcel")
+	public String exportCBMWellRTAnalisiDataExcel() throws Exception {
+		orgId = ParamUtils.getParameter(request, "orgId");
+		orgId = findCurrentUserOrgIdInfo(orgId);
+		wellName = ParamUtils.getParameter(request, "wellName");
+		
+		String type = ParamUtils.getParameter(request, "type");
+		String unitType = ParamUtils.getParameter(request, "unitType");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		String statValue = ParamUtils.getParameter(request, "statValue");
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		String tableName="tbl_cbm_discrete_hist";
+		if("1".equals(unitType)){
+			tableName="tbl_cbm_discrete_hist";
+		}else if("2".equals(unitType)){
+			tableName="tbl_groupvalve_discrete_hist";
+		}else if("3".equals(unitType)){
+			tableName="tbl_bp_discrete_hist";
+		}
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		if(StringManagerUtils.isNotNull(wellName)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+wellName+"' ) ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+		}
+		
+		if(!StringManagerUtils.isNotNull(startDate)){
+			startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
+		}
+		
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		
+		String json = realTimeEvaluationService.exportCBMWellRTAnalisiDataExcel(orgId, wellName, pager,type,unitType,startDate,endDate,statValue);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.print(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * <P>
 	 * 描述:阀组实时评价数据表
@@ -219,7 +285,7 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		
-		String json = realTimeEvaluationService.getRealtimeAnalysisWellList(orgId, name, pager,type,unitType,startDate,endDate,statValue);
+		String json = realTimeEvaluationService.getRealtimeAnalysisGroupValveList(orgId, name, pager,type,unitType,startDate,endDate,statValue);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw;
@@ -235,6 +301,53 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
+	@RequestMapping("/exportGroupValveRTAnalisiDataExcel")
+	public String exportGroupValveRTAnalisiDataExcel() throws Exception {
+		orgId = ParamUtils.getParameter(request, "orgId");
+		orgId = findCurrentUserOrgIdInfo(orgId);
+		String name = ParamUtils.getParameter(request, "name");
+		
+		String type = ParamUtils.getParameter(request, "type");
+		String unitType = ParamUtils.getParameter(request, "unitType");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		String statValue = ParamUtils.getParameter(request, "statValue");
+		String tableName="tbl_groupvalve_discrete_hist";
+		this.pager = new Page("pagerForm", request);
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		if(StringManagerUtils.isNotNull(name)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+name+"' ) ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+		}
+		
+		if(!StringManagerUtils.isNotNull(startDate)){
+			startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
+		}
+		
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		
+		String json = realTimeEvaluationService.exportGroupValveRTAnalisiDataExcel(orgId, name, pager,type,unitType,startDate,endDate,statValue);
+		
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		return null;
+	}
 	
 	
 	@RequestMapping("/getCBMWellAnalysisAndAcqAndControlData")
@@ -401,6 +514,7 @@ public class RealTimeEvaluationController<T> extends BaseController{
 			if (getOld.equals(getUpwd)&&StringManagerUtils.isNumber(controlValue)) {
 				for(int i=0;EquipmentDriverServerTast.units!=null&&i<EquipmentDriverServerTast.units.size();i++){
 					if(wellName.equals(EquipmentDriverServerTast.units.get(i).getWellName())){
+						//
 						if("startOrStopWell".equalsIgnoreCase(controlType)){//启停井控制
 							EquipmentDriverServerTast.units.get(i).setWellStopControl(StringManagerUtils.stringToInteger(controlValue));
 						}else if("frequencyOrSPMcontrolSign".equalsIgnoreCase(controlType)){//频率/冲次控制方式
@@ -426,6 +540,31 @@ public class RealTimeEvaluationController<T> extends BaseController{
 						else if("rtuProgramVersion".equalsIgnoreCase(controlType)){//设置程序版本号
 							EquipmentDriverServerTast.units.get(i).setRTUProgramVersionControl(StringManagerUtils.stringToInteger(controlValue));
 						}
+						//阀组控制项
+						else if("deviceId".equalsIgnoreCase(controlType)){//设置设备地址
+							EquipmentDriverServerTast.units.get(i).setGroupValveDeviceIdControl(StringManagerUtils.stringToInteger(controlValue));
+						}
+						else if("baudrate".equalsIgnoreCase(controlType)){//设置A1B1口波特率
+							EquipmentDriverServerTast.units.get(i).setGroupValveBaudRate1Control(StringManagerUtils.stringToInteger(controlValue));
+						}
+						else if("baudrate2".equalsIgnoreCase(controlType)){//设置A2B2口波特率
+							EquipmentDriverServerTast.units.get(i).setGroupValveBaudRate2Control(StringManagerUtils.stringToInteger(controlValue));
+						}
+						else if("instrumentCombinationMode1".equalsIgnoreCase(controlType)){//设置仪表组合方式-1#从站
+							EquipmentDriverServerTast.units.get(i).setGroupValveInstrumentCombinationMode1Control(StringManagerUtils.stringToInteger(controlValue));
+						}
+						else if("instrumentCombinationMode2".equalsIgnoreCase(controlType)){//设置仪表组合方式-2#从站
+							EquipmentDriverServerTast.units.get(i).setGroupValveInstrumentCombinationMode2Control(StringManagerUtils.stringToInteger(controlValue));
+						}
+						else if("instrumentCombinationMode3".equalsIgnoreCase(controlType)){//设置仪表组合方式-2#从站
+							EquipmentDriverServerTast.units.get(i).setGroupValveInstrumentCombinationMode3Control(StringManagerUtils.stringToInteger(controlValue));
+						}
+						else if("instrumentCombinationMode4".equalsIgnoreCase(controlType)){//设置仪表组合方式-4#从站
+							EquipmentDriverServerTast.units.get(i).setGroupValveInstrumentCombinationMode4Control(StringManagerUtils.stringToInteger(controlValue));
+						}
+						
+						
+						
 						break;
 					}
 				}

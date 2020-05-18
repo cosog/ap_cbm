@@ -143,7 +143,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
     			        },
-    			        { header: '曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMAnalysisCurve(value,e,o)} }
+    			        { header: '趋势曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMAnalysisCurve(value,e,o)} }
     			    ]
     			});
     			Ext.getCmp("CBMWellRTAnalysisTableCalDataPanel_Id").add(GridPanel);
@@ -223,7 +223,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			        	 	return '<span data-qtip="'+tipval+'" data-dismissDelay=10000>'+value+'</span>';
     			        	}
     			        },
-    			        { header: '曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMAnalysisCurve(value,e,o)} }
+    			        { header: '趋势曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMAnalysisCurve(value,e,o)} }
     			    ]
     			});
     			Ext.getCmp("CBMWellRTAnalysisTableAcqDataPanel_Id").add(acqGridPanel);

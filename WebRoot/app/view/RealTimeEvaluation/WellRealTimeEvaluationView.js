@@ -434,7 +434,8 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                         items: [{
                                             border: false,
                                             margin: '0 0 1 0',
-                                            height: 1000,
+//                                            height: 1000,
+                                            flex: 1,
                                             layout: 'fit',
                                             id: 'CBMWellRTCurveDataPanel_Id',
                                             html: '<div id="CBMWellRTCurveDataChartDiv_Id" style="width:100%;height:100%;"></div>',
@@ -489,8 +490,9 @@ Ext.define("AP.view.RealTimeEvaluation.WellRealTimeEvaluationView", {
                                                 scrollable: true
                                             }, {
                                                 title: '采集',
+                                                layout:"border",
                                                 id: 'CBMWellRTAnalysisTableAcqDataPanel_Id',
-                                                border: false,
+                                            	border: false,
                                                 layout: 'fit',
                                                 autoScroll: true,
                                                 scrollable: true
@@ -1004,3 +1006,253 @@ function initWellHistoryDataCurveChartFn(catagories, series, tickInterval, divId
         series: series
     });
 };
+
+initCBMWellRTCurveChartFn = function (get_rawData, divId) {
+	var items=get_rawData.totalRoot;
+	var runTimeEfficiency=[];
+	var gasCumulativeFlow=[];
+	var liquidCumulativeflow=[];
+	var gasFlowmeterPress=[];
+	var totalWattEnergy=[];
+	
+	
+	for(var i=0;i<items.length;i++){
+		runTimeEfficiency.push([
+            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
+            parseFloat(items[i].runTimeEfficiency)
+        ]);
+		gasCumulativeFlow.push([
+            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
+            parseFloat(items[i].gasCumulativeFlow)
+        ]);
+		liquidCumulativeflow.push([
+            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
+            parseFloat(items[i].liquidCumulativeflow)
+        ]);
+		gasFlowmeterPress.push([
+            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
+            parseFloat(items[i].gasFlowmeterPress)
+        ]);
+		totalWattEnergy.push([
+            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
+            parseFloat(items[i].totalWattEnergy)
+        ]);
+	}
+	
+	Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+	mychart = new Highcharts.StockChart({
+		chart: {
+            renderTo : divId
+        }, 
+        exporting:{    
+            enabled:true,    
+            filename:'class-booking-chart',    
+            url:context + '/exportHighcharsPicController/export'
+       },
+        legend: {
+        	enabled:false,
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+		rangeSelector: {
+            selected: 1
+        },
+        title: {
+            text: get_rawData.wellName+'井趋势曲线'
+        },
+        tooltip:{  
+            // 日期时间格式化  
+            xDateFormat: '%Y-%m-%d %H:%M:%S',
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+            footerFormat: '</table>',
+//            shared: true,
+            useHTML: true
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions:{
+        	series:{
+        		dataGrouping:{
+        			groupPixelWidth:0.1
+        		}
+        	}
+        },
+        xAxis: {  
+            //tickPixelInterval: 200,//x轴上的间隔  
+        	title:{
+        		text:'时间'
+        	},
+            type: 'datetime', //定义x轴上日期的显示格式  
+            labels: {  
+            formatter: function() {  
+                var vDate=new Date(this.value);
+                //return vDate.getFullYear()+"-"+(vDate.getMonth()+1)+"-"+vDate.getDate()+" "+vDate.getDay()+":"+vDate.getMinutes()+":"+vDate.getSeconds();  
+                return vDate.getFullYear()+"-"+(vDate.getMonth()+1)+"-"+vDate.getDate(); 
+                },  
+            align: 'center'  
+            }
+        },
+        yAxis: [{
+        	opposite:false,
+            labels: {
+                align: 'left',
+                x: 0
+            },
+            title: {
+                text: '运行时率(小数)',
+                style: {
+                    color: '#000000',
+                    fontWeight: 'bold'
+                }
+            },
+            endOnTick: false,
+//            min:0,
+            height: '18%',
+            offset: 0,
+            lineWidth: 1
+        },{
+        	opposite:false,
+            labels: {
+                align: 'left',
+                x: 0
+            },
+            title: {
+                text: '累计产气量(m^3)'
+            },
+            endOnTick: false,
+            height: '18%',
+            top: '20.5%',
+            offset: 0,
+            lineWidth: 1
+        },{
+        	opposite:false,
+            labels: {
+                align: 'left',
+                x: 0
+            },
+            title: {
+                text: '累计产水量(m^3)'
+            },
+            endOnTick: false,
+            height: '18%',
+            top: '41%',
+            offset: 0,
+            lineWidth: 1
+        },{
+        	opposite:false,
+            labels: {
+                align: 'left',
+                x: 0
+            },
+            title: {
+                text: '套压(kPa)'
+            },
+            endOnTick: false,
+            height: '18%',
+            top: '61.5%',
+            offset: 0,
+            lineWidth: 1
+        },{
+        	opposite:false,
+            labels: {
+                align: 'left',
+                x: 0
+            },
+            title: {
+                text: '累计耗电量(kW·h)'
+            },
+            endOnTick: false,
+            height: '18%',
+            top: '82%',
+            offset: 0,
+            lineWidth: 1
+        }],
+        rangeSelector: {  
+        	enabled:false,
+            buttons: [{//定义一组buttons,下标从0开始  
+            type: 'week',  
+            count: 1,  
+            text: '一周'  
+        },{  
+        	type: 'week',  
+            count: 2,  
+            text: '两周'   
+        }, {  
+        	type: 'week',  
+            count: 3,  
+            text: '三周' 
+        }, {  
+            type: 'month',  
+            count: 1,  
+            text: '一月'  
+        },{  
+            type: 'all',  
+            text: '全部'  
+        }],  
+            selected: 4,//表示以上定义button的index,从0开始  
+            inputDateFormat:'%Y-%m-%d'
+        },  
+        navigator:{
+        	enabled:false
+        },
+        scrollbar:{
+        	enabled:false
+        },
+        series: [{
+        		type: 'spline',
+        		name: '运行时率(小数)',
+        		data: runTimeEfficiency,
+        		marker:{
+        			enabled:true,
+        			radius: 3
+        		},
+        		yAxis: 0
+        	},{
+            	type: 'spline',
+            	name: '累计产气量(m^3)',
+            	data: gasCumulativeFlow,
+            	marker:{
+            		enabled:true,
+            		radius: 3
+            	},
+            	yAxis: 1
+            },{
+            	type: 'spline',
+            	name: '累计产水量(m^3)',
+            	data: liquidCumulativeflow,
+            	marker:{
+            		enabled:true,
+            		radius: 3
+            	},
+            	yAxis: 2
+            },{
+            	type: 'spline',
+            	name: '套压(kPa)',
+            	data: gasFlowmeterPress,
+            	marker:{
+            		enabled:true,
+            		radius: 3
+            	},
+            	yAxis: 3
+            },{
+            	type: 'spline',
+            	name: '累计耗电量(kW·h)',
+            	data: totalWattEnergy,
+            	marker:{
+            		enabled:true,
+            		radius: 3
+            	},
+            	yAxis: 4
+            }
+            ]
+	});
+}

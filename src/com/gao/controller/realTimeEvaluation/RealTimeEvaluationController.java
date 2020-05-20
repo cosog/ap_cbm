@@ -349,6 +349,30 @@ public class RealTimeEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
+	@RequestMapping("/getCBMWellDataCurve")
+	public String getCBMWellDataCurve() throws Exception {
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		wellName = ParamUtils.getParameter(request, "wellName");
+		String selectedWellName = ParamUtils.getParameter(request, "selectedWellName");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		this.pager = new Page("pagerForm", request);
+		String json =realTimeEvaluationService.getCBMWellDataCurve(wellName,selectedWellName,startDate,endDate);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.print(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	@RequestMapping("/getCBMWellAnalysisAndAcqAndControlData")
 	public String getCBMWellAnalysisAndAcqAndControlData() throws Exception {

@@ -31,7 +31,7 @@ Ext.define("AP.view.reportOut.ReportOutDayReportView", {
                 listeners: {
                     tabchange: function (tabPanel, newCard,oldCard, obj) {
                     	if(newCard.id=="ReportPumpingUnitDayReport"){
-                    		CreateDiagnosisDailyReportTable();
+                    		CreateCBMWellDailyReportTable();
                     	}else if(newCard.id=="screwPumpDailyReportPanel_Id"){
                     		CreateScrewPumpDailyReportTable();
                     	}

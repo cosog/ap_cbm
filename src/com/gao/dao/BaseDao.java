@@ -1182,7 +1182,7 @@ public class BaseDao extends HibernateDaoSupport {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
 		try {
-			cs = conn.prepareCall("{call prd_save_cbmDailyData(?,?,?,?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_save_cbmDailyData(?,?,?,?,?,?,?,?,?,?)}");
 			cs.setString(1,timeEffResponseData.getWellName());
 			
 			cs.setInt(2, commResponseData.getDaily().getCommStatus()?1:0);

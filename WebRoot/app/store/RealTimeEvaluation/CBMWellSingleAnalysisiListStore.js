@@ -56,8 +56,8 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellSingleAnalysisiListStore', {
                     listeners: {
                         selectionchange: function (view, selected, o) {
                             if (selected.length > 0) {
-                        		//请求图形数据
-//                        		Ext.create("AP.store.diagnosis.SinglePumpCardStore");
+                        		//请求单井详情数据
+                        		Ext.create("AP.store.RealTimeEvaluation.CBMWellDataCurveStore");
                         		Ext.create("AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore");
                             }
                             
@@ -115,6 +115,9 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellSingleAnalysisiListStore', {
             	Ext.getCmp("CBMWellRTAnalysisTableCalDataPanel_Id").removeAll();
             	Ext.getCmp("CBMWellRTAnalysisTableAcqDataPanel_Id").removeAll();
             	Ext.getCmp("CBMWellRTAnalysisControlDataPanel_Id").removeAll();
+            	if($("#CBMWellRTCurveDataChartDiv_Id")!=null){
+            		$("#CBMWellRTCurveDataChartDiv_Id").html('');
+            	}
             }
             
             

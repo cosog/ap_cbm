@@ -34,7 +34,7 @@ import com.google.gson.reflect.TypeToken;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-@Component("BeeTechDriverServerTast")  
+@Component("EquipmentDriverServerTast")  
 public class EquipmentDriverServerTast {
 	public static Connection conn = null;   
 	public static PreparedStatement pstmt = null;  
@@ -53,7 +53,7 @@ public class EquipmentDriverServerTast {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 //		Gson gson = new Gson();
 //		StringManagerUtils stringManagerUtils=new StringManagerUtils();
@@ -332,8 +332,8 @@ public class EquipmentDriverServerTast {
 			boolean isAdd=true;
 			for(int i=0;i<units.size();i++){
 				if(units.get(i).wellName.equals(rs.getString(1))){//遍历目前内存中的井列表
-					if(!units.get(i).driverAddr.equals(rs.getString(2)==null?"":rs.getString(2))
-							||!units.get(i).dirverId.equals(rs.getString(3)==null?"":rs.getString(3))){//驱动信息发生改变
+					if(!units.get(i).driverAddr.equals(rs.getString(3)==null?"":rs.getString(3))
+							||!units.get(i).dirverId.equals(rs.getString(4)==null?"":rs.getString(4))){//驱动信息发生改变
 						System.out.println("配置发生变化");
 						for(int j=0;j<clientUnitList.size();j++){//遍历已连接的客户端
 							boolean isExit=false;
@@ -1001,6 +1001,9 @@ public class EquipmentDriverServerTast {
 	public static class UnitData{
 		public  String wellName;
 		
+		//即时采集
+		public int ImmediatelyAcquisitionControl=-999999999;//离散数据即时采集设置
+		
 		//煤层气井控制标志
 		public int wellStartupControl=0;
 		public int wellStopControl=0;
@@ -1422,6 +1425,14 @@ public class EquipmentDriverServerTast {
 
 		public void setLastGasTodayProd(float lastGasTodayProd) {
 			this.lastGasTodayProd = lastGasTodayProd;
+		}
+
+		public int getImmediatelyAcquisitionControl() {
+			return ImmediatelyAcquisitionControl;
+		}
+
+		public void setImmediatelyAcquisitionControl(int immediatelyAcquisitionControl) {
+			ImmediatelyAcquisitionControl = immediatelyAcquisitionControl;
 		}
 		
 	}

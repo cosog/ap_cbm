@@ -406,34 +406,74 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
+//	public String getCBMWellDataCurve(String wellName,String selectedWellName,String startDate,String endDate) throws SQLException, IOException {
+//		StringBuffer dynSbf = new StringBuffer();
+//		
+//		String sql="select "
+//				+ " to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+//				+ " runTimeEfficiency,"
+//				+ " t.gasCumulativeFlow,t.liquidCumulativeflow,t.gasFlowmeterPress,"
+//				+ " t.totalWattEnergy"
+//				+ " from viw_cbm_discrete_hist t "
+//				+ " where t.wellName='"+selectedWellName+"'";
+//		if(StringManagerUtils.isNotNull(wellName)){
+//			sql+=" and t.acquisitionTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
+//		}else{
+//			sql+=" and t.acquisitiontime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
+//		}
+//		sql+= " order by t.acquisitionTime";
+//		List<?> list=this.findCallSql(sql);
+//		
+//		dynSbf.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"wellName\":\""+selectedWellName+"\",\"totalRoot\":[");
+//		if (list.size() > 0) {
+//			for (int i = 0; i < list.size(); i++) {
+//				Object[] obj = (Object[]) list.get(i);
+//				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+//				dynSbf.append("\"runTimeEfficiency\":"+obj[1]+",");
+//				dynSbf.append("\"gasCumulativeFlow\":"+obj[2]+",");
+//				dynSbf.append("\"liquidCumulativeflow\":"+obj[3]+",");
+//				dynSbf.append("\"gasFlowmeterPress\":"+obj[4]+",");
+//				dynSbf.append("\"totalWattEnergy\":"+obj[5]+"},");
+//				
+//			}
+//		}
+//		if(dynSbf.toString().endsWith(",")){
+//			dynSbf.deleteCharAt(dynSbf.length() - 1);
+//		}
+//		dynSbf.append("]");
+//		dynSbf.append("}");
+//		return dynSbf.toString();
+//	}
+	
 	public String getCBMWellDataCurve(String wellName,String selectedWellName,String startDate,String endDate) throws SQLException, IOException {
 		StringBuffer dynSbf = new StringBuffer();
 		
 		String sql="select "
 				+ " to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
-				+ " runTimeEfficiency,"
-				+ " t.gasCumulativeFlow,t.liquidCumulativeflow,t.gasFlowmeterPress,"
-				+ " t.totalWattEnergy"
+				+ " fluidLevel,SPM,t.gasFlowmeterPress,"
+				+ " t.gasInstantaneousFlow,t.liquidInstantaneousflow"
 				+ " from viw_cbm_discrete_hist t "
 				+ " where t.wellName='"+selectedWellName+"'";
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.acquisitionTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
 		}else{
 			sql+=" and t.acquisitiontime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
+			startDate=StringManagerUtils.getCurrentTime();
+			endDate=StringManagerUtils.getCurrentTime();
 		}
 		sql+= " order by t.acquisitionTime";
 		List<?> list=this.findCallSql(sql);
 		
-		dynSbf.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"wellName\":\""+selectedWellName+"\",\"totalRoot\":[");
+		dynSbf.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"wellName\":\""+selectedWellName+"\",\"startDate\":\""+startDate+"\",\"endDate\":\""+endDate+"\",\"totalRoot\":[");
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Object[] obj = (Object[]) list.get(i);
 				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
-				dynSbf.append("\"runTimeEfficiency\":"+obj[1]+",");
-				dynSbf.append("\"gasCumulativeFlow\":"+obj[2]+",");
-				dynSbf.append("\"liquidCumulativeflow\":"+obj[3]+",");
-				dynSbf.append("\"gasFlowmeterPress\":"+obj[4]+",");
-				dynSbf.append("\"totalWattEnergy\":"+obj[5]+"},");
+				dynSbf.append("\"fluidLevel\":"+obj[1]+",");
+				dynSbf.append("\"SPM\":"+obj[2]+",");
+				dynSbf.append("\"gasFlowmeterPress\":"+obj[3]+",");
+				dynSbf.append("\"gasInstantaneousFlow\":"+obj[4]+",");
+				dynSbf.append("\"liquidInstantaneousflow\":"+obj[5]+"},");
 				
 			}
 		}

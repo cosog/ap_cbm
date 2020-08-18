@@ -20,7 +20,7 @@ import com.google.gson.reflect.TypeToken;
 @Service("calculateDataService")
 public class CalculateDataService<T> extends BaseService<T> {
 	
-	public void CBMDailyCalculation(String tatalDate,String wellId) throws ParseException, SQLException{
+	public void CBMDailyCalculation(String tatalDate,String wellId){
 		StringBuffer dataSbf=null;
 		List<String> requestDataList=new ArrayList<String>();
 		String timeEffTotalUrl=Config.getInstance().configFile.getAgileCalculate().getRun()[0];
@@ -37,61 +37,70 @@ public class CalculateDataService<T> extends BaseService<T> {
 
 		List<?> statusList = findCallSql(statusSql);
 		for(int j=0;j<statusList.size();j++){
-			TimeEffResponseData timeEffResponseData=null;
-			CommResponseData commResponseData=null;
-			Object[] statusObj=(Object[]) statusList.get(j);
+			try{
+				TimeEffResponseData timeEffResponseData=null;
+				CommResponseData commResponseData=null;
+				Object[] statusObj=(Object[]) statusList.get(j);
 
-			boolean commStatus=false;
-			boolean runStatus=false;
-			if(statusObj[2]!=null&&StringManagerUtils.stringToInteger(statusObj[2]+"")==1){
-				commStatus=true;
+				boolean commStatus=false;
+				boolean runStatus=false;
+				if(statusObj[2]!=null&&StringManagerUtils.stringToInteger(statusObj[2]+"")==1){
+					commStatus=true;
+				}
+				if(statusObj[6]!=null&&StringManagerUtils.stringToInteger(statusObj[6]+"")==1){
+					runStatus=true;
+				}
+				String commTotalRequestData="{"
+						+ "\"AKString\":\"\","
+						+ "\"WellName\":\""+statusObj[0]+"\","
+						+ "\"Last\":{"
+						+ "\"AcquisitionTime\": \""+statusObj[1]+"\","
+						+ "\"CommStatus\": "+commStatus+","
+						+ "\"CommEfficiency\": {"
+						+ "\"Efficiency\": "+statusObj[3]+","
+						+ "\"Time\": "+statusObj[4]+","
+						+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(statusObj[5]+"")+""
+						+ "}"
+						+ "},"
+						+ "\"Current\": {"
+						+ "\"AcquisitionTime\":\""+tatalDate+" 01:00:00\","
+						+ "\"CommStatus\":true"
+						+ "}"
+						+ "}";
+				String runTotalRequestData="{"
+						+ "\"AKString\":\"\","
+						+ "\"WellName\":\""+statusObj[0]+"\","
+						+ "\"Last\":{"
+						+ "\"AcquisitionTime\": \""+statusObj[1]+"\","
+						+ "\"RunStatus\": "+runStatus+","
+						+ "\"RunEfficiency\": {"
+						+ "\"Efficiency\": "+statusObj[7]+","
+						+ "\"Time\": "+statusObj[8]+","
+						+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(statusObj[9]+"")+""
+						+ "}"
+						+ "},"
+						+ "\"Current\": {"
+						+ "\"AcquisitionTime\":\""+tatalDate+" 01:00:00\","
+						+ "\"RunStatus\":true"
+						+ "}"
+						+ "}";
+				Gson gson = new Gson();
+				java.lang.reflect.Type type=null;
+				String commTotalResponse=StringManagerUtils.sendPostMethod(commTotalUrl, commTotalRequestData,"utf-8");
+				type = new TypeToken<CommResponseData>() {}.getType();
+				commResponseData = gson.fromJson(commTotalResponse, type);
+				String runTotalResponse=StringManagerUtils.sendPostMethod(timeEffTotalUrl, runTotalRequestData,"utf-8");
+				type = new TypeToken<TimeEffResponseData>() {}.getType();
+				timeEffResponseData = gson.fromJson(runTotalResponse, type);
+				if(timeEffResponseData!=null&&timeEffResponseData.getResultStatus()==1
+						&&commResponseData!=null&&commResponseData.getResultStatus()==1){
+					saveCBMDailyCalculationData(timeEffResponseData,commResponseData);
+				}
+			}catch(ParseException|SQLException e){
+				e.printStackTrace();
+				continue;
 			}
-			if(statusObj[6]!=null&&StringManagerUtils.stringToInteger(statusObj[6]+"")==1){
-				runStatus=true;
-			}
-			String commTotalRequestData="{"
-					+ "\"AKString\":\"\","
-					+ "\"WellName\":\""+statusObj[0]+"\","
-					+ "\"Last\":{"
-					+ "\"AcquisitionTime\": \""+statusObj[1]+"\","
-					+ "\"CommStatus\": "+commStatus+","
-					+ "\"CommEfficiency\": {"
-					+ "\"Efficiency\": "+statusObj[3]+","
-					+ "\"Time\": "+statusObj[4]+","
-					+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(statusObj[5]+"")+""
-					+ "}"
-					+ "},"
-					+ "\"Current\": {"
-					+ "\"AcquisitionTime\":\""+tatalDate+" 01:00:00\","
-					+ "\"CommStatus\":true"
-					+ "}"
-					+ "}";
-			String runTotalRequestData="{"
-					+ "\"AKString\":\"\","
-					+ "\"WellName\":\""+statusObj[0]+"\","
-					+ "\"Last\":{"
-					+ "\"AcquisitionTime\": \""+statusObj[1]+"\","
-					+ "\"RunStatus\": "+runStatus+","
-					+ "\"RunEfficiency\": {"
-					+ "\"Efficiency\": "+statusObj[7]+","
-					+ "\"Time\": "+statusObj[8]+","
-					+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(statusObj[9]+"")+""
-					+ "}"
-					+ "},"
-					+ "\"Current\": {"
-					+ "\"AcquisitionTime\":\""+tatalDate+" 01:00:00\","
-					+ "\"RunStatus\":true"
-					+ "}"
-					+ "}";
-			Gson gson = new Gson();
-			java.lang.reflect.Type type=null;
-			String commTotalResponse=StringManagerUtils.sendPostMethod(commTotalUrl, commTotalRequestData,"utf-8");
-			type = new TypeToken<CommResponseData>() {}.getType();
-			commResponseData = gson.fromJson(commTotalResponse, type);
-			String runTotalResponse=StringManagerUtils.sendPostMethod(timeEffTotalUrl, runTotalRequestData,"utf-8");
-			type = new TypeToken<TimeEffResponseData>() {}.getType();
-			timeEffResponseData = gson.fromJson(runTotalResponse, type);
-			saveCBMDailyCalculationData(timeEffResponseData,commResponseData);
+			
 		}
 	}
 	public boolean saveCBMDailyCalculationData(TimeEffResponseData timeEffResponseData,CommResponseData commResponseData) throws SQLException, ParseException{

@@ -54,6 +54,7 @@ Ext.define('AP.store.RealTimeEvaluation.GroupValveAnalysisTableStore', {
     		acqSataStr+="]}";
     		
     		var controlSataStr="{\"items\":[";
+    		controlSataStr+="{\"item\":\"即时采集\",\"itemcode\":\"ImmediatelyAcquisition\",\"value\":\"\",\"commStatus\":"+get_rawData.commStatus+",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1},";
     		controlSataStr+="{\"item\":\"设备地址\",\"itemcode\":\"deviceId\",\"value\":\""+get_rawData.deviceId+"\",\"commStatus\":\""+get_rawData.commStatus+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1},";
     		controlSataStr+="{\"item\":\"A1B1口波特率\",\"itemcode\":\"baudrate\",\"value\":\""+get_rawData.baudrate+"\",\"commStatus\":\""+get_rawData.commStatus+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":2},";
     		controlSataStr+="{\"item\":\"A2B2口波特率\",\"itemcode\":\"baudrate2\",\"value\":\""+get_rawData.baudrate2+"\",\"commStatus\":\""+get_rawData.commStatus+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":2},";
@@ -247,6 +248,11 @@ Ext.define('AP.store.RealTimeEvaluation.GroupValveAnalysisTableStore', {
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
+    			        		if(o.data.itemcode==="ImmediatelyAcquisition"){
+    			        			text="即时采集";
+    			        		}else{
+    			        			text="设置";
+    			        		}
     		                    Ext.defer(function () {
     		                        Ext.widget('button', {
     		                            renderTo: id,
@@ -297,6 +303,10 @@ Ext.define('AP.store.RealTimeEvaluation.GroupValveAnalysisTableStore', {
     		                                        	 Ext.getCmp("GroupValveControlTypeCombo_Id").setStore(controlTypeStore);
     		                                        	 Ext.getCmp("GroupValveControlTypeCombo_Id").setRawValue(o.data.value);
     		                                        	 Ext.getCmp("GroupValveControlTypeCombo_Id").show();
+    		                                         }else if(o.data.itemcode=="ImmediatelyAcquisition"){//即时采集
+    		                                        	 Ext.getCmp("GroupValveControlValue_Id").setValue(1);
+    		                                        	 Ext.getCmp("GroupValveControlValue_Id").hide();
+    		                                        	 Ext.getCmp("GroupValveControlTypeCombo_Id").hide();
     		                                         }else{
     		                                        	 Ext.getCmp("GroupValveControlValue_Id").show();
     		                                        	 Ext.getCmp("GroupValveControlTypeCombo_Id").hide();

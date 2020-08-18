@@ -538,9 +538,21 @@ public class RealTimeEvaluationController<T> extends BaseController{
 			if (getOld.equals(getUpwd)&&StringManagerUtils.isNumber(controlValue)) {
 				for(int i=0;EquipmentDriverServerTast.units!=null&&i<EquipmentDriverServerTast.units.size();i++){
 					if(wellName.equals(EquipmentDriverServerTast.units.get(i).getWellName())){
-						//
-						if("startOrStopWell".equalsIgnoreCase(controlType)){//启停井控制
-							EquipmentDriverServerTast.units.get(i).setWellStopControl(StringManagerUtils.stringToInteger(controlValue));
+						
+						if("ImmediatelyAcquisition".equalsIgnoreCase(controlType)){//即时采集
+							EquipmentDriverServerTast.units.get(i).setImmediatelyAcquisitionControl(StringManagerUtils.stringToInteger(controlValue));
+						}
+						//煤层气井控制
+						else if("startOrStopWell".equalsIgnoreCase(controlType)){//启停井控制
+							if(StringManagerUtils.stringToInteger(controlValue)==1){//启抽
+								EquipmentDriverServerTast.units.get(i).setWellStopControl(0);
+								EquipmentDriverServerTast.units.get(i).setWellStartupControl(1);
+							}else if(StringManagerUtils.stringToInteger(controlValue)==2){//停抽
+								EquipmentDriverServerTast.units.get(i).setWellStartupControl(0);
+								EquipmentDriverServerTast.units.get(i).setWellStopControl(1);
+							}
+							
+							
 						}else if("frequencyOrSPMcontrolSign".equalsIgnoreCase(controlType)){//频率/冲次控制方式
 							EquipmentDriverServerTast.units.get(i).setFrequencyOrRPMControlSignControl(StringManagerUtils.stringToInteger(controlValue));
 						}else if("frequencySetValue".equalsIgnoreCase(controlType)){//频率设定

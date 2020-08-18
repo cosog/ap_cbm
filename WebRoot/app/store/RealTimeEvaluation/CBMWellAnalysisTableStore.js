@@ -63,6 +63,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     		acqSataStr+="]}";
     		
     		var controlSataStr="{\"items\":[";
+    		controlSataStr+="{\"item\":\"即时采集\",\"itemcode\":\"ImmediatelyAcquisition\",\"value\":\"\",\"commStatus\":"+get_rawData.commStatus+",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1},";
     		controlSataStr+="{\"item\":\"启/停抽\",\"itemcode\":\"startOrStopWell\",\"value\":\""+get_rawData.runStatusName+"\",\"commStatus\":\""+get_rawData.commStatus+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":0},";
     		controlSataStr+="{\"item\":\"频率/冲次控制方式\",\"itemcode\":\"frequencyOrSPMcontrolSign\",\"value\":\""+get_rawData.frequencyOrSPMcontrol+"\",\"commStatus\":\""+get_rawData.commStatus+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":2},";
     		controlSataStr+="{\"item\":\"频率设定值(Hz)\",\"itemcode\":\"frequencySetValue\",\"value\":\""+get_rawData.frequencySetValue+"\",\"commStatus\":\""+get_rawData.commStatus+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1},";
@@ -275,16 +276,20 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
-    			        		if(item=="启/停抽"){
+    			        		if(o.data.itemcode==="startOrStopWell"){
     			        			if(o.data.value=="运行"){
     			        				text="停抽";
     			        			}else if(o.data.value=="停抽" ||o.data.value=="停止"){
     			        				text="启抽";
-    			        				hand=true;
+    			        				hand=false;
     			        			}else{
     			        				text="不可用";
     			        			}
-    			        		}else{
+    			        		}
+    			        		else if(o.data.itemcode==="ImmediatelyAcquisition"){
+    			        			text="即时采集";
+    			        		}
+    			        		else{
     			        			text="设置";
     			        		}
     		                    Ext.defer(function () {
@@ -320,10 +325,14 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     		                                         Ext.getCmp("CBMWellControlShowType_Id").setValue(o.data.showType);
     		                                         if(o.data.itemcode=="startOrStopWell"){
     		                                        	 if(o.data.value=="运行"){
-    		                                        		 Ext.getCmp("ProductionWellControlValue_Id").setValue(2);
+    		                                        		 Ext.getCmp("CBMWellControlValue_Id").setValue(2);
     		                                        	 }else if(o.data.value=="停抽" ||o.data.value=="停止"){
-    		                                        		 Ext.getCmp("ProductionWellControlValue_Id").setValue(1);
+    		                                        		 Ext.getCmp("CBMWellControlValue_Id").setValue(1);
     		             			        			 }
+    		                                        	 Ext.getCmp("CBMWellControlValue_Id").hide();
+    		                                        	 Ext.getCmp("CBMWellControlTypeCombo_Id").hide();
+    		                                         }else if(o.data.itemcode=="ImmediatelyAcquisition"){//即时采集
+    		                                        	 Ext.getCmp("CBMWellControlValue_Id").setValue(1);
     		                                        	 Ext.getCmp("CBMWellControlValue_Id").hide();
     		                                        	 Ext.getCmp("CBMWellControlTypeCombo_Id").hide();
     		                                         }else if(o.data.itemcode=="frequencyOrSPMcontrolSign"||o.data.itemcode=="vfdManufacturerCode"){
@@ -333,7 +342,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     		                                        	 if(o.data.itemcode=="frequencyOrSPMcontrolSign"){
     		                                        		 data=[['0', '冲次控制'], ['1', '频率控制']];
     		                                        	 }else if(o.data.itemcode=="vfdManufacturerCode"){
-    		                                        		 data=[['0', '无变频器或变频器无通讯功能'], ['1', '英威腾'], ['2', '科陆新能'], ['3', '步科'], ['4', '汇川'], ['5', '信宇']];
+    		                                        		 data=[['0', '无变频器或变频器无通讯功能'], ['1', '英威腾'], ['2', '科陆新能'], ['3', '步科'], ['4', '汇川'], ['5', '信宇'], ['6', '科陆新能旧'], ['7', '日业电气'], ['8', '普传科技']];
     		                                        	 }
     		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
     		                                             	autoLoad : false,

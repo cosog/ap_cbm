@@ -53,7 +53,7 @@ public class ProtocolModbusThread extends Thread{
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         StringBuffer recvBuff=new StringBuffer();
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
-        int readTimeout=1000*60;//socket read超时时间
+        int readTimeout=1000*5;//socket read超时时间
         Gson gson = new Gson();
         while(!isExit){
         	//获取输入流，并读取客户端信息
@@ -90,23 +90,28 @@ public class ProtocolModbusThread extends Thread{
     				}
     				
     				if(StringManagerUtils.isNotNull(revMacStr)){//接收到注册包
+    					boolean isRun=false;
+						for(int j=0;j<EquipmentDriverServerTast.clientUnitList.size();j++){//遍历已连接的客户端
+							if(EquipmentDriverServerTast.clientUnitList.get(j).socket!=null){//如果已连接
+								for(int k=0;k<EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.size();k++){
+									if(revMacStr.equals(EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.get(k).driverAddr)){//查询原有设备地址和新地址的连接，如存在断开资源，释放资源
+										if(EquipmentDriverServerTast.clientUnitList.get(j).thread!=null){
+											EquipmentDriverServerTast.clientUnitList.get(j).thread.interrupt();
+											isRun=true;
+											break;
+										}
+									}
+								}
+							}
+							if(isRun){
+								break;
+							}
+						}
+    					
+    					
     					for(int i=0;i<EquipmentDriverServerTast.units.size();i++){
     						if(revMacStr.equalsIgnoreCase(beeTechDriverServerTast.units.get(i).driverAddr)){
     							System.out.println(beeTechDriverServerTast.units.get(i).wellName+"上线");
-    							
-    							for(int j=0;j<EquipmentDriverServerTast.clientUnitList.size();j++){//遍历已连接的客户端
-    								if(EquipmentDriverServerTast.clientUnitList.get(j).socket!=null){//如果已连接
-    									for(int k=0;k<EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.size();k++){
-    										if(revMacStr.equals(EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.get(k).driverAddr)){//查询原有设备地址和新地址的连接，如存在断开资源，释放资源
-    											if(EquipmentDriverServerTast.clientUnitList.get(j).thread!=null){
-    												EquipmentDriverServerTast.clientUnitList.get(j).thread.interrupt();
-    												break;
-    											}
-    										}
-    									}
-    								}
-    							}
-    							
     							clientUnit.unitDataList.add(beeTechDriverServerTast.units.get(i));
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).setCommStatus(1);
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageCount+=1;
@@ -152,6 +157,12 @@ public class ProtocolModbusThread extends Thread{
     				for(int i=0;i<clientUnit.unitDataList.size();i++){
     					if(clientUnit.unitDataList.get(i).type==1){//抽油机
     						//先查看是否有待发控制项
+    						//离散数据即时采集控制
+        					if(clientUnit.unitDataList.get(i).ImmediatelyAcquisitionControl>0){
+        						clientUnit.unitDataList.get(i).setImmediatelyAcquisitionControl(0);
+        						clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
     						//启井控制
         					if(clientUnit.unitDataList.get(i).wellStartupControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getCMBWellDataConfig().getWellStartup()!=null){
         						wellReaded=true;
@@ -889,6 +900,12 @@ public class ProtocolModbusThread extends Thread{
         					}
     					}else if(clientUnit.unitDataList.get(i).type==2){//阀组
     						//先查看是否有待发控制项
+    						//离散数据即时采集控制
+        					if(clientUnit.unitDataList.get(i).ImmediatelyAcquisitionControl>0){
+        						clientUnit.unitDataList.get(i).setImmediatelyAcquisitionControl(0);
+        						clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
     						//设置设备地址
         					if(clientUnit.unitDataList.get(i).groupValveDeviceIdControl!=0&&clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getDeviceId()!=null){
         						wellReaded=true;
@@ -1361,7 +1378,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ CumulativeFlow4+","+FlowmeterBackupPoint4+","+InstantaneousFlow4+","+FlowmeterTemperature4+","+FlowmeterPress4+","
                 								+ DeviceId+","+BaudRate+","+BaudRate2+","
                 								+ InstrumentCombinationMode1+","+InstrumentCombinationMode2+","+InstrumentCombinationMode3+","+InstrumentCombinationMode4
-                								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"'";
+                								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"' and rownum=1";
                 						try {
             								stmt = conn.createStatement();
             								int result=stmt.executeUpdate(saveGroupValveDiscreteData);
@@ -1384,6 +1401,12 @@ public class ProtocolModbusThread extends Thread{
     							}
         					}
     					}else if(clientUnit.unitDataList.get(i).type==3){//55kW增压泵
+    						//离散数据即时采集控制
+        					if(clientUnit.unitDataList.get(i).ImmediatelyAcquisitionControl>0){
+        						clientUnit.unitDataList.get(i).setImmediatelyAcquisitionControl(0);
+        						clientUnit.unitDataList.get(i).getAcquisitionData().setReadTime("");//控制指令发出后，将离散数据上一次读取时间清空，执行离散数据读取
+    	    					clientUnit.unitDataList.get(i).getAcquisitionData().setSaveTime("");//控制指令发出后，将离散数据上一次保存时间清空，执行离散数据保存
+        					}
     						//读取数据
         					long readTime=0;
     						if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).getAcquisitionData().getReadTime())){
@@ -1701,7 +1724,16 @@ public class ProtocolModbusThread extends Thread{
 				String commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
 				java.lang.reflect.Type type = new TypeToken<CommResponseData>() {}.getType();
 				CommResponseData commResponseData=gson.fromJson(commResponse, type);
-				String updateCommStatus="update tbl_cbm_discrete_latest t set t.commStatus=0,t.acquisitionTime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss') ";
+				
+				String tableName="";
+				if(clientUnit.unitDataList.get(i).type==1){//抽油机
+					tableName="tbl_cbm_discrete_latest";
+				}else if(clientUnit.unitDataList.get(i).type==2){//阀组
+					tableName="tbl_GroupValve_discrete_latest";
+				}else if(clientUnit.unitDataList.get(i).type==3){//55kW增压泵
+					tableName="tbl_bp_discrete_hist";
+				}
+				String updateCommStatus="update "+tableName+" t set t.commStatus=0,t.acquisitionTime=to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss') ";
 				if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 					updateCommStatus+=" ,t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
 							+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime()
@@ -1783,9 +1815,9 @@ public class ProtocolModbusThread extends Thread{
 		}else if(gnm==5){//写单个线圈
 			startAddrArr=StringManagerUtils.getByteArray((short)(startAddr-00001));
 			if(data==1){//线圈置位
-				startAddrArr=new byte[]{(byte) 0xFF,0x00};
+				dataArr=new byte[]{(byte) 0xFF,0x00};
 			}else{
-				startAddrArr=new byte[]{0x00,0x00};
+				dataArr=new byte[]{0x00,0x00};
 			}
 		}
 		

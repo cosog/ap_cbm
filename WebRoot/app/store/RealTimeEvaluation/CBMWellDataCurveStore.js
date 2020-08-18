@@ -20,6 +20,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellDataCurveStore', {
         load: function (store, record, f, op, o) {
         	var get_rawData=store.proxy.reader.rawData;
         	initCBMWellRTCurveChartFn(get_rawData,"CBMWellRTCurveDataChartDiv_Id");
+        	initCBMWellRTCurveChartFn2(get_rawData,"CBMWellRTCurveDataChartDiv2_Id");
         },
         beforeload: function (store, options) {
         	var wellName=Ext.getCmp('CBMWellRealtimeAnalysisWellCom_Id').getValue();

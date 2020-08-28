@@ -297,15 +297,27 @@ public class BaseDao extends HibernateDaoSupport {
 	public int executeSqlUpdate(String sql) {
 		int n = 0;
 		Statement stat = null;
+		Connection conn=null;
+		PreparedStatement ps=null;
 		try {
-			stat=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection().createStatement();
-			n = stat.executeUpdate(sql);
+			conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+//			stat=conn.createStatement();
+//			n = stat.executeUpdate(sql);
+			
+			ps=conn.prepareStatement(sql);
+			n=ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				if (stat != null) {
 					stat.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+				if (conn != null) {
+					conn.close();
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

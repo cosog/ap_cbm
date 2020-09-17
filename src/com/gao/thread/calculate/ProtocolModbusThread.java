@@ -716,7 +716,7 @@ public class ProtocolModbusThread extends Thread{
     										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
     	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastCommRange)){
     	        						commRequest+= "\"Last\":{"
-    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
     	    									+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
     	    									+ "\"CommEfficiency\": {"
     	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
@@ -726,7 +726,7 @@ public class ProtocolModbusThread extends Thread{
     	    									+ "},";
     	        					}	
     	        					commRequest+= "\"Current\": {"
-    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"CommStatus\":true"
     										+ "}"
     										+ "}";
@@ -762,7 +762,7 @@ public class ProtocolModbusThread extends Thread{
     										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
     	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastRunRange)){
     	        						tiemEffRequest+= "\"Last\":{"
-    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
     	    									+ "\"RunStatus\": "+(clientUnit.unitDataList.get(i).lastRunStatus==1?true:false)+","
     	    									+ "\"RunEfficiency\": {"
     	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastRunTimeEfficiency+","
@@ -772,7 +772,7 @@ public class ProtocolModbusThread extends Thread{
     	    									+ "},";
     	        					}	
     	        					tiemEffRequest+= "\"Current\": {"
-    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"RunStatus\":"+(runStatus==1?true:false)+""
     										+ "}"
     										+ "}";
@@ -806,18 +806,18 @@ public class ProtocolModbusThread extends Thread{
     										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
     	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
     	        						energyRequest+= "\"Last\":{"
-    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
     	    									+ "\"Total\":{"
-    	    									+ "\"Watt\":"+clientUnit.unitDataList.get(i).lastGasCumulativeflow
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGasCumulativeflow
     	    									+ "},\"Today\":{"
-    	    									+ "\"Watt\":"+clientUnit.unitDataList.get(i).lastGasTodayProd
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGasTodayProd
     	    									+ "}"
     	    									+ "},";
     	        					}	
     	        					energyRequest+= "\"Current\": {"
-    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"Total\":{"
-    										+ "\"Watt\":"+gasCumulativeFlow
+    										+ "\"KWattH\":"+gasCumulativeFlow
     										+ "}"
     										+ "}"
     										+ "}";
@@ -826,8 +826,8 @@ public class ProtocolModbusThread extends Thread{
     	        					energyCalculateResponseData=gson.fromJson(energyResponse, type);
     	        					if(energyCalculateResponseData!=null&&energyCalculateResponseData.getResultStatus()==1){
 //    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
-    	        						clientUnit.unitDataList.get(i).lastGasCumulativeflow=energyCalculateResponseData.getCurrent().getTotal().getWatt();
-    	        						clientUnit.unitDataList.get(i).lastGasTodayProd=energyCalculateResponseData.getCurrent().getToday().getWatt();
+    	        						clientUnit.unitDataList.get(i).lastGasCumulativeflow=energyCalculateResponseData.getCurrent().getTotal().getKWattH();
+    	        						clientUnit.unitDataList.get(i).lastGasTodayProd=energyCalculateResponseData.getCurrent().getToday().getKWattH();
     	        					}else{
     	        						System.out.println("energy error");
     	        						System.out.println("请求数据："+energyRequest);
@@ -867,7 +867,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ "1,"+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime()+",'"+commResponseData.getCurrent().getCommEfficiency().getRangeString()+"',"
                 								+ runStatus+","+timeEffResponseData.getCurrent().getRunEfficiency().getEfficiency()+","+timeEffResponseData.getCurrent().getRunEfficiency().getTime()+",'"+timeEffResponseData.getCurrent().getRunEfficiency().getRangeString()+"',"
                 								+ RTUStatus+","+SPM+","+AI1+","+AI2+","+AI3+","+AI4+","
-                								+ gasFlowmeterCommStatus+","+gasInstantaneousFlow+","+gasCumulativeFlow+","+gasFlowmeterPress+","+energyCalculateResponseData.getCurrent().getToday().getWatt()+","
+                								+ gasFlowmeterCommStatus+","+gasInstantaneousFlow+","+gasCumulativeFlow+","+gasFlowmeterPress+","+energyCalculateResponseData.getCurrent().getToday().getKWattH()+","
                 								+ liquidFlowmeterCommStatus+","+liquidInstantaneousFlow+","+liquidCumulativeFlow+","+liquidFlowmeterProd+","
                 								+ fluidLevelIndicatorCommStatus+",to_date('"+fluidLevelAcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"+fluidLevelIndicatorSoundVelocity+","+fluidLevel+","+fluidLevelIndicatorPress+","
                 								+ frequencyChangerCommStatus+","+frequencyChangerStatus+","+frequencyChangerStatus2+","+runFrequency+","
@@ -1311,7 +1311,7 @@ public class ProtocolModbusThread extends Thread{
     										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
     	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastCommRange)){
     	        						commRequest+= "\"Last\":{"
-    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
     	    									+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
     	    									+ "\"CommEfficiency\": {"
     	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
@@ -1321,7 +1321,7 @@ public class ProtocolModbusThread extends Thread{
     	    									+ "},";
     	        					}	
     	        					commRequest+= "\"Current\": {"
-    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"CommStatus\":true"
     										+ "}"
     										+ "}";
@@ -1561,7 +1561,7 @@ public class ProtocolModbusThread extends Thread{
     										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
     	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)&&StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastCommRange)){
     	        						commRequest+= "\"Last\":{"
-    	    									+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
     	    									+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
     	    									+ "\"CommEfficiency\": {"
     	    									+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
@@ -1571,7 +1571,7 @@ public class ProtocolModbusThread extends Thread{
     	    									+ "},";
     	        					}	
     	        					commRequest+= "\"Current\": {"
-    										+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"CommStatus\":true"
     										+ "}"
     										+ "}";
@@ -1707,7 +1707,7 @@ public class ProtocolModbusThread extends Thread{
 						+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
 				if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
 					commRequest+= "\"Last\":{"
-							+ "\"AcquisitionTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+							+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
 							+ "\"CommStatus\": "+(clientUnit.unitDataList.get(i).lastCommStatus==1?true:false)+","
 							+ "\"CommEfficiency\": {"
 							+ "\"Efficiency\": "+clientUnit.unitDataList.get(i).lastCommTimeEfficiency+","
@@ -1717,7 +1717,7 @@ public class ProtocolModbusThread extends Thread{
 							+ "},";
 				}	
 				commRequest+= "\"Current\": {"
-						+ "\"AcquisitionTime\":\""+AcquisitionTime+"\","
+						+ "\"AcqTime\":\""+AcquisitionTime+"\","
 						+ "\"CommStatus\":false"
 						+ "}"
 						+ "}";

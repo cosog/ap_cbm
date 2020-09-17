@@ -1370,7 +1370,7 @@ initCBMWellRTCurveChartFn2 = function (get_rawData, divId) {
 //	var gasCumulativeFlow=[];
 //	var liquidCumulativeflow=[];
 //	var gasFlowmeterPress=[];
-//	var totalWattEnergy=[];
+//	var totalKWattH=[];
 //	
 //	
 //	for(var i=0;i<items.length;i++){
@@ -1390,9 +1390,9 @@ initCBMWellRTCurveChartFn2 = function (get_rawData, divId) {
 //            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
 //            parseFloat(items[i].gasFlowmeterPress)
 //        ]);
-//		totalWattEnergy.push([
+//		totalKWattH.push([
 //            Date.parse(items[i].acquisitionTime.replace(/-/g, '/')),
-//            parseFloat(items[i].totalWattEnergy)
+//            parseFloat(items[i].totalKWattH)
 //        ]);
 //	}
 //	
@@ -1603,7 +1603,7 @@ initCBMWellRTCurveChartFn2 = function (get_rawData, divId) {
 //            },{
 //            	type: 'spline',
 //            	name: '累计耗电量(kW·h)',
-//            	data: totalWattEnergy,
+//            	data: totalKWattH,
 //            	marker:{
 //            		enabled:true,
 //            		radius: 3

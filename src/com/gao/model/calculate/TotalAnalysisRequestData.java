@@ -31,7 +31,7 @@ public class TotalAnalysisRequestData {
 	
 	public static class EveryTime
 	{
-		private String AcquisitionTime;
+		private String AcqTime;
 		
 		private int CommStatus;
 
@@ -127,12 +127,12 @@ public class TotalAnalysisRequestData {
 
 	    private float RPM;
 
-		public String getAcquisitionTime() {
-			return AcquisitionTime;
+		public String getAcqTime() {
+			return AcqTime;
 		}
 
-		public void setAcquisitionTime(String acquisitionTime) {
-			AcquisitionTime = acquisitionTime;
+		public void setAcqTime(String acqTime) {
+			AcqTime = acqTime;
 		}
 
 		public int getCommStatus() {

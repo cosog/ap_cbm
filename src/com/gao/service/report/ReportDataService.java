@@ -19,7 +19,7 @@ public class ReportDataService<T> extends BaseService<T> {
 				+ " t.runTime,t.runRange, t.runTimeEfficiency,"
 				+ " t.gasCumulativeFlow,t.gasTodayProd,t.gasMonthProd,t.gasYearProd,"
 				+ " t.liquidCumulativeFlow,t.liquidFlowmeterProd,t.liquidMonthProd,t.liquidYearProd,"
-				+ " t.spm,t.fluidLevel,t.casingPressure*0.001,t.totalWattEnergy,t.todayWattEnergy,"
+				+ " t.spm,t.fluidLevel,t.casingPressure*0.001,t.totalKWattH,t.todayKWattH,"
 				+ " remark"
 				+ " from viw_cbm_total_day t "
 				+ " where t.org_id in ("+orgId+") "
@@ -59,8 +59,8 @@ public class ReportDataService<T> extends BaseService<T> {
 				+ "{ \"header\":\"动液面(m)\",\"dataIndex\":\"fluidLevel\"},"
 				+ "{ \"header\":\"套压(kPa)\",\"dataIndex\":\"casingPressure\"},"
 
-				+ "{ \"header\":\"累计耗电量(kW·h)\",\"dataIndex\":\"totalWattEnergy\"},"
-				+ "{ \"header\":\"日用电量(kW·h)\",\"dataIndex\":\"todayWattEnergy\"},"
+				+ "{ \"header\":\"累计耗电量(kW·h)\",\"dataIndex\":\"totalKWattH\"},"
+				+ "{ \"header\":\"日用电量(kW·h)\",\"dataIndex\":\"todayKWattH\"},"
 				
 				+ "{ \"header\":\"备注\",\"dataIndex\":\"remark\"}"
 				+ "]";
@@ -93,8 +93,8 @@ public class ReportDataService<T> extends BaseService<T> {
 			result_json.append("\"spm\":\""+obj[17]+"\",");
 			result_json.append("\"fluidLevel\":\""+obj[18]+"\",");
 			result_json.append("\"casingPressure\":\""+obj[19]+"\",");
-			result_json.append("\"totalWattEnergy\":\""+obj[20]+"\",");
-			result_json.append("\"todayWattEnergy\":\""+obj[21]+"\",");
+			result_json.append("\"totalKWattH\":\""+obj[20]+"\",");
+			result_json.append("\"todayKWattH\":\""+obj[21]+"\",");
 			result_json.append("\"remark\":\""+obj[22]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
@@ -111,7 +111,7 @@ public class ReportDataService<T> extends BaseService<T> {
 				+ " t.runTime,t.runRange, t.runTimeEfficiency,"
 				+ " t.gasCumulativeFlow,t.gasTodayProd,t.gasMonthProd,t.gasYearProd,"
 				+ " t.liquidCumulativeFlow,t.liquidFlowmeterProd,t.liquidMonthProd,t.liquidYearProd,"
-				+ " t.spm,t.fluidLevel,t.casingPressure*0.001,t.totalWattEnergy,t.todayWattEnergy,"
+				+ " t.spm,t.fluidLevel,t.casingPressure*0.001,t.totalKWattH,t.todayKWattH,"
 				+ " remark"
 				+ " from viw_cbm_total_day t "
 				+ " where t.org_id in ("+orgId+") "
@@ -151,8 +151,8 @@ public class ReportDataService<T> extends BaseService<T> {
 			result_json.append("\"spm\":\""+obj[17]+"\",");
 			result_json.append("\"fluidLevel\":\""+obj[18]+"\",");
 			result_json.append("\"casingPressure\":\""+obj[19]+"\",");
-			result_json.append("\"totalWattEnergy\":\""+obj[20]+"\",");
-			result_json.append("\"todayWattEnergy\":\""+obj[21]+"\",");
+			result_json.append("\"totalKWattH\":\""+obj[20]+"\",");
+			result_json.append("\"todayKWattH\":\""+obj[21]+"\",");
 			result_json.append("\"remark\":\""+obj[22]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){

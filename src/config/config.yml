@@ -42,11 +42,11 @@ agileCalculate:
    pcpProduction: 
     - http://39.98.134.121:18100/api/calc/pcp/rpm
    communication: 
-    - http://39.98.134.121:18100/api/calc/comm
+    - http://39.98.134.121:18100/api/calc/plugin/timeeff/comm
    run: 
-    - http://39.98.134.121:18100/api/calc/run
+    - http://39.98.134.121:18100/api/calc/plugin/timeeff/run
    energy: 
-    - http://39.98.134.121:18100/api/calc/energy
+    - http://39.98.134.121:18100/api/calc/plugin/energy
    totalCalculation:
       well: 
        - http://39.98.134.121:18100/api/analy/total/well

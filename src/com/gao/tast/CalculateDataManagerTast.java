@@ -23,7 +23,7 @@ public class CalculateDataManagerTast {
 	/**
 	 * 汇总计算
 	 * */
-	@Scheduled(cron = "0 0 1/24 * * ?")
+//	@Scheduled(cron = "0 0 1/24 * * ?")
 	public void totalCalculationTast() throws SQLException, UnsupportedEncodingException, ParseException{
 		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/calculateDataController/CBMDailyCalculation";
 		@SuppressWarnings("unused")

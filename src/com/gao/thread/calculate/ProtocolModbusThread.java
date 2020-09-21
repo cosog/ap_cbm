@@ -1349,6 +1349,144 @@ public class ProtocolModbusThread extends Thread{
     	        						System.out.println("通信请求数据："+commRequest);
     	    							System.out.println("通信返回数据："+commResponse);
     	        					}
+    	        					//进行日流量计算
+    	        					EnergyCalculateResponseData energyCalculateResponseData1=null;
+    	        					EnergyCalculateResponseData energyCalculateResponseData2=null;
+    	        					EnergyCalculateResponseData energyCalculateResponseData3=null;
+    	        					EnergyCalculateResponseData energyCalculateResponseData4=null;
+    	        					//1#流量计
+    	        					String energyRequest1="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
+    	        						energyRequest1+= "\"Last\":{"
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"Total\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow1
+    	    									+ "},\"Today\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveDailyflow1
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					energyRequest1+= "\"Current\": {"
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
+    										+ "\"Total\":{"
+    										+ "\"KWattH\":"+CumulativeFlow1
+    										+ "}"
+    										+ "}"
+    										+ "}";
+    	        					String energyResponse1=StringManagerUtils.sendPostMethod(energyUrl, energyRequest1,"utf-8");
+    	        					type = new TypeToken<EnergyCalculateResponseData>() {}.getType();
+    	        					energyCalculateResponseData1=gson.fromJson(energyResponse1, type);
+    	        					if(energyCalculateResponseData1!=null&&energyCalculateResponseData1.getResultStatus()==1){
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow1=energyCalculateResponseData1.getCurrent().getTotal().getKWattH();
+    	        						clientUnit.unitDataList.get(i).lastGroupValveDailyflow1=energyCalculateResponseData1.getCurrent().getToday().getKWattH();
+    	        					}else{
+    	        						System.out.println("阀组1#流量计日产量计算 error");
+    	        						System.out.println("请求数据："+energyRequest1);
+    	    							System.out.println("返回数据："+energyResponse1);
+    	        					}
+    	        					//2#流量计
+    	        					String energyRequest2="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
+    	        						energyRequest2+= "\"Last\":{"
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"Total\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow2
+    	    									+ "},\"Today\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveDailyflow2
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					energyRequest2+= "\"Current\": {"
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
+    										+ "\"Total\":{"
+    										+ "\"KWattH\":"+CumulativeFlow2
+    										+ "}"
+    										+ "}"
+    										+ "}";
+    	        					String energyResponse2=StringManagerUtils.sendPostMethod(energyUrl, energyRequest2,"utf-8");
+    	        					type = new TypeToken<EnergyCalculateResponseData>() {}.getType();
+    	        					energyCalculateResponseData2=gson.fromJson(energyResponse2, type);
+    	        					if(energyCalculateResponseData2!=null&&energyCalculateResponseData2.getResultStatus()==1){
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow2=energyCalculateResponseData2.getCurrent().getTotal().getKWattH();
+    	        						clientUnit.unitDataList.get(i).lastGroupValveDailyflow2=energyCalculateResponseData2.getCurrent().getToday().getKWattH();
+    	        					}else{
+    	        						System.out.println("阀组2#流量计日产量计算 error");
+    	        						System.out.println("请求数据："+energyRequest2);
+    	    							System.out.println("返回数据："+energyResponse2);
+    	        					}
+    	        					//3#流量计
+    	        					String energyRequest3="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
+    	        						energyRequest3+= "\"Last\":{"
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"Total\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow3
+    	    									+ "},\"Today\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveDailyflow3
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					energyRequest2+= "\"Current\": {"
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
+    										+ "\"Total\":{"
+    										+ "\"KWattH\":"+CumulativeFlow3
+    										+ "}"
+    										+ "}"
+    										+ "}";
+    	        					String energyResponse3=StringManagerUtils.sendPostMethod(energyUrl, energyRequest3,"utf-8");
+    	        					type = new TypeToken<EnergyCalculateResponseData>() {}.getType();
+    	        					energyCalculateResponseData3=gson.fromJson(energyResponse3, type);
+    	        					if(energyCalculateResponseData3!=null&&energyCalculateResponseData3.getResultStatus()==1){
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow3=energyCalculateResponseData3.getCurrent().getTotal().getKWattH();
+    	        						clientUnit.unitDataList.get(i).lastGroupValveDailyflow3=energyCalculateResponseData3.getCurrent().getToday().getKWattH();
+    	        					}else{
+    	        						System.out.println("阀组3#流量计日产量计算 error");
+    	        						System.out.println("请求数据："+energyRequest3);
+    	    							System.out.println("返回数据："+energyResponse3);
+    	        					}
+    	        					//4#流量计
+    	        					String energyRequest4="{"
+    										+ "\"AKString\":\"\","
+    										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
+    	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
+    	        						energyRequest3+= "\"Last\":{"
+    	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
+    	    									+ "\"Total\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow4
+    	    									+ "},\"Today\":{"
+    	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveDailyflow4
+    	    									+ "}"
+    	    									+ "},";
+    	        					}	
+    	        					energyRequest2+= "\"Current\": {"
+    										+ "\"AcqTime\":\""+AcquisitionTime+"\","
+    										+ "\"Total\":{"
+    										+ "\"KWattH\":"+CumulativeFlow4
+    										+ "}"
+    										+ "}"
+    										+ "}";
+    	        					String energyResponse4=StringManagerUtils.sendPostMethod(energyUrl, energyRequest4,"utf-8");
+    	        					type = new TypeToken<EnergyCalculateResponseData>() {}.getType();
+    	        					energyCalculateResponseData4=gson.fromJson(energyResponse4, type);
+    	        					if(energyCalculateResponseData4!=null&&energyCalculateResponseData4.getResultStatus()==1){
+//    	        						clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
+    	        						clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow4=energyCalculateResponseData4.getCurrent().getTotal().getKWattH();
+    	        						clientUnit.unitDataList.get(i).lastGroupValveDailyflow4=energyCalculateResponseData4.getCurrent().getToday().getKWattH();
+    	        					}else{
+    	        						System.out.println("阀组4#流量计日产量计算 error");
+    	        						System.out.println("请求数据："+energyRequest4);
+    	    							System.out.println("返回数据："+energyResponse4);
+    	        					}
+    	        					
     	        					clientUnit.unitDataList.get(i).lastDisAcquisitionTime=AcquisitionTime;
     	        					//判断是否保存数据
     	        					long hisDataInterval=0;
@@ -1356,6 +1494,10 @@ public class ProtocolModbusThread extends Thread{
     	    							hisDataInterval=format.parse(clientUnit.unitDataList.get(i).getAcquisitionData().getSaveTime()).getTime();
     	    						}
     	    						if(commResponseData!=null&&commResponseData.getResultStatus()==1
+    	    								&&energyCalculateResponseData1!=null&&energyCalculateResponseData1.getResultStatus()==1
+    	    								&&energyCalculateResponseData1!=null&&energyCalculateResponseData1.getResultStatus()==1
+    	    								&&energyCalculateResponseData1!=null&&energyCalculateResponseData1.getResultStatus()==1
+    	    								&&energyCalculateResponseData1!=null&&energyCalculateResponseData1.getResultStatus()==1
     	    							&&format.parse(AcquisitionTime).getTime()-hisDataInterval>=clientUnit.unitDataList.get(i).getSaveCycle_Discrete()//比上次保存时间大于5分钟
     	        						){
     	        						//入库
@@ -1368,6 +1510,7 @@ public class ProtocolModbusThread extends Thread{
                 								+ "CumulativeFlow2,FlowmeterBackupPoint2,InstantaneousFlow2,FlowmeterTemperature2,FlowmeterPress2,"
                 								+ "CumulativeFlow3,FlowmeterBackupPoint3,InstantaneousFlow3,FlowmeterTemperature3,FlowmeterPress3,"
                 								+ "CumulativeFlow4,FlowmeterBackupPoint4,InstantaneousFlow4,FlowmeterTemperature4,FlowmeterPress4,"
+                								+ "Dailyflow1,Dailyflow2,Dailyflow3,Dailyflow4,"
                 								+ "DeviceId,BaudRate,BaudRate2,"
                 								+ "InstrumentCombinationMode1,InstrumentCombinationMode2,InstrumentCombinationMode3,InstrumentCombinationMode4) "
                 								+ " select id,to_date('"+AcquisitionTime+"','yyyy-mm-dd hh24:mi:ss'),"
@@ -1376,6 +1519,10 @@ public class ProtocolModbusThread extends Thread{
                 								+ CumulativeFlow2+","+FlowmeterBackupPoint2+","+InstantaneousFlow2+","+FlowmeterTemperature2+","+FlowmeterPress2+","
                 								+ CumulativeFlow3+","+FlowmeterBackupPoint3+","+InstantaneousFlow3+","+FlowmeterTemperature3+","+FlowmeterPress3+","
                 								+ CumulativeFlow4+","+FlowmeterBackupPoint4+","+InstantaneousFlow4+","+FlowmeterTemperature4+","+FlowmeterPress4+","
+                								+ energyCalculateResponseData1.getCurrent().getToday().getKWattH()+","
+                								+ energyCalculateResponseData2.getCurrent().getToday().getKWattH()+","
+                								+ energyCalculateResponseData3.getCurrent().getToday().getKWattH()+","
+                								+ energyCalculateResponseData4.getCurrent().getToday().getKWattH()+","
                 								+ DeviceId+","+BaudRate+","+BaudRate2+","
                 								+ InstrumentCombinationMode1+","+InstrumentCombinationMode2+","+InstrumentCombinationMode3+","+InstrumentCombinationMode4
                 								+ " from tbl_wellinformation t where t.wellname='"+clientUnit.unitDataList.get(i).wellName+"' and rownum=1";

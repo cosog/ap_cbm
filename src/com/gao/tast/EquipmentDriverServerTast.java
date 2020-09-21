@@ -53,7 +53,7 @@ public class EquipmentDriverServerTast {
 		return instance;
 	}
 	
-	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 //		Gson gson = new Gson();
 //		StringManagerUtils stringManagerUtils=new StringManagerUtils();
@@ -109,7 +109,11 @@ public class EquipmentDriverServerTast {
 		String groupValveInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
 				+ " t.drivercode,"
 				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
-				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange"
+				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange,"
+				+ " t3.cumulativeflow1,t3.dailyflow1,"
+				+ " t3.cumulativeflow2,t3.dailyflow2,"
+				+ " t3.cumulativeflow3,t3.dailyflow3,"
+				+ " t3.cumulativeflow4,t3.dailyflow4"
 				+ " from tbl_wellinformation t ,tbl_groupValve_discrete_latest  t3 "
 				+ " where t3.wellId=t.id"
 				+ " order by t.sortNum";
@@ -225,6 +229,15 @@ public class EquipmentDriverServerTast {
 				unit.lastCommTime=rs.getFloat(10);
 				unit.lastCommTimeEfficiency=rs.getFloat(11);
 				unit.lastCommRange=rs.getString(12);
+				
+				unit.lastGroupValveCumulativeflow1=rs.getFloat(13);
+				unit.lastGroupValveDailyflow1=rs.getFloat(14);
+				unit.lastGroupValveCumulativeflow2=rs.getFloat(15);
+				unit.lastGroupValveDailyflow2=rs.getFloat(16);
+				unit.lastGroupValveCumulativeflow3=rs.getFloat(17);
+				unit.lastGroupValveDailyflow3=rs.getFloat(18);
+				unit.lastGroupValveCumulativeflow4=rs.getFloat(19);
+				unit.lastGroupValveDailyflow4=rs.getFloat(20);
 				
 				units.add(unit);
 				clientUnitList.add(clientUnit);
@@ -1045,6 +1058,16 @@ public class EquipmentDriverServerTast {
 		public float lastGasCumulativeflow;
 		public float lastGasTodayProd;
 		
+		//阀组日产量
+		public float lastGroupValveCumulativeflow1;
+		public float lastGroupValveDailyflow1;
+		public float lastGroupValveCumulativeflow2;
+		public float lastGroupValveDailyflow2;
+		public float lastGroupValveCumulativeflow3;
+		public float lastGroupValveDailyflow3;
+		public float lastGroupValveCumulativeflow4;
+		public float lastGroupValveDailyflow4;
+		
 		public  int acqCycle_Discrete=1000*60*2;//离散数据以及心跳读取周期,单位毫秒
 		public  int saveCycle_Discrete=1000*60*5;//离散数据保存间隔,单位毫秒
 		
@@ -1433,6 +1456,70 @@ public class EquipmentDriverServerTast {
 
 		public void setImmediatelyAcquisitionControl(int immediatelyAcquisitionControl) {
 			ImmediatelyAcquisitionControl = immediatelyAcquisitionControl;
+		}
+
+		public float getLastGroupValveCumulativeflow1() {
+			return lastGroupValveCumulativeflow1;
+		}
+
+		public void setLastGroupValveCumulativeflow1(float lastGroupValveCumulativeflow1) {
+			this.lastGroupValveCumulativeflow1 = lastGroupValveCumulativeflow1;
+		}
+
+		public float getLastGroupValveDailyflow1() {
+			return lastGroupValveDailyflow1;
+		}
+
+		public void setLastGroupValveDailyflow1(float lastGroupValveDailyflow1) {
+			this.lastGroupValveDailyflow1 = lastGroupValveDailyflow1;
+		}
+
+		public float getLastGroupValveCumulativeflow2() {
+			return lastGroupValveCumulativeflow2;
+		}
+
+		public void setLastGroupValveCumulativeflow2(float lastGroupValveCumulativeflow2) {
+			this.lastGroupValveCumulativeflow2 = lastGroupValveCumulativeflow2;
+		}
+
+		public float getLastGroupValveDailyflow2() {
+			return lastGroupValveDailyflow2;
+		}
+
+		public void setLastGroupValveDailyflow2(float lastGroupValveDailyflow2) {
+			this.lastGroupValveDailyflow2 = lastGroupValveDailyflow2;
+		}
+
+		public float getLastGroupValveCumulativeflow3() {
+			return lastGroupValveCumulativeflow3;
+		}
+
+		public void setLastGroupValveCumulativeflow3(float lastGroupValveCumulativeflow3) {
+			this.lastGroupValveCumulativeflow3 = lastGroupValveCumulativeflow3;
+		}
+
+		public float getLastGroupValveDailyflow3() {
+			return lastGroupValveDailyflow3;
+		}
+
+		public void setLastGroupValveDailyflow3(float lastGroupValveDailyflow3) {
+			this.lastGroupValveDailyflow3 = lastGroupValveDailyflow3;
+		}
+
+		public float getLastGroupValveCumulativeflow4() {
+			return lastGroupValveCumulativeflow4;
+		}
+
+		public void setLastGroupValveCumulativeflow4(float lastGroupValveCumulativeflow4) {
+			this.lastGroupValveCumulativeflow4 = lastGroupValveCumulativeflow4;
+		}
+
+		public float getLastGroupValveDailyflow4() {
+			return lastGroupValveDailyflow4;
+		}
+
+		public void setLastGroupValveDailyflow4(float lastGroupValveDailyflow4) {
+			this.lastGroupValveDailyflow4 = lastGroupValveDailyflow4;
 		}
 		
 	}

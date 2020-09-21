@@ -167,7 +167,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		&& module_Code != "blockdata_Ids"
 		&& module_Code != "RealTimeEvaluation_Well"
 		&& module_Code !="RealTimeEvaluation_GroupValve"
-		&& module_Code !="DailyReport_Well") {
+		&& module_Code !="DailyReport_Well"
+		&& module_Code !="DailyEvaluation_Well") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -292,6 +293,9 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		loadGroupValveSingleStatData();
 	}else if(module_Code == "DailyReport_Well"){
 		CreateCBMWellDailyReportTable();
+	}else if(module_Code == "DailyEvaluation_Well"){
+		Ext.getCmp('CBMWellDailyAnalysisWellCom_Id').setValue("");
+		loadCBMWellDailyStatData();
 	}else {
 		return false;
 	}

@@ -14,8 +14,8 @@ dockDataSource:
         user: agile
         password: agile
 viewInformation:
-   title: 煤层气敏捷生产 V7.2
-   profile: AgileProduction 煤层气敏捷生产 V7.2主要在采集、控制的基础上，侧重煤层气井生产智能分析。模块主要包括实时评价、全天评价、生产报表等，提升对目标区块和单井的整体管控能力。
+   title: 煤层气敏捷生产 V7.5
+   profile: AgileProduction 煤层气敏捷生产 V7.5主要在采集、控制的基础上，侧重煤层气井生产智能分析。模块主要包括实时评价、全天评价、生产报表等，提升对目标区块和单井的整体管控能力。
    copy: ""
    linkaddress: http://www.cosogoil.com
    linkshow: ""

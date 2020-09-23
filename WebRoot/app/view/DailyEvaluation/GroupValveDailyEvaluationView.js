@@ -1,11 +1,11 @@
 /*******************************************************************************
- * 煤层气井全天评价视图
+ * 阀组全天评价视图
  *
  *
  */
-Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.wellDailyEvaluationView', // 定义别名
+Ext.define("AP.view.DailyEvaluation.GroupValveDailyEvaluationView", {
+	extend: 'Ext.panel.Panel',
+    alias: 'widget.groupValveDailyEvaluationView', // 定义别名
     layout: 'fit',
     border: false,
     initComponent: function () {
@@ -35,19 +35,19 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
             listeners: {
                 beforeload: function (store, options) {
                     var org_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('CBMWellDailyAnalysisWellCom_Id').getValue();
+                    var wellName = Ext.getCmp('GroupValveDailyAnalysisWellCom_Id').getValue();
                     var new_params = {
                     	wellName: wellName,
                         orgId: org_Id,
-                        wellType: 1
+                        wellType: 2
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
                 }
             }
         });
         var wellComb = Ext.create('Ext.form.field.ComboBox', {
-            fieldLabel: cosog.string.wellName,
-            id: "CBMWellDailyAnalysisWellCom_Id",
+            fieldLabel: '阀组',
+            id: "GroupValveDailyAnalysisWellCom_Id",
             store: wellCombStore,
             labelWidth: 35,
             width: 125,
@@ -66,25 +66,25 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
             listeners: {
                 expand: function (sm, selections) {},
                 select: function (combo, record, index) {
-                	var statPanelId=getCBMWellDailyStatType().piePanelId;;
+                	var statPanelId=getGroupValveDailyStatType().piePanelId;;
                     if(combo.value==""){
-                    	Ext.getCmp("CBMWellDailyAnalysisWellListPanel_Id").setTitle("统计数据");
-                    	Ext.getCmp("CBMWellDailyAnalysisDate_Id").show();
-                    	Ext.getCmp("CBMWellDailyAnalysisStartDate_Id").hide();
-                  	  	Ext.getCmp("CBMWellDailyAnalysisEndDate_Id").hide();
-                        Ext.getCmp("CBMWellDailyAnalysisHisBtn_Id").show();
-                  	  	Ext.getCmp("CBMWellDailyAnalysisAllBtn_Id").hide();
+                    	Ext.getCmp("GroupValveDailyAnalysisWellListPanel_Id").setTitle("统计数据");
+                    	Ext.getCmp("GroupValveDailyAnalysisDate_Id").show();
+                    	Ext.getCmp("GroupValveDailyAnalysisStartDate_Id").hide();
+                  	  	Ext.getCmp("GroupValveDailyAnalysisEndDate_Id").hide();
+                        Ext.getCmp("GroupValveDailyAnalysisHisBtn_Id").show();
+                  	  	Ext.getCmp("GroupValveDailyAnalysisAllBtn_Id").hide();
                     	Ext.getCmp(statPanelId).expand(true);
                     }else{
-                    	Ext.getCmp("CBMWellDailyAnalysisWellListPanel_Id").setTitle("单井历史");
-                    	Ext.getCmp("CBMWellDailyAnalysisDate_Id").hide();
-            			Ext.getCmp("CBMWellDailyAnalysisStartDate_Id").show();
-                    	Ext.getCmp("CBMWellDailyAnalysisEndDate_Id").show();
-                    	Ext.getCmp("CBMWellDailyAnalysisHisBtn_Id").hide();
-                        Ext.getCmp("CBMWellDailyAnalysisAllBtn_Id").show();
+                    	Ext.getCmp("GroupValveDailyAnalysisWellListPanel_Id").setTitle("阀组历史");
+                    	Ext.getCmp("GroupValveDailyAnalysisDate_Id").hide();
+            			Ext.getCmp("GroupValveDailyAnalysisStartDate_Id").show();
+                    	Ext.getCmp("GroupValveDailyAnalysisEndDate_Id").show();
+                    	Ext.getCmp("GroupValveDailyAnalysisHisBtn_Id").hide();
+                        Ext.getCmp("GroupValveDailyAnalysisAllBtn_Id").show();
                     	Ext.getCmp(statPanelId).collapse();
                     }
-                    Ext.getCmp('CBMWellAnalysisDaily_Id').getStore().loadPage(1);
+                    Ext.getCmp('GroupValveAnalysisDaily_Id').getStore().loadPage(1);
                 }
             }
         });
@@ -96,26 +96,26 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                     {
                         region: 'center',
                         layout: 'fit',
-                        id: 'CBMWellDailyAnalysisWellListPanel_Id',
+                        id: 'GroupValveDailyAnalysisWellListPanel_Id',
                         title: '统计数据',
                         border: false,
                         tbar: [wellComb, '-',{
-                            id: 'CBMWellDailySelectedStatValue_Id',//选择的统计项的值
+                            id: 'GroupValveDailySelectedStatValue_Id',//选择的统计项的值
                             xtype: 'textfield',
                             value: '',
                             hidden: true
                         }, {
-                            id: 'CBMWellDailyTableColumnStr_Id',//选择查看曲线的数据项代码
+                            id: 'GroupValveDailyTableColumnStr_Id',//选择查看曲线的数据项代码
                             xtype: 'textfield',
                             value: '',
                             hidden: true
                         },{
-                            id: 'CBMWellDailyAnalysisCurveItem_Id',//选择查看曲线的数据项名称
+                            id: 'GroupValveDailyAnalysisCurveItem_Id',//选择查看曲线的数据项名称
                             xtype: 'textfield',
                             value: '',
                             hidden: true
                         }, {
-                            id: 'CBMWellDailyAnalysisCurveItemCode_Id',//选择查看曲线的数据项代码
+                            id: 'GroupValveDailyAnalysisCurveItemCode_Id',//选择查看曲线的数据项代码
                             xtype: 'textfield',
                             value: '',
                             hidden: true
@@ -127,11 +127,11 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                             labelWidth: 60,
                             width: 150,
                             format: 'Y-m-d ',
-                            id: 'CBMWellDailyAnalysisDate_Id',
+                            id: 'GroupValveDailyAnalysisDate_Id',
                             value: new Date(),
                             listeners: {
                                 select: function (combo, record, index) {
-                                	loadCBMWellDailyStatData();
+                                	loadGroupValveDailyStatData();
                                 }
                             }
                         }, {
@@ -142,11 +142,11 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                             labelWidth: 0,
                             width: 90,
                             format: 'Y-m-d ',
-                            id: 'CBMWellDailyAnalysisStartDate_Id',
+                            id: 'GroupValveDailyAnalysisStartDate_Id',
                             value: '',
                             listeners: {
                                 select: function (combo, record, index) {
-                                	Ext.getCmp('CBMWellAnalysisDaily_Id').getStore().loadPage(1);
+                                	Ext.getCmp('GroupValveAnalysisDaily_Id').getStore().loadPage(1);
                                 }
                             }
                         }, {
@@ -157,11 +157,11 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                             labelWidth: 15,
                             width: 105,
                             format: 'Y-m-d ',
-                            id: 'CBMWellDailyAnalysisEndDate_Id',
+                            id: 'GroupValveDailyAnalysisEndDate_Id',
                             value: new Date(),
                             listeners: {
                                 select: function (combo, record, index) {
-                                	Ext.getCmp('CBMWellAnalysisDaily_Id').getStore().loadPage(1);
+                                	Ext.getCmp('GroupValveAnalysisDaily_Id').getStore().loadPage(1);
                                 }
                             }
                         }, {
@@ -169,52 +169,52 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                             text: cosog.string.exportExcel,
                             pressed: true,
                             handler: function (v, o) {
-                            	exportCBMWellDailyAnalisiDataExcel();
+                            	exportGroupValveDailyAnalisiDataExcel();
                             }
                         }, '->', {
                             xtype: 'button',
-                            text: '单井历史',
-                            tooltip: '点击按钮或者双击表格，查看单井历史数据',
-                            id: 'CBMWellDailyAnalysisHisBtn_Id',
+                            text: '阀组历史',
+                            tooltip: '点击按钮或者双击表格，查看阀组历史数据',
+                            id: 'GroupValveDailyAnalysisHisBtn_Id',
                             pressed: true,
                             hidden: false,
                             handler: function (v, o) {
-                            	var statPanelId=getCBMWellDailyStatType().piePanelId;
-                            	Ext.getCmp("CBMWellDailyAnalysisWellListPanel_Id").setTitle("单井历史");
-                            	Ext.getCmp("CBMWellDailyAnalysisDate_Id").hide();
-                            	Ext.getCmp("CBMWellDailyAnalysisStartDate_Id").show();
-                            	Ext.getCmp("CBMWellDailyAnalysisEndDate_Id").show();
-                            	Ext.getCmp("CBMWellDailyAnalysisHisBtn_Id").hide();
-                                Ext.getCmp("CBMWellDailyAnalysisAllBtn_Id").show();
+                            	var statPanelId=getGroupValveDailyStatType().piePanelId;
+                            	Ext.getCmp("GroupValveDailyAnalysisWellListPanel_Id").setTitle("阀组历史");
+                            	Ext.getCmp("GroupValveDailyAnalysisDate_Id").hide();
+                            	Ext.getCmp("GroupValveDailyAnalysisStartDate_Id").show();
+                            	Ext.getCmp("GroupValveDailyAnalysisEndDate_Id").show();
+                            	Ext.getCmp("GroupValveDailyAnalysisHisBtn_Id").hide();
+                                Ext.getCmp("GroupValveDailyAnalysisAllBtn_Id").show();
                             	Ext.getCmp(statPanelId).collapse();
                                 
-                                var wellName  = Ext.getCmp("CBMWellAnalysisDaily_Id").getSelectionModel().getSelection()[0].data.wellName;
-                                Ext.getCmp("CBMWellDailyAnalysisWellCom_Id").setValue(wellName);
-                                Ext.getCmp("CBMWellDailyAnalysisWellCom_Id").setRawValue(wellName);
-                                Ext.getCmp('CBMWellAnalysisDaily_Id').getStore().loadPage(1);
+                                var wellName  = Ext.getCmp("GroupValveAnalysisDaily_Id").getSelectionModel().getSelection()[0].data.wellName;
+                                Ext.getCmp("GroupValveDailyAnalysisWellCom_Id").setValue(wellName);
+                                Ext.getCmp("GroupValveDailyAnalysisWellCom_Id").setRawValue(wellName);
+                                Ext.getCmp('GroupValveAnalysisDaily_Id').getStore().loadPage(1);
                             }
                       }, {
                             xtype: 'button',
                             text: '返回统计',
-                            id: 'CBMWellDailyAnalysisAllBtn_Id',
+                            id: 'GroupValveDailyAnalysisAllBtn_Id',
                             pressed: true,
                             hidden: true,
                             handler: function (v, o) {
-                            	var statPanelId=getCBMWellDailyStatType().piePanelId;
-                            	Ext.getCmp("CBMWellDailyAnalysisWellListPanel_Id").setTitle("统计数据");
-                            	Ext.getCmp("CBMWellDailyAnalysisDate_Id").show();
-                            	Ext.getCmp("CBMWellDailyAnalysisStartDate_Id").hide();
-                          	  	Ext.getCmp("CBMWellDailyAnalysisEndDate_Id").hide();
-                                Ext.getCmp("CBMWellDailyAnalysisHisBtn_Id").show();
-                          	  	Ext.getCmp("CBMWellDailyAnalysisAllBtn_Id").hide();
+                            	var statPanelId=getGroupValveDailyStatType().piePanelId;
+                            	Ext.getCmp("GroupValveDailyAnalysisWellListPanel_Id").setTitle("统计数据");
+                            	Ext.getCmp("GroupValveDailyAnalysisDate_Id").show();
+                            	Ext.getCmp("GroupValveDailyAnalysisStartDate_Id").hide();
+                          	  	Ext.getCmp("GroupValveDailyAnalysisEndDate_Id").hide();
+                                Ext.getCmp("GroupValveDailyAnalysisHisBtn_Id").show();
+                          	  	Ext.getCmp("GroupValveDailyAnalysisAllBtn_Id").hide();
                             	Ext.getCmp(statPanelId).expand(true);
                                 
-                                Ext.getCmp("CBMWellDailyAnalysisWellCom_Id").setValue('');
-                                Ext.getCmp("CBMWellDailyAnalysisWellCom_Id").setRawValue('');
-                                Ext.getCmp('CBMWellAnalysisDaily_Id').getStore().loadPage(1);
+                                Ext.getCmp("GroupValveDailyAnalysisWellCom_Id").setValue('');
+                                Ext.getCmp("GroupValveDailyAnalysisWellCom_Id").setRawValue('');
+                                Ext.getCmp('GroupValveAnalysisDaily_Id').getStore().loadPage(1);
                             }
                       }, {
-                            id: 'CBMWellDailyAnalysisCount_Id',
+                            id: 'GroupValveDailyAnalysisCount_Id',
                             xtype: 'component',
                             hidden: true,
                             tpl: cosog.string.totalCount + ': {count}',
@@ -222,126 +222,47 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                     }],
                         items: {
                             xtype: 'tabpanel',
-                            id: 'CBMWellDailyStatTabpanel_Id',
+                            id: 'GroupValveDailyStatTabpanel_Id',
                             activeTab: 0,
                             border: true,
                             header: false,
                             collapsible: true, // 是否折叠
                             split: true, // 竖折叠条
                             tabPosition: 'top',
-                            items: [{
-                                    xtype: 'tabpanel',
-                                    tabPosition: 'right',
-                                    title: '时率',
-                                    iconCls: 'select',
-                                    id: 'CBMWellDailyRunTimeEffStatTabpanel_Id',
-                                    tabRotation: 1,
-                                    items: [{
-                                        title: '运行状态',
-                                        border: false,
-                                        iconCls: 'dtgreen',
-                                        layout: 'border',
-                                        id: 'CBMWellDailyRunStatusStatPanel_Id',
-                                        items: [{
-                                            region: 'center',
-                                            id: 'CBMWellDailyRunStatusDataListPanel_Id',
-                                            header: false,
-                                            layout: 'fit'
-                                        }, {
-                                            region: 'south',
-                                            id: 'CBMWellDailyRunStatusStatGraphPanel_Id',
-                                            height: '50%',
-                                            border: true,
-                                            header: false,
-                                            collapsible: true, // 是否折叠
-                                            split: true, // 竖折叠条
-                                            html: '<div id="CBMWellDailyRunStatusStatGraphPieDiv_Id" style="width:100%;height:100%;"></div>',
-                                            listeners: {
-                                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                                	if ($("#CBMWellDailyRunStatusStatGraphPieDiv_Id").highcharts() != undefined) {
-                                                        $("#CBMWellDailyRunStatusStatGraphPieDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
-                                                    }else{
-                                                    	Ext.create('Ext.tip.ToolTip', {
-                                                            target: 'CBMWellDailyRunStatusStatGraphPieDiv_Id',
-                                                            html: '点击饼图不同区域或标签，查看相应统计数据'
-                                                        });
-                                                    }
-                                                }
-                                            }
-                                        }]
-                                    }, {
-                                        title: '运行时率',
-                                        border: false,
-                                        layout: 'border',
-                                        id: 'CBMWellDailyRunTimeEffStatPanel_Id',
-                                        items: [{
-                                            region: 'center',
-                                            id: 'CBMWellDailyRunTimeEffDataListPanel_Id',
-                                            header: false,
-                                            layout: 'fit'
-                                        }, {
-                                            region: 'south',
-                                            id: 'CBMWellDailyRunTimeEffStatGraphPanel_Id',
-                                            height: '50%',
-                                            border: true,
-                                            header: false,
-                                            collapsible: true, // 是否折叠
-                                            split: true, // 竖折叠条
-                                            html: '<div id="CBMWellDailyRunTimeEffStatGraphPieDiv_Id" style="width:100%;height:100%;"></div>',
-                                            listeners: {
-                                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                                	if ($("#CBMWellDailyRunTimeEffStatGraphPieDiv_Id").highcharts() != undefined) {
-                                                        $("#CBMWellDailyRunTimeEffStatGraphPieDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
-                                                    }else{
-                                                    	Ext.create('Ext.tip.ToolTip', {
-                                                            target: 'CBMWellDailyRunTimeEffStatGraphPieDiv_Id',
-                                                            html: '点击饼图不同区域或标签，查看相应统计数据'
-                                                        });
-                                                    }
-                                                }
-                                            }
-                                        }]
-                                    }],
-                                    listeners: {
-                                        tabchange: function (tabPanel, newCard, oldCard, obj) {
-                                            newCard.setIconCls("dtgreen");
-                                            oldCard.setIconCls("");
-                                            loadCBMWellDailyStatData();
-                                        }
-                                    }
-                                },{
+                            items: [
+                            	{
                                     xtype: 'tabpanel',
                                     tabPosition: 'right',
                                     title: '通信',
-                                    id: 'CBMWellDailyCommEffStatTabpanel_Id',
+                                    id: 'GroupValveDailyCommEffStatTabpanel_Id',
                                     tabRotation: 1,
                                     items: [{
                                         title: '通信状态',
                                         border: false,
                                         iconCls: 'dtgreen',
                                         layout: 'border',
-                                        id: 'CBMWellDailyCommStatusStatPanel_Id',
+                                        id: 'GroupValveDailyCommStatusStatPanel_Id',
                                         items: [{
                                             region: 'center',
-                                            id: 'CBMWellDailyCommStatusDataListPanel_Id',
+                                            id: 'GroupValveDailyCommStatusDataListPanel_Id',
                                             header: false,
                                             layout: 'fit'
                                         }, {
                                             region: 'south',
-                                            id: 'CBMWellDailyCommStatusStatGraphPanel_Id',
+                                            id: 'GroupValveDailyCommStatusStatGraphPanel_Id',
                                             height: '50%',
                                             border: true,
                                             header: false,
                                             collapsible: true, // 是否折叠
                                             split: true, // 竖折叠条
-                                            html: '<div id="CBMWellDailyCommStatusStatGraphPieDiv_Id" style="width:100%;height:100%;"></div>',
+                                            html: '<div id="GroupValveDailyCommStatusStatGraphPieDiv_Id" style="width:100%;height:100%;"></div>',
                                             listeners: {
                                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                                	if ($("#CBMWellDailyCommStatusStatGraphPieDiv_Id").highcharts() != undefined) {
-                                                        $("#CBMWellDailyCommStatusStatGraphPieDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
+                                                	if ($("#GroupValveDailyCommStatusStatGraphPieDiv_Id").highcharts() != undefined) {
+                                                        $("#GroupValveDailyCommStatusStatGraphPieDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
                                                     }else{
                                                     	Ext.create('Ext.tip.ToolTip', {
-                                                            target: 'CBMWellDailyCommStatusStatGraphPieDiv_Id',
+                                                            target: 'GroupValveDailyCommStatusStatGraphPieDiv_Id',
                                                             html: '点击饼图不同区域或标签，查看相应统计数据'
                                                         });
                                                     }
@@ -352,28 +273,28 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                         title: '在线时率',
                                         border: false,
                                         layout: 'border',
-                                        id: 'CBMWellDailyCommEffStatPanel_Id',
+                                        id: 'GroupValveDailyCommEffStatPanel_Id',
                                         items: [{
                                             region: 'center',
-                                            id: 'CBMWellDailyCommEffDataListPanel_Id',
+                                            id: 'GroupValveDailyCommEffDataListPanel_Id',
                                             header: false,
                                             layout: 'fit'
                                         }, {
                                             region: 'south',
-                                            id: 'CBMWellDailyCommEffStatGraphPanel_Id',
+                                            id: 'GroupValveDailyCommEffStatGraphPanel_Id',
                                             height: '50%',
                                             border: true,
                                             header: false,
                                             collapsible: true, // 是否折叠
                                             split: true, // 竖折叠条
-                                            html: '<div id="CBMWellDailyCommEffStatGraphPieDiv_Id" style="width:100%;height:100%;"></div>',
+                                            html: '<div id="GroupValveDailyCommEffStatGraphPieDiv_Id" style="width:100%;height:100%;"></div>',
                                             listeners: {
                                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                                	if ($("#CBMWellDailyCommEffStatGraphPieDiv_Id").highcharts() != undefined) {
-                                                        $("#CBMWellDailyCommEffStatGraphPieDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
+                                                	if ($("#GroupValveDailyCommEffStatGraphPieDiv_Id").highcharts() != undefined) {
+                                                        $("#GroupValveDailyCommEffStatGraphPieDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
                                                     }else{
                                                     	Ext.create('Ext.tip.ToolTip', {
-                                                            target: 'CBMWellDailyCommEffStatGraphPieDiv_Id',
+                                                            target: 'GroupValveDailyCommEffStatGraphPieDiv_Id',
                                                             html: '点击饼图不同区域或标签，查看相应统计数据'
                                                         });
                                                     }
@@ -385,7 +306,7 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                         tabchange: function (tabPanel, newCard, oldCard, obj) {
                                             newCard.setIconCls("dtgreen");
                                             oldCard.setIconCls("");
-                                            loadCBMWellDailyStatData();
+                                            loadGroupValveDailyStatData();
                                         }
                                     }
                                 }
@@ -394,16 +315,13 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                 tabchange: function (tabPanel, newCard, oldCard, obj) {
                                     oldCard.setIconCls("");
                                     newCard.setIconCls("select");
-                                    loadCBMWellDailyStatData();
+                                    loadGroupValveDailyStatData();
                                 }
                             }
                         },
                         listeners: {
                             afterrender: function (comp, eOpts) {
-                                Ext.getCmp("CBMWellDailyRunTimeEffStatTabpanel_Id").getTabBar().insert(0, {
-                                    xtype: 'tbfill'
-                                });
-                                Ext.getCmp("CBMWellDailyCommEffStatTabpanel_Id").getTabBar().insert(0, {
+                                Ext.getCmp("GroupValveDailyCommEffStatTabpanel_Id").getTabBar().insert(0, {
                                     xtype: 'tbfill'
                                 });
                             }
@@ -411,7 +329,7 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                 },
                     {
                         region: 'east',
-                        id: 'CBMWellDailyAnalysisDataPanel_Id',
+                        id: 'GroupValveDailyAnalysisDataPanel_Id',
                         width: '65%',
                         title: '单井详情',
                         collapsible: true, // 是否折叠
@@ -455,12 +373,12 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
 //                                            height: 1000,
                                             flex: 1,
                                             layout: 'fit',
-                                            id: 'CBMWellDailyCurveDataPanel_Id',
-                                            html: '<div id="CBMWellDailyCurveDataChartDiv_Id" style="width:100%;height:100%;"></div>',
+                                            id: 'GroupValveDailyCurveDataPanel_Id',
+                                            html: '<div id="GroupValveDailyCurveDataChartDiv_Id" style="width:100%;height:100%;"></div>',
                                             listeners: {
                                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                                	if ($("#CBMWellDailyCurveDataChartDiv_Id").highcharts() != undefined) {
-                                                        $("#CBMWellDailyCurveDataChartDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
+                                                	if ($("#GroupValveDailyCurveDataChartDiv_Id").highcharts() != undefined) {
+                                                        $("#GroupValveDailyCurveDataChartDiv_Id").highcharts().setSize(adjWidth, adjHeight, true);
                                                     }
                                                 }
                                             }
@@ -481,12 +399,12 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                          margin: '0 0 1 0',
                                          flex: 1,
                                          layout: 'fit',
-                                         id: 'CBMWellDailyCurveDataPanel2_Id',
-                                         html: '<div id="CBMWellDailyCurveDataChartDiv2_Id" style="width:100%;height:100%;"></div>',
+                                         id: 'GroupValveDailyCurveDataPanel2_Id',
+                                         html: '<div id="GroupValveDailyCurveDataChartDiv2_Id" style="width:100%;height:100%;"></div>',
                                          listeners: {
                                              resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                             	if ($("#CBMWellDailyCurveDataChartDiv2_Id").highcharts() != undefined) {
-                                                     $("#CBMWellDailyCurveDataChartDiv2_Id").highcharts().setSize(adjWidth, adjHeight, true);
+                                             	if ($("#GroupValveDailyCurveDataChartDiv2_Id").highcharts() != undefined) {
+                                                     $("#GroupValveDailyCurveDataChartDiv2_Id").highcharts().setSize(adjWidth, adjHeight, true);
                                                  }
                                              }
                                          }
@@ -514,7 +432,7 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                 items: [
                                     {
                                         xtype: 'tabpanel',
-                                        id: 'CBMWellDailyAnalysisAndAcqDataTabpanel_Id',
+                                        id: 'GroupValveDailyAnalysisAndAcqDataTabpanel_Id',
                                         flex: 1,
                                         activeTab: 0,
                                         header: false,
@@ -526,7 +444,7 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                         items: [
                                             {
                                                 title: '分析',
-                                                id: 'CBMWellDailyAnalysisTableCalDataPanel_Id',
+                                                id: 'GroupValveDailyAnalysisTableCalDataPanel_Id',
                                                 border: false,
                                                 layout: 'fit',
                                                 autoScroll: true,
@@ -535,7 +453,7 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                                             }, {
                                                 title: '采集',
                                                 layout:"border",
-                                                id: 'CBMWellDailyAnalysisTableAcqDataPanel_Id',
+                                                id: 'GroupValveDailyAnalysisTableAcqDataPanel_Id',
                                             	border: false,
                                                 layout: 'fit',
                                                 hidden:true,
@@ -551,10 +469,10 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
                         ],
                         listeners: {
                             beforeCollapse: function (panel, eOpts) {
-                                $("#CBMWellDailyCurveDataChartDiv_Id").hide();
+                                $("#GroupValveDailyCurveDataChartDiv_Id").hide();
                             },
                             expand: function (panel, eOpts) {
-                                $("#CBMWellDailyCurveDataChartDiv_Id").show();
+                                $("#GroupValveDailyCurveDataChartDiv_Id").show();
                             }
                         }
                         }]
@@ -564,7 +482,7 @@ Ext.define("AP.view.DailyEvaluation.WellDailyEvaluationView", {
     }
 });
 
-function createCBMWellDailyTableColumn(columnInfo) {
+function createGroupValveDailyTableColumn(columnInfo) {
     var myArr = columnInfo;
 
     var myColumns = "[";
@@ -614,50 +532,36 @@ function createCBMWellDailyTableColumn(columnInfo) {
     return myColumns;
 };
 
-function getCBMWellDailyStatType() {
+function getGroupValveDailyStatType() {
 	var type=1;
-	panelId="CBMWellDailyRunStatusDataListPanel_Id";
-	piePanelId="CBMWellDailyRunStatusStatGraphPanel_Id";
-	pieDivId="CBMWellDailyRunStatusStatGraphPieDiv_Id";
-	pieChartTitle="运行状态";
-	exportExcelTitle='煤层气井全天评价-运行状态';
-	var activeTabId= Ext.getCmp(Ext.getCmp("CBMWellDailyStatTabpanel_Id").getActiveTab().id).getActiveTab().id;
-	if(activeTabId=="CBMWellDailyRunStatusStatPanel_Id"){//运行状态
+	panelId="GroupValveDailyCommStatusDataListPanel_Id";
+	piePanelId="GroupValveDailyCommStatusStatGraphPanel_Id";
+	pieDivId="GroupValveDailyCommStatusStatGraphPieDiv_Id";
+	pieChartTitle="通信状态";
+	exportExcelTitle='阀组全天评价-通信状态';
+	var activeTabId= Ext.getCmp(Ext.getCmp("GroupValveDailyStatTabpanel_Id").getActiveTab().id).getActiveTab().id;
+	if(activeTabId=="GroupValveDailyCommStatusStatPanel_Id"){//通信状态
 		type=1;
-		panelId="CBMWellDailyRunStatusDataListPanel_Id";
-		piePanelId="CBMWellDailyRunStatusStatGraphPanel_Id";
-		pieDivId="CBMWellDailyRunStatusStatGraphPieDiv_Id";
-		pieChartTitle="运行状态";
-		exportExcelTitle='煤层气井全天评价-运行状态';
-	}else if(activeTabId=="CBMWellDailyRunTimeEffStatPanel_Id"){//运行时率
-		type=2;
-		panelId="CBMWellDailyRunTimeEffDataListPanel_Id";
-		piePanelId="CBMWellDailyRunTimeEffStatGraphPanel_Id";
-		pieDivId="CBMWellDailyRunTimeEffStatGraphPieDiv_Id";
-		pieChartTitle="运行时率";
-		exportExcelTitle='煤层气井全天评价-运行时率';
-	}else if(activeTabId=="CBMWellDailyCommStatusStatPanel_Id"){//通信状态
-		type=3;
-		panelId="CBMWellDailyCommStatusDataListPanel_Id";
-		piePanelId="CBMWellDailyCommStatusStatGraphPanel_Id";
-		pieDivId="CBMWellDailyCommStatusStatGraphPieDiv_Id";
+		panelId="GroupValveDailyCommStatusDataListPanel_Id";
+		piePanelId="GroupValveDailyCommStatusStatGraphPanel_Id";
+		pieDivId="GroupValveDailyCommStatusStatGraphPieDiv_Id";
 		pieChartTitle="通信状态";
-		exportExcelTitle='煤层气井全天评价-通信状态';
-	}else if(activeTabId=="CBMWellDailyCommEffStatPanel_Id"){//在线时率
-		type=4;
-		panelId="CBMWellDailyCommEffDataListPanel_Id";
-		piePanelId="CBMWellDailyCommEffStatGraphPanel_Id";
-		pieDivId="CBMWellDailyCommEffStatGraphPieDiv_Id";
+		exportExcelTitle='阀组全天评价-通信状态';
+	}else if(activeTabId=="GroupValveDailyCommEffStatPanel_Id"){//在线时率
+		type=2;
+		panelId="GroupValveDailyCommEffDataListPanel_Id";
+		piePanelId="GroupValveDailyCommEffStatGraphPanel_Id";
+		pieDivId="GroupValveDailyCommEffStatGraphPieDiv_Id";
 		pieChartTitle="在线时率";
-		exportExcelTitle='煤层气井全天评价-在线时率';
+		exportExcelTitle='阀组全天评价-在线时率';
 	}
 	var result=Ext.JSON.decode("{\"type\":"+type+",\"panelId\":\""+panelId+"\",\"piePanelId\":\""+piePanelId+"\",\"pieDivId\":\""+pieDivId+"\",\"pieChartTitle\":\""+pieChartTitle+"\",\"exportExcelTitle\":\""+exportExcelTitle+"\"}");
 	return result;
 }
 
-function initCBMWellDailyStatPieChat(store) {
-	var divid=getCBMWellDailyStatType().pieDivId;
-	var title=getCBMWellDailyStatType().pieChartTitle;
+function initGroupValveDailyStatPieChat(store) {
+	var divid=getGroupValveDailyStatType().pieDivId;
+	var title=getGroupValveDailyStatType().pieChartTitle;
 	var get_rawData = store.proxy.reader.rawData;
 	var datalist=get_rawData.List;
 	
@@ -670,11 +574,11 @@ function initCBMWellDailyStatPieChat(store) {
 	}
 	pieDataStr+="]";
 	var pieData = Ext.JSON.decode(pieDataStr);
-	ShowCBMWellDailyStatPieChat(title,divid, "井数占", pieData);
+	ShowGroupValveDailyStatPieChat(title,divid, "井数占", pieData);
 }
 
 
-function ShowCBMWellDailyStatPieChat(title,divid, name, data) {
+function ShowGroupValveDailyStatPieChat(title,divid, name, data) {
 	$('#'+divid).highcharts({
 		chart : {
 			plotBackgroundColor : null,
@@ -710,13 +614,13 @@ function ShowCBMWellDailyStatPieChat(title,divid, name, data) {
 				events: {
 					click: function(e) {
 						if(!e.point.selected){//如果没被选中
-							Ext.getCmp('CBMWellDailySelectedStatValue_Id').setValue(e.point.name);
+							Ext.getCmp('GroupValveDailySelectedStatValue_Id').setValue(e.point.name);
 						}else{
-							Ext.getCmp('CBMWellDailySelectedStatValue_Id').setValue("");
+							Ext.getCmp('GroupValveDailySelectedStatValue_Id').setValue("");
 						}
-						Ext.getCmp("CBMWellDailyAnalysisWellCom_Id").setValue("");
-	            		Ext.getCmp("CBMWellDailyAnalysisWellCom_Id").setRawValue("");
-	            		var gridPanel = Ext.getCmp("CBMWellAnalysisDaily_Id");
+						Ext.getCmp("GroupValveDailyAnalysisWellCom_Id").setValue("");
+	            		Ext.getCmp("GroupValveDailyAnalysisWellCom_Id").setRawValue("");
+	            		var gridPanel = Ext.getCmp("GroupValveAnalysisDaily_Id");
 	                    if (isNotVal(gridPanel)) {
 	                    	gridPanel.getSelectionModel().clearSelections();
 	                    	gridPanel.getStore().loadPage(1);
@@ -740,48 +644,48 @@ function ShowCBMWellDailyStatPieChat(title,divid, name, data) {
 }
 
 
-function loadCBMWellDailyStatData() {
-	var selectWellName=Ext.getCmp('CBMWellDailyAnalysisWellCom_Id').getValue();
-	var statPanelId=getCBMWellDailyStatType().piePanelId;
+function loadGroupValveDailyStatData() {
+	var selectWellName=Ext.getCmp('GroupValveDailyAnalysisWellCom_Id').getValue();
+	var statPanelId=getGroupValveDailyStatType().piePanelId;
 	if(selectWellName==null||selectWellName==""){
-		Ext.getCmp("CBMWellDailyAnalysisWellListPanel_Id").setTitle("统计数据");
-		Ext.getCmp("CBMWellDailyAnalysisDate_Id").show();
-    	Ext.getCmp("CBMWellDailyAnalysisStartDate_Id").hide();
-  	  	Ext.getCmp("CBMWellDailyAnalysisEndDate_Id").hide();
-        Ext.getCmp("CBMWellDailyAnalysisHisBtn_Id").show();
-  	  	Ext.getCmp("CBMWellDailyAnalysisAllBtn_Id").hide();
+		Ext.getCmp("GroupValveDailyAnalysisWellListPanel_Id").setTitle("统计数据");
+		Ext.getCmp("GroupValveDailyAnalysisDate_Id").show();
+    	Ext.getCmp("GroupValveDailyAnalysisStartDate_Id").hide();
+  	  	Ext.getCmp("GroupValveDailyAnalysisEndDate_Id").hide();
+        Ext.getCmp("GroupValveDailyAnalysisHisBtn_Id").show();
+  	  	Ext.getCmp("GroupValveDailyAnalysisAllBtn_Id").hide();
     	Ext.getCmp(statPanelId).expand(true);
     }else{
-    	Ext.getCmp("CBMWellDailyAnalysisWellListPanel_Id").setTitle("单井历史");
-    	Ext.getCmp("CBMWellDailyAnalysisDate_Id").hide();
-		Ext.getCmp("CBMWellDailyAnalysisStartDate_Id").show();
-    	Ext.getCmp("CBMWellDailyAnalysisEndDate_Id").show();
-    	Ext.getCmp("CBMWellDailyAnalysisHisBtn_Id").hide();
-        Ext.getCmp("CBMWellDailyAnalysisAllBtn_Id").show();
+    	Ext.getCmp("GroupValveDailyAnalysisWellListPanel_Id").setTitle("阀组历史");
+    	Ext.getCmp("GroupValveDailyAnalysisDate_Id").hide();
+		Ext.getCmp("GroupValveDailyAnalysisStartDate_Id").show();
+    	Ext.getCmp("GroupValveDailyAnalysisEndDate_Id").show();
+    	Ext.getCmp("GroupValveDailyAnalysisHisBtn_Id").hide();
+        Ext.getCmp("GroupValveDailyAnalysisAllBtn_Id").show();
     	Ext.getCmp(statPanelId).collapse();
     }
-	Ext.getCmp("CBMWellDailySelectedStatValue_Id").setValue("");
+	Ext.getCmp("GroupValveDailySelectedStatValue_Id").setValue("");
 	
-	var gridPanel=Ext.getCmp("CBMWellAnalysisDaily_Id");
+	var gridPanel=Ext.getCmp("GroupValveAnalysisDaily_Id");
 	if(isNotVal(gridPanel)){
 		gridPanel.destroy();
 	}
-	Ext.create("AP.store.DailyEvaluation.CBMWellDailyAnalysisStatStore");
+	Ext.create("AP.store.DailyEvaluation.GroupValveDailyAnalysisStatStore");
 }
 
-function exportCBMWellDailyAnalisiDataExcel() {
-	var gridId = "CBMWellAnalysisDaily_Id";
-    var url = context + '/dailyEvaluationController/exportCBMWellDailyAnalisiDataExcel';
-    var fileName = getCBMWellDailyStatType().exportExcelTitle;
-    var title =  getCBMWellDailyStatType().exportExcelTitle;
+function exportGroupValveDailyAnalisiDataExcel() {
+	var gridId = "GroupValveAnalysisDaily_Id";
+    var url = context + '/dailyEvaluationController/exportGroupValveDailyAnalisiDataExcel';
+    var fileName = getGroupValveDailyStatType().exportExcelTitle;
+    var title =  getGroupValveDailyStatType().exportExcelTitle;
     
     var orgId = Ext.getCmp('leftOrg_Id').getValue();
-    var wellName = Ext.getCmp('CBMWellDailyAnalysisWellCom_Id').getValue();
-    var totalDate=Ext.getCmp('CBMWellDailyAnalysisDate_Id').rawValue;
-    var startDate=Ext.getCmp('CBMWellDailyAnalysisStartDate_Id').rawValue;
-    var endDate=Ext.getCmp('CBMWellDailyAnalysisEndDate_Id').rawValue;
-    var statValue = Ext.getCmp('CBMWellDailySelectedStatValue_Id').getValue();
-    var type=getCBMWellDailyStatType().type;
+    var wellName = Ext.getCmp('GroupValveDailyAnalysisWellCom_Id').getValue();
+    var totalDate=Ext.getCmp('GroupValveDailyAnalysisDate_Id').rawValue;
+    var startDate=Ext.getCmp('GroupValveDailyAnalysisStartDate_Id').rawValue;
+    var endDate=Ext.getCmp('GroupValveDailyAnalysisEndDate_Id').rawValue;
+    var statValue = Ext.getCmp('GroupValveDailySelectedStatValue_Id').getValue();
+    var type=getGroupValveDailyStatType().type;
     var wellType=400;
     
     var fields = "";
@@ -790,7 +694,7 @@ function exportCBMWellDailyAnalisiDataExcel() {
     var unlockedheads = "";
     var lockedfields = "";
     var unlockedfields = "";
-    var columns_ = Ext.JSON.decode(Ext.getCmp("CBMWellDailyTableColumnStr_Id").getValue());
+    var columns_ = Ext.JSON.decode(Ext.getCmp("GroupValveDailyTableColumnStr_Id").getValue());
     
     Ext.Array.each(columns_, function (name, index, countriesItSelf) {
         var column = columns_[index];
@@ -829,7 +733,7 @@ function exportCBMWellDailyAnalisiDataExcel() {
     openExcelWindow(url + '?flag=true' + param);
 };
 
-CBMWellDailyHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, divId) {
+GroupValveDailyHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, divId) {
     var tickInterval = 1;
     var data = get_rawData.totalRoot;
     tickInterval = Math.floor(data.length / 10) + 1;
@@ -853,7 +757,7 @@ CBMWellDailyHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode,
     }
 
     var catagories = "[";
-    var title = get_rawData.wellName + "井" + itemName.split("(")[0] + "趋势曲线";
+    var title = get_rawData.wellName + "阀组" + itemName.split("(")[0] + "趋势曲线";
     for (var i = 0; i < data.length; i++) {
         catagories += "\"" + data[i].calculateDate + "\"";
         if (i < data.length - 1) {
@@ -888,12 +792,12 @@ CBMWellDailyHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode,
        '#FF00FF' // 紫
      ];
 
-    initCBMWellDailyHistoryDataCurveChartFn(cat, ser, tickInterval, divId, title, "[" + get_rawData.startDate + "~" + get_rawData.endDate + "]", "日期", itemName, color, upline, downline, uplineName, downlineName, limitlinewidth);
+    initGroupValveDailyHistoryDataCurveChartFn(cat, ser, tickInterval, divId, title, "[" + get_rawData.startDate + "~" + get_rawData.endDate + "]", "日期", itemName, color, upline, downline, uplineName, downlineName, limitlinewidth);
 
     return false;
 };
 
-function initCBMWellDailyHistoryDataCurveChartFn(catagories, series, tickInterval, divId, title, subtitle, xtitle, ytitle, color, upline, downline, uplineName, downlineName, limitlinewidth) {
+function initGroupValveDailyHistoryDataCurveChartFn(catagories, series, tickInterval, divId, title, subtitle, xtitle, ytitle, color, upline, downline, uplineName, downlineName, limitlinewidth) {
     var max = null;
     var min = null;
     if (upline != 0) {
@@ -1031,28 +935,22 @@ function initCBMWellDailyHistoryDataCurveChartFn(catagories, series, tickInterva
     });
 };
 
-initCBMWellDailyCurveChartFn = function (get_rawData, divId) {
+initGroupValveDailyCurveChartFn = function (get_rawData, divId) {
 	var tickInterval = 1;
     var data = get_rawData.totalRoot;
     tickInterval = Math.floor(data.length / 10) + 1;
     
-    var title = get_rawData.wellName + "井日产气量趋势曲线";
+    var title = get_rawData.wellName + "阀组1#流量计日流量趋势曲线";
     var subtitle="[" + get_rawData.startDate + "~" + get_rawData.endDate + "]";
     var xtitle='日期';
-    var legendName = ['产气量'];
+    var legendName = ['1#流量计日流量'];
     var series = "[";
     for (var i = 0; i < legendName.length; i++) {
         series += "{\"name\":\"" + legendName[i] + "\",\"yAxis\":"+i+",";
         series += "\"data\":[";
         for (var j = 0; j < data.length; j++) {
-            var year = parseInt(data[j].calculateDate.split(" ")[0].split("-")[0]);
-            var month = parseInt(data[j].calculateDate.split(" ")[0].split("-")[1]);
-            var day = parseInt(data[j].calculateDate.split(" ")[0].split("-")[2]);
-//            var hour = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[0]);
-//            var minute = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[1]);
-//            var second = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[2]);
             if(i==0){
-            	series += "[" + Date.parse(data[j].calculateDate.replace(/-/g, '/')) + "," + parseFloat(data[j].gastodayProd) + "]";
+            	series += "[" + Date.parse(data[j].calculateDate.replace(/-/g, '/')) + "," + parseFloat(data[j].dailyFlow1) + "]";
             }
             
             if (j != data.length - 1) {
@@ -1110,7 +1008,7 @@ initCBMWellDailyCurveChartFn = function (get_rawData, divId) {
         yAxis: [{
             lineWidth: 1,
             title: {
-                text: '日产气量(m^3/d)',
+                text: '日流量(m^3/d)',
                 style: {
                     color: '#000000',
                     fontWeight: 'bold'
@@ -1173,28 +1071,22 @@ initCBMWellDailyCurveChartFn = function (get_rawData, divId) {
         series: ser
     });
 };
-initCBMWellDailyCurveChartFn2 = function (get_rawData, divId) {
+initGroupValveDailyCurveChartFn2 = function (get_rawData, divId) {
 	var tickInterval = 1;
     var data = get_rawData.totalRoot;
     tickInterval = Math.floor(data.length / 10) + 1;
     
-    var title = get_rawData.wellName + "井日产水量趋势曲线";
+    var title = get_rawData.wellName + "阀组2#流量计日流量趋势曲线";
     var subtitle="[" + get_rawData.startDate + "~" + get_rawData.endDate + "]";
     var xtitle='日期';
-    var legendName = ['产气量'];
+    var legendName = ['2#流量计日流量'];
     var series = "[";
     for (var i = 0; i < legendName.length; i++) {
         series += "{\"name\":\"" + legendName[i] + "\",\"yAxis\":"+i+",";
         series += "\"data\":[";
         for (var j = 0; j < data.length; j++) {
-            var year = parseInt(data[j].calculateDate.split(" ")[0].split("-")[0]);
-            var month = parseInt(data[j].calculateDate.split(" ")[0].split("-")[1]);
-            var day = parseInt(data[j].calculateDate.split(" ")[0].split("-")[2]);
-//            var hour = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[0]);
-//            var minute = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[1]);
-//            var second = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[2]);
             if(i==0){
-            	series += "[" + Date.parse(data[j].calculateDate.replace(/-/g, '/')) + "," + parseFloat(data[j].liquidflowMeterProd) + "]";
+            	series += "[" + Date.parse(data[j].calculateDate.replace(/-/g, '/')) + "," + parseFloat(data[j].dailyFlow2) + "]";
             }
             
             if (j != data.length - 1) {
@@ -1252,7 +1144,7 @@ initCBMWellDailyCurveChartFn2 = function (get_rawData, divId) {
         yAxis: [{
             lineWidth: 1,
             title: {
-                text: '日产水量(m^3/d)',
+                text: '日流量(m^3/d)',
                 style: {
                     color: '#000000',
                     fontWeight: 'bold'

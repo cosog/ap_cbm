@@ -21,8 +21,6 @@ import com.google.gson.reflect.TypeToken;
 public class CalculateDataService<T> extends BaseService<T> {
 	
 	public void CBMDailyCalculation(String tatalDate,String wellId){
-		StringBuffer dataSbf=null;
-		List<String> requestDataList=new ArrayList<String>();
 		String timeEffTotalUrl=Config.getInstance().configFile.getAgileCalculate().getRun()[0];
 		String commTotalUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String statusSql="select well.wellname,to_char(t.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as acquisitiontime,"
@@ -103,9 +101,66 @@ public class CalculateDataService<T> extends BaseService<T> {
 			
 		}
 	}
+	
+	public void GroupValveDailyCalculation(String tatalDate,String wellId){
+		String commTotalUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
+		String statusSql="select well.wellname,to_char(t.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as acquisitiontime,"
+				+ "t.commstatus,t.commtimeefficiency,t.commtime,t.commrange"
+				+ " from tbl_groupvalve_discrete_hist t,tbl_wellinformation well "
+				+ " where t.wellid=well.id and t.acquisitiontime=( select max(t2.acquisitiontime) from tbl_groupvalve_discrete_hist t2 where t2.wellid=t.wellid and t2.acquisitiontime between to_date('"+tatalDate+"','yyyy-mm-dd')-1 and to_date('"+tatalDate+"','yyyy-mm-dd'))";
+		if(StringManagerUtils.isNotNull(wellId)){
+			statusSql+=" and t.wellid in("+wellId+")";
+		}
+		statusSql+=" order by well.sortnum";
+
+		List<?> statusList = findCallSql(statusSql);
+		for(int j=0;j<statusList.size();j++){
+			try{
+				CommResponseData commResponseData=null;
+				Object[] statusObj=(Object[]) statusList.get(j);
+
+				boolean commStatus=false;
+				if(statusObj[2]!=null&&StringManagerUtils.stringToInteger(statusObj[2]+"")==1){
+					commStatus=true;
+				}
+				String commTotalRequestData="{"
+						+ "\"AKString\":\"\","
+						+ "\"WellName\":\""+statusObj[0]+"\","
+						+ "\"Last\":{"
+						+ "\"AcqTime\": \""+statusObj[1]+"\","
+						+ "\"CommStatus\": "+commStatus+","
+						+ "\"CommEfficiency\": {"
+						+ "\"Efficiency\": "+statusObj[3]+","
+						+ "\"Time\": "+statusObj[4]+","
+						+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(statusObj[5]+"")+""
+						+ "}"
+						+ "},"
+						+ "\"Current\": {"
+						+ "\"AcqTime\":\""+tatalDate+" 01:00:00\","
+						+ "\"CommStatus\":true"
+						+ "}"
+						+ "}";
+				Gson gson = new Gson();
+				java.lang.reflect.Type type=null;
+				String commTotalResponse=StringManagerUtils.sendPostMethod(commTotalUrl, commTotalRequestData,"utf-8");
+				type = new TypeToken<CommResponseData>() {}.getType();
+				commResponseData = gson.fromJson(commTotalResponse, type);
+				
+				if(commResponseData!=null&&commResponseData.getResultStatus()==1){
+					saveGroupValveDailyCalculationData(commResponseData);
+				}
+			}catch(ParseException|SQLException e){
+				e.printStackTrace();
+				continue;
+			}
+			
+		}
+	}
 	public boolean saveCBMDailyCalculationData(TimeEffResponseData timeEffResponseData,CommResponseData commResponseData) throws SQLException, ParseException{
 		return this.getBaseDao().saveCBMDailyCalculationData(timeEffResponseData,commResponseData);
 	}
-	
+	public boolean saveGroupValveDailyCalculationData(CommResponseData commResponseData) throws SQLException, ParseException{
+		return this.getBaseDao().saveGroupValveDailyCalculationData(commResponseData);
+	}
 	
 }

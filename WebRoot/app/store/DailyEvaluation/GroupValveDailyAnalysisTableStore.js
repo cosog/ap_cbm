@@ -1,11 +1,11 @@
-Ext.define('AP.store.DailyEvaluation.CBMWellDailyAnalysisTableStore', {
+Ext.define('AP.store.DailyEvaluation.GroupValveDailyAnalysisTableStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.CBMWellDailyAnalysisTableStore',
+    alias: 'widget.groupValveDailyAnalysisTableStore',
     autoLoad: true,
     pageSize: 10000,
     proxy: {
         type: 'ajax',
-        url: context + '/dailyEvaluationController/getCBMWellDailyAnalysisAndAcqAndControlData',
+        url: context + '/dailyEvaluationController/getGroupValveDailyAnalysisAndAcqAndControlData',
         actionMethods: {
             read: 'POST'
         },
@@ -24,11 +24,17 @@ Ext.define('AP.store.DailyEvaluation.CBMWellDailyAnalysisTableStore', {
     		dataStr+="{\"item\":\"在线时间(h)\",\"itemCode\":\"commTime\",\"value\":\""+get_rawData.commTime+"\",\"curve\":\"\"},";
     		dataStr+="{\"item\":\"在线时率(小数)\",\"itemCode\":\"commTimeEfficiency\",\"value\":\""+get_rawData.commTimeEfficiency+"\",\"curve\":\"\"},";
     		
-    		dataStr+="{\"item\":\"运行时间(h)\",\"itemCode\":\"runStatus\",\"value\":\""+get_rawData.runStatus+"\",\"curve\":\"\"},";
-    		dataStr+="{\"item\":\"运行时率(小数)\",\"itemCode\":\"runTimeEfficiency\",\"value\":\""+get_rawData.runTimeEfficiency+"\",\"curve\":\"\"},";
+    		dataStr+="{\"item\":\"1#流量计总量(m^3)\",\"itemCode\":\"cumulativeFlow1\",\"value\":\""+get_rawData.cumulativeFlow1+"\",\"curve\":\"\"},";
+    		dataStr+="{\"item\":\"1#流量计总量日流量(m^3/d)\",\"itemCode\":\"dailyFlow1\",\"value\":\""+get_rawData.dailyFlow1+"\",\"curve\":\"\"},";
     		
-    		dataStr+="{\"item\":\"日产气量(m^3/d)\",\"itemCode\":\"gasTodayProd\",\"value\":\""+get_rawData.gasTodayProd+"\",\"curve\":\"\"},";
-    		dataStr+="{\"item\":\"日产水量(m^3/d)\",\"itemCode\":\"liquidFlowMeterProd\",\"value\":\""+get_rawData.liquidFlowMeterProd+"\",\"curve\":\"\"}";
+    		dataStr+="{\"item\":\"2#流量计总量(m^3)\",\"itemCode\":\"cumulativeFlow2\",\"value\":\""+get_rawData.cumulativeFlow2+"\",\"curve\":\"\"},";
+    		dataStr+="{\"item\":\"2#流量计总量日流量(m^3/d)\",\"itemCode\":\"dailyFlow2\",\"value\":\""+get_rawData.dailyFlow2+"\",\"curve\":\"\"},";
+    		
+    		dataStr+="{\"item\":\"3#流量计总量(m^3)\",\"itemCode\":\"cumulativeFlow3\",\"value\":\""+get_rawData.cumulativeFlow3+"\",\"curve\":\"\"},";
+    		dataStr+="{\"item\":\"3#流量计总量日流量(m^3/d)\",\"itemCode\":\"dailyFlow3\",\"value\":\""+get_rawData.dailyFlow3+"\",\"curve\":\"\"},";
+    		
+    		dataStr+="{\"item\":\"4#流量计总量(m^3)\",\"itemCode\":\"cumulativeFlow4\",\"value\":\""+get_rawData.cumulativeFlow4+"\",\"curve\":\"\"},";
+    		dataStr+="{\"item\":\"4#流量计总量日流量(m^3/d)\",\"itemCode\":\"dailyFlow4\",\"value\":\""+get_rawData.dailyFlow4+"\",\"curve\":\"\"}";
     		dataStr+="]}";
     		
     		var acqSataStr="{\"items\":[";
@@ -61,10 +67,10 @@ Ext.define('AP.store.DailyEvaluation.CBMWellDailyAnalysisTableStore', {
 			    }
 			});
     		
-    		var GridPanel=Ext.getCmp("CBMWellDailyAnalysisDataGridPanel_Id");
+    		var GridPanel=Ext.getCmp("GroupValveDailyAnalysisDataGridPanel_Id");
     		if(!isNotVal(GridPanel)){
     			GridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'CBMWellDailyAnalysisDataGridPanel_Id',
+    				id:'GroupValveDailyAnalysisDataGridPanel_Id',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -88,18 +94,18 @@ Ext.define('AP.store.DailyEvaluation.CBMWellDailyAnalysisTableStore', {
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
     			        },
-    			        { header: '趋势曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMDailyAnalysisCurve(value,e,o)} }
+    			        { header: '趋势曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconGroupValveDailyAnalysisCurve(value,e,o)} }
     			    ]
     			});
-    			Ext.getCmp("CBMWellDailyAnalysisTableCalDataPanel_Id").add(GridPanel);
+    			Ext.getCmp("GroupValveDailyAnalysisTableCalDataPanel_Id").add(GridPanel);
     		}else{
     			GridPanel.reconfigure(store);
     		}
     		
-    		var acqGridPanel=Ext.getCmp("CBMWellDailyAcqDataGridPanel_Id");
+    		var acqGridPanel=Ext.getCmp("GroupValveDailyAcqDataGridPanel_Id");
     		if(!isNotVal(acqGridPanel)){
     			acqGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'CBMWellDailyAcqDataGridPanel_Id',
+    				id:'GroupValveDailyAcqDataGridPanel_Id',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -137,15 +143,15 @@ Ext.define('AP.store.DailyEvaluation.CBMWellDailyAnalysisTableStore', {
     			        { header: '趋势曲线', dataIndex: 'curve',align:'center',flex:1,renderer :function(value,e,o){return iconCBMDailyAnalysisCurve(value,e,o)} }
     			    ]
     			});
-    			Ext.getCmp("CBMWellRTAnalysisTableAcqDataPanel_Id").add(acqGridPanel);
+    			Ext.getCmp("GroupValveRTAnalysisTableAcqDataPanel_Id").add(acqGridPanel);
     		}else{
     			acqGridPanel.reconfigure(acqStore);
     		}
         },
         beforeload: function (store, options) {
-        	var id  = Ext.getCmp("CBMWellAnalysisDaily_Id").getSelectionModel().getSelection()[0].data.id;
-        	var wellName=Ext.getCmp('CBMWellDailyAnalysisWellCom_Id').getValue();
-        	var selectedWellName  = Ext.getCmp("CBMWellAnalysisDaily_Id").getSelectionModel().getSelection()[0].data.wellName;
+        	var id  = Ext.getCmp("GroupValveAnalysisDaily_Id").getSelectionModel().getSelection()[0].data.id;
+        	var wellName=Ext.getCmp('GroupValveDailyAnalysisWellCom_Id').getValue();
+        	var selectedWellName  = Ext.getCmp("GroupValveAnalysisDaily_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var new_params = {
         			id: id,
         			wellName:wellName,

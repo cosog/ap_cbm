@@ -1209,19 +1209,19 @@ public class ProtocolModbusThread extends Thread{
 									CumulativeFlow2=getFloat(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getCumulativeFlow2().getAddress()-40101)*2, 
     										driveConfig.getProtocol());
-									//1#流量计备用点位
+									//2#流量计备用点位
 									FlowmeterBackupPoint2=getFloat(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getFlowmeterBackupPoint2().getAddress()-40101)*2, 
     										driveConfig.getProtocol());
-									//1#流量计标况瞬时流量
+									//2#流量计标况瞬时流量
 									InstantaneousFlow2=getFloat(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getInstantaneousFlow2().getAddress()-40101)*2, 
     										driveConfig.getProtocol());
-									//1#流量计温度
+									//2#流量计温度
 									FlowmeterTemperature2=getFloat(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getFlowmeterTemperature2().getAddress()-40101)*2, 
     										driveConfig.getProtocol());
-									//1#流量计压力
+									//2#流量计压力
 									FlowmeterPress2=getFloat(recByte,
     										(clientUnit.unitDataList.get(i).getRtuDriveConfig().getGroupValveDataConfig().getFlowmeterPress2().getAddress()-40101)*2, 
     										driveConfig.getProtocol());
@@ -1434,7 +1434,7 @@ public class ProtocolModbusThread extends Thread{
     	    									+ "}"
     	    									+ "},";
     	        					}	
-    	        					energyRequest2+= "\"Current\": {"
+    	        					energyRequest3+= "\"Current\": {"
     										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"Total\":{"
     										+ "\"KWattH\":"+CumulativeFlow3
@@ -1458,7 +1458,7 @@ public class ProtocolModbusThread extends Thread{
     										+ "\"AKString\":\"\","
     										+ "\"WellName\":\""+clientUnit.unitDataList.get(i).getWellName()+"\",";
     	        					if(StringManagerUtils.isNotNull(clientUnit.unitDataList.get(i).lastDisAcquisitionTime)){
-    	        						energyRequest3+= "\"Last\":{"
+    	        						energyRequest4+= "\"Last\":{"
     	    									+ "\"AcqTime\": \""+clientUnit.unitDataList.get(i).lastDisAcquisitionTime+"\","
     	    									+ "\"Total\":{"
     	    									+ "\"KWattH\":"+clientUnit.unitDataList.get(i).lastGroupValveCumulativeflow4
@@ -1467,7 +1467,7 @@ public class ProtocolModbusThread extends Thread{
     	    									+ "}"
     	    									+ "},";
     	        					}	
-    	        					energyRequest2+= "\"Current\": {"
+    	        					energyRequest4+= "\"Current\": {"
     										+ "\"AcqTime\":\""+AcquisitionTime+"\","
     										+ "\"Total\":{"
     										+ "\"KWattH\":"+CumulativeFlow4

@@ -544,6 +544,22 @@ iconCBMAnalysisCurve = function(value, e, o) {
 	return resultstring;
 }
 
+iconCBMDailyAnalysisCurve = function(value, e, o) {
+	var itemCode = o.data.itemCode;
+	var item=o.data.item;
+	var index=o.internalId%2;
+	var resultstring='';
+	if(itemCode.toUpperCase() == 'acquisitionTime'.toUpperCase()){
+		resultstring=o.data.value;
+	}else{
+		resultstring = "<img src='"
+			+ context
+			+ "/images/icon/curvetest"+index+".png' style='cursor:pointer' onclick=callBackDailyHistoryData(\""+item+"\",\""+itemCode+"\") />";
+	}
+	
+	return resultstring;
+}
+
 iconGroupValveAnalysisCurve = function(value, e, o) {
 	var itemCode = o.data.itemCode;
 	var item=o.data.item;
@@ -555,6 +571,22 @@ iconGroupValveAnalysisCurve = function(value, e, o) {
 		resultstring = "<img src='"
 			+ context
 			+ "/images/icon/curvetest"+index+".png' style='cursor:pointer' onclick=callBackGroupValveHistoryData(\""+item+"\",\""+itemCode+"\") />";
+	}
+	
+	return resultstring;
+}
+
+iconGroupValveDailyAnalysisCurve = function(value, e, o) {
+	var itemCode = o.data.itemCode;
+	var item=o.data.item;
+	var index=o.internalId%2;
+	var resultstring='';
+	if(itemCode.toUpperCase() == 'acquisitionTime'.toUpperCase()){
+		resultstring=o.data.value;
+	}else{
+		resultstring = "<img src='"
+			+ context
+			+ "/images/icon/curvetest"+index+".png' style='cursor:pointer' onclick=callBackGroupValveDailyHistoryData(\""+item+"\",\""+itemCode+"\") />";
 	}
 	
 	return resultstring;
@@ -649,6 +681,24 @@ var callBackHistoryData = function(item,itemCode) {
     Ext.getCmp('CBMWellAnalysisCurveItemCode_Id').setValue(itemCode);
     var HistoryCurveOnclickWindow=Ext.create("AP.view.RealTimeEvaluation.WellHistoryCurveOnclickWindow", {
 				    html:'<div id="HistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
+			   });
+    HistoryCurveOnclickWindow.show();
+}
+
+var callBackDailyHistoryData = function(item,itemCode) {
+    Ext.getCmp('CBMWellDailyAnalysisCurveItem_Id').setValue(item);
+    Ext.getCmp('CBMWellDailyAnalysisCurveItemCode_Id').setValue(itemCode);
+    var HistoryCurveOnclickWindow=Ext.create("AP.view.DailyEvaluation.WellDailyHistoryCurveOnclickWindow", {
+				    html:'<div id="DailyHistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
+			   });
+    HistoryCurveOnclickWindow.show();
+}
+
+var callBackGroupValveDailyHistoryData = function(item,itemCode) {
+    Ext.getCmp('GroupValveDailyAnalysisCurveItem_Id').setValue(item);
+    Ext.getCmp('GroupValveDailyAnalysisCurveItemCode_Id').setValue(itemCode);
+    var HistoryCurveOnclickWindow=Ext.create("AP.view.DailyEvaluation.GroupValveDailyHistoryCurveOnclickWindow", {
+				    html:'<div id="GroupValveDailyHistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
 			   });
     HistoryCurveOnclickWindow.show();
 }

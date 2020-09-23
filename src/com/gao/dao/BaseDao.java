@@ -1220,6 +1220,31 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
+	public Boolean saveGroupValveDailyCalculationData(CommResponseData commResponseData) throws SQLException {
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		try {
+			cs = conn.prepareCall("{call prd_save_GroupValveDailyData(?,?,?,?,?,?)}");
+			cs.setString(1,commResponseData.getWellName());
+			
+			cs.setInt(2, commResponseData.getDaily().getCommStatus()?1:0);
+			cs.setFloat(3, commResponseData.getDaily().getCommEfficiency().getTime());
+			cs.setFloat(4, commResponseData.getDaily().getCommEfficiency().getEfficiency());
+			cs.setString(5, commResponseData.getDaily().getCommEfficiency().getRangeString());
+			
+			cs.setString(6, commResponseData.getDaily().getDate());
+			cs.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
 	public Boolean savePumpEditerGridData(PumpGridPanelData p, String ids, String comandType) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;

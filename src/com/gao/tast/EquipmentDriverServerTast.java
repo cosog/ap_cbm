@@ -53,7 +53,7 @@ public class EquipmentDriverServerTast {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 //		Gson gson = new Gson();
 //		StringManagerUtils stringManagerUtils=new StringManagerUtils();
@@ -126,7 +126,9 @@ public class EquipmentDriverServerTast {
 				+ " order by t.sortNum";
 		String AcquisitionTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 		String resetCommStatus="update tbl_cbm_discrete_latest t set t.commstatus=0  ";
+		String resetDailyCommStatus="update tbl_cbm_total_day t set t.commstatus=0 where t.calculatedate=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
 		String resetGroupValveCommStatus="update tbl_GroupValve_discrete_latest t set t.commstatus=0  ";
+		String resetGroupValveDailyCommStatus="update tbl_groupvalve_total_day t set t.commstatus=0 where t.calculatedate=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
 		String resetBPCommStatus="update tbl_bp_discrete_latest t set t.commstatus=0  ";
 		if(clientUnitList!=null){
 			for(int i=0;i<clientUnitList.size();i++){
@@ -157,9 +159,10 @@ public class EquipmentDriverServerTast {
 		try {
 			stmt=conn.createStatement();
 			int result=stmt.executeUpdate(resetCommStatus);
+			result=stmt.executeUpdate(resetDailyCommStatus);
 			result=stmt.executeUpdate(resetGroupValveCommStatus);
+			result=stmt.executeUpdate(resetGroupValveDailyCommStatus);
 			result=stmt.executeUpdate(resetBPCommStatus);
-			
 			System.out.println("煤层气井初始化");
 			pstmt = conn.prepareStatement(wellInitsql); 
 			rs=pstmt.executeQuery();

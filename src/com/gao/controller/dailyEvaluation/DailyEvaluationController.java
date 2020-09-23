@@ -74,17 +74,16 @@ public class DailyEvaluationController<T> extends BaseController{
 		pw.close();
 		return null;
 	}
-	
 	/**
 	 * <p>
-	 * 描述：阀组统计json数据
+	 * 描述：阀组全天评价统计饼图json数据
 	 * </p>
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/groupValveStatisticsData")
-	public String groupValveStatisticsData() throws Exception {
+	@RequestMapping("/groupValveDailyStatisticsData")
+	public String groupValveDailyStatisticsData() throws Exception {
 		orgId=ParamUtils.getParameter(request, "orgId");
 		if (!StringManagerUtils.isNotNull(orgId)) {
 			HttpSession session=request.getSession();
@@ -94,12 +93,16 @@ public class DailyEvaluationController<T> extends BaseController{
 			}
 		}
 		String type = ParamUtils.getParameter(request, "type");
+		String wellType = ParamUtils.getParameter(request, "wellType");
+		String totalDate = ParamUtils.getParameter(request, "totalDate");
 		String json = "";
 		
 		/******
 		 * 饼图及柱状图需要的data信息
 		 * ***/
-		json = dailyEvaluationService.groupValveStatisticsData(orgId,type);
+		json = dailyEvaluationService.groupValveDailyStatisticsData(orgId,type,wellType,totalDate);
+//		json="{ \"success\":true,\"List\":[{\"item\":\"离线\",\"count\":1},{\"item\":\"在线\",\"count\":1}]}";
+		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -111,7 +114,7 @@ public class DailyEvaluationController<T> extends BaseController{
 	
 	/**
 	 * <P>
-	 * 描述:煤层气井实时评价数据表
+	 * 描述:煤层气井全天评价数据表
 	 * </p>
 	 * 
 	 */
@@ -177,28 +180,30 @@ public class DailyEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
-	@RequestMapping("/exportCBMWellRTAnalisiDataExcel")
-	public String exportCBMWellRTAnalisiDataExcel() throws Exception {
+	@RequestMapping("/exportCBMWellDailyAnalisiDataExcel")
+	public String exportCBMWellDailyAnalisiDataExcel() throws Exception {
 		orgId = ParamUtils.getParameter(request, "orgId");
 		orgId = findCurrentUserOrgIdInfo(orgId);
 		wellName = ParamUtils.getParameter(request, "wellName");
 		
 		String type = ParamUtils.getParameter(request, "type");
 		String unitType = ParamUtils.getParameter(request, "unitType");
+		String totalDate = ParamUtils.getParameter(request, "totalDate");
 		String startDate = ParamUtils.getParameter(request, "startDate");
 		String endDate = ParamUtils.getParameter(request, "endDate");
 		String statValue = ParamUtils.getParameter(request, "statValue");
+		
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");
 		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
-		String tableName="tbl_cbm_discrete_hist";
+		String tableName="tbl_cbm_total_day";
 		if("1".equals(unitType)){
-			tableName="tbl_cbm_discrete_hist";
+			tableName="tbl_cbm_total_day";
 		}else if("2".equals(unitType)){
-			tableName="tbl_groupvalve_discrete_hist";
+			tableName="tbl_groupvalve_total_day";
 		}else if("3".equals(unitType)){
-			tableName="tbl_bp_discrete_hist";
+			tableName="tbl_bp_total_day";
 		}
 		this.pager = new Page("pagerForm", request);
 		User user=null;
@@ -210,7 +215,7 @@ public class DailyEvaluationController<T> extends BaseController{
 			}
 		}
 		if(StringManagerUtils.isNotNull(wellName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+wellName+"' ) ";
+			String sql = " select to_char(max(t.calculatedate),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+wellName+"' ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -226,7 +231,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		
-		String json = dailyEvaluationService.exportCBMWellRTAnalisiDataExcel(orgId, wellName, pager,type,unitType,startDate,endDate,statValue);
+		String json = dailyEvaluationService.exportCBMWellDailyAnalisiDataExcel(orgId, wellName, pager,type,unitType,totalDate,startDate,endDate,statValue);
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -245,22 +250,30 @@ public class DailyEvaluationController<T> extends BaseController{
 	
 	/**
 	 * <P>
-	 * 描述:阀组实时评价数据表
+	 * 描述:阀组全天评价数据表
 	 * </p>
 	 * 
 	 */
-	@RequestMapping("/getRealtimeAnalysisGroupValveList")
-	public String getRealtimeAnalysisGroupValveList() throws Exception {
+	@RequestMapping("/getGroupValveRealtimeAnalysisWellList")
+	public String getGroupValveRealtimeAnalysisWellList() throws Exception {
 		orgId = ParamUtils.getParameter(request, "orgId");
 		orgId = findCurrentUserOrgIdInfo(orgId);
-		String name = ParamUtils.getParameter(request, "name");
+		wellName = ParamUtils.getParameter(request, "wellName");
 		
 		String type = ParamUtils.getParameter(request, "type");
 		String unitType = ParamUtils.getParameter(request, "unitType");
+		String totalDate = ParamUtils.getParameter(request, "totalDate");
 		String startDate = ParamUtils.getParameter(request, "startDate");
 		String endDate = ParamUtils.getParameter(request, "endDate");
 		String statValue = ParamUtils.getParameter(request, "statValue");
-		String tableName="tbl_groupvalve_discrete_hist";
+		String tableName="tbl_cbm_total_day";
+		if("1".equals(unitType)){
+			tableName="tbl_cbm_total_day";
+		}else if("2".equals(unitType)){
+			tableName="tbl_groupvalve_total_day";
+		}else if("3".equals(unitType)){
+			tableName="tbl_bp_total_day";
+		}
 		this.pager = new Page("pagerForm", request);
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {
@@ -270,8 +283,8 @@ public class DailyEvaluationController<T> extends BaseController{
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		if(StringManagerUtils.isNotNull(name)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+name+"' ) ";
+		if(StringManagerUtils.isNotNull(wellName)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.calculatedate),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+wellName+"' ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -287,7 +300,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		
-		String json = dailyEvaluationService.getRealtimeAnalysisGroupValveList(orgId, name, pager,type,unitType,startDate,endDate,statValue);
+		String json = dailyEvaluationService.getGroupValveRealtimeAnalysisWellList(orgId, wellName, pager,type,unitType,totalDate,startDate,endDate,statValue);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw;
@@ -303,23 +316,32 @@ public class DailyEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
-	@RequestMapping("/exportGroupValveRTAnalisiDataExcel")
-	public String exportGroupValveRTAnalisiDataExcel() throws Exception {
+	@RequestMapping("/exportGroupValveDailyAnalisiDataExcel")
+	public String exportGroupValveDailyAnalisiDataExcel() throws Exception {
 		orgId = ParamUtils.getParameter(request, "orgId");
 		orgId = findCurrentUserOrgIdInfo(orgId);
-		String name = ParamUtils.getParameter(request, "name");
+		wellName = ParamUtils.getParameter(request, "wellName");
 		
 		String type = ParamUtils.getParameter(request, "type");
 		String unitType = ParamUtils.getParameter(request, "unitType");
+		String totalDate = ParamUtils.getParameter(request, "totalDate");
 		String startDate = ParamUtils.getParameter(request, "startDate");
 		String endDate = ParamUtils.getParameter(request, "endDate");
 		String statValue = ParamUtils.getParameter(request, "statValue");
-		String tableName="tbl_groupvalve_discrete_hist";
-		this.pager = new Page("pagerForm", request);
+		
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");
 		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		String tableName="tbl_cbm_total_day";
+		if("1".equals(unitType)){
+			tableName="tbl_cbm_total_day";
+		}else if("2".equals(unitType)){
+			tableName="tbl_groupvalve_total_day";
+		}else if("3".equals(unitType)){
+			tableName="tbl_bp_total_day";
+		}
+		this.pager = new Page("pagerForm", request);
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {
 			HttpSession session=request.getSession();
@@ -328,8 +350,8 @@ public class DailyEvaluationController<T> extends BaseController{
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		if(StringManagerUtils.isNotNull(name)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+name+"' ) ";
+		if(StringManagerUtils.isNotNull(wellName)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.calculatedate),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+wellName+"' ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -345,9 +367,20 @@ public class DailyEvaluationController<T> extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		
-		String json = dailyEvaluationService.exportGroupValveRTAnalisiDataExcel(orgId, name, pager,type,unitType,startDate,endDate,statValue);
-		
+		String json = dailyEvaluationService.exportGroupValveDailyAnalisiDataExcel(orgId, wellName, pager,type,unitType,totalDate,startDate,endDate,statValue);
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.print(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -364,6 +397,34 @@ public class DailyEvaluationController<T> extends BaseController{
 		}
 		this.pager = new Page("pagerForm", request);
 		String json =dailyEvaluationService.getCBMWellDailyDataCurve(wellName,selectedWellName,startDate,endDate);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.print(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping("/getGroupValveDailyDataCurve")
+	public String getGroupValveDailyDataCurve() throws Exception {
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		wellName = ParamUtils.getParameter(request, "wellName");
+		String selectedWellName = ParamUtils.getParameter(request, "selectedWellName");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		if(!StringManagerUtils.isNotNull(startDate)){
+			startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
+		}
+		this.pager = new Page("pagerForm", request);
+		String json =dailyEvaluationService.getGroupValveDailyDataCurve(wellName,selectedWellName,startDate,endDate);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw;
@@ -404,8 +465,8 @@ public class DailyEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
-	@RequestMapping("/getGroupValveAnalysisAndAcqAndControlData")
-	public String getGroupValveAnalysisAndAcqAndControlData() throws Exception {
+	@RequestMapping("/getGroupValveDailyAnalysisAndAcqAndControlData")
+	public String getGroupValveDailyAnalysisAndAcqAndControlData() throws Exception {
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
 		String recordId = ParamUtils.getParameter(request, "id");
@@ -413,7 +474,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		String selectedWellName = ParamUtils.getParameter(request, "selectedWellName");
 		this.pager = new Page("pagerForm", request);
 		
-		String json =dailyEvaluationService.getGroupValveAnalysisAndAcqAndControlData(recordId,wellName,selectedWellName,user.getUserNo());
+		String json =dailyEvaluationService.getGroupValveDailyAnalysisAndAcqAndControlData(recordId,wellName,selectedWellName,user.getUserNo());
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw;
@@ -430,8 +491,8 @@ public class DailyEvaluationController<T> extends BaseController{
 	}
 	
 	@SuppressWarnings("rawtypes")
-	@RequestMapping("/getWellHistoryDataCurveData")
-	public String getWellHistoryDataCurveData() throws Exception {
+	@RequestMapping("/getCBMWellDailyHistoryDataCurveData")
+	public String getCBMWellDailyHistoryDataCurveData() throws Exception {
 		String json = "";
 		wellName = ParamUtils.getParameter(request, "wellName");
 		String endDate = ParamUtils.getParameter(request, "endDate");
@@ -439,7 +500,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		String itemName = ParamUtils.getParameter(request, "itemName");
 		String itemCode = ParamUtils.getParameter(request, "itemCode");
 		String wellType = ParamUtils.getParameter(request, "wellType");
-		String tableName="viw_cbm_discrete_hist";
+		String tableName="viw_cbm_total_day";
 		this.pager = new Page("pagerForm", request);
 		if(!StringManagerUtils.isNotNull(endDate)){
 			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
@@ -458,7 +519,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		if("1".equals(wellType)){//井
-			json =  dailyEvaluationService.getWellHistoryDataCurveData(wellName, startDate,endDate,itemName,itemCode);
+			json =  dailyEvaluationService.getCBMWellDailyHistoryDataCurveData(wellName, startDate,endDate,itemName,itemCode);
 		}
 		
 		//HttpServletResponse response = ServletActionContext.getResponse();
@@ -477,9 +538,8 @@ public class DailyEvaluationController<T> extends BaseController{
 		return null;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	@RequestMapping("/getGroupValveHistoryDataCurveData")
-	public String getGroupValveHistoryDataCurveData() throws Exception {
+	@RequestMapping("/getGroupValveDailyHistoryDataCurveData")
+	public String getGroupValveDailyHistoryDataCurveData() throws Exception {
 		String json = "";
 		wellName = ParamUtils.getParameter(request, "wellName");
 		String endDate = ParamUtils.getParameter(request, "endDate");
@@ -487,7 +547,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		String itemName = ParamUtils.getParameter(request, "itemName");
 		String itemCode = ParamUtils.getParameter(request, "itemCode");
 		String wellType = ParamUtils.getParameter(request, "wellType");
-		String tableName="viw_groupvalve_discrete_hist";
+		String tableName="viw_groupvalve_total_day";
 		this.pager = new Page("pagerForm", request);
 		if(!StringManagerUtils.isNotNull(endDate)){
 			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
@@ -506,7 +566,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		if("1".equals(wellType)){//井
-			json =  dailyEvaluationService.getGroupValveHistoryDataCurveData(wellName, startDate,endDate,itemName,itemCode);
+			json =  dailyEvaluationService.getGroupValveDailyHistoryDataCurveData(wellName, startDate,endDate,itemName,itemCode);
 		}
 		
 		//HttpServletResponse response = ServletActionContext.getResponse();

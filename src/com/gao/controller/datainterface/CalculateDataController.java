@@ -43,7 +43,7 @@ public class CalculateDataController extends BaseController{
 			tatalDate=StringManagerUtils.getCurrentTime();
 		}
 		calculateDataService.CBMDailyCalculation(tatalDate,wellId);
-		
+		calculateDataService.GroupValveDailyCalculation(tatalDate,wellId);
 		
 		System.out.println("汇总完成");
 		

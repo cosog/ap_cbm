@@ -24,7 +24,7 @@ Ext.define('AP.store.RealTimeEvaluation.CBMWellAnalysisTableStore', {
     		dataStr+="]}";
     		
     		var acqSataStr="{\"items\":[";
-    		acqSataStr+="{\"item\":\"采集时间:"+get_rawData.acquisitionTime+"\",\"itemCode\":\"acquisitionTime\",\"value\":\"\",\"curve\":\"\"},";
+    		acqSataStr+="{\"item\":\"采集时间:"+get_rawData.acqTime+"\",\"itemCode\":\"acqTime\",\"value\":\"\",\"curve\":\"\"},";
     		acqSataStr+="{\"item\":\"通信状态\",\"itemCode\":\"commStatus\",\"value\":\""+get_rawData.commStatusName+"\",\"alarmLevel\":"+get_rawData.commAlarmLevel+",\"curve\":\"\"},";
     		acqSataStr+="{\"item\":\"运行状态\",\"itemCode\":\"runStatus\",\"value\":\""+get_rawData.runStatusName+"\",\"alarmLevel\":"+get_rawData.runAlarmLevel+",\"curve\":\"\"},";
     		

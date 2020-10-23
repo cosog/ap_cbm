@@ -1,6 +1,6 @@
 Ext.define('AP.store.RealTimeEvaluation.GroupValveSingleAnalysisiListStore', {
     extend: 'Ext.data.Store',
-    fields: ['wellName','acquisitionTime',
+    fields: ['wellName','acqTime',
     	'commStatusName','commTime','commTimeEfficiency','commRange', 'commAlarmLevel','commtimeefficiencyLevel',
     	'cumulativeFlow1', 'flowmeterBackupPoint1','instantaneousFlow1', 'flowmeterTemperature1', 'flowmeterPress1',
     	'cumulativeFlow2', 'flowmeterBackupPoint2','instantaneousFlow2', 'flowmeterTemperature2', 'flowmeterPress2',

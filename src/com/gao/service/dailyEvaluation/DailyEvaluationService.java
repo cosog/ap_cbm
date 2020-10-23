@@ -354,25 +354,25 @@ public class DailyEvaluationService<T> extends BaseService<T> {
 //		StringBuffer dynSbf = new StringBuffer();
 //		
 //		String sql="select "
-//				+ " to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+//				+ " to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 //				+ " runTimeEfficiency,"
 //				+ " t.gasCumulativeFlow,t.liquidCumulativeflow,t.gasFlowmeterPress,"
 //				+ " t.totalWattEnergy"
 //				+ " from viw_cbm_discrete_hist t "
 //				+ " where t.wellName='"+selectedWellName+"'";
 //		if(StringManagerUtils.isNotNull(wellName)){
-//			sql+=" and t.acquisitionTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
+//			sql+=" and t.acqTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
 //		}else{
-//			sql+=" and t.acquisitiontime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
+//			sql+=" and t.acqTime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
 //		}
-//		sql+= " order by t.acquisitionTime";
+//		sql+= " order by t.acqTime";
 //		List<?> list=this.findCallSql(sql);
 //		
 //		dynSbf.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"wellName\":\""+selectedWellName+"\",\"totalRoot\":[");
 //		if (list.size() > 0) {
 //			for (int i = 0; i < list.size(); i++) {
 //				Object[] obj = (Object[]) list.get(i);
-//				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+//				dynSbf.append("{ \"acqTime\":\"" + obj[0] + "\",");
 //				dynSbf.append("\"runTimeEfficiency\":"+obj[1]+",");
 //				dynSbf.append("\"gasCumulativeFlow\":"+obj[2]+",");
 //				dynSbf.append("\"liquidCumulativeflow\":"+obj[3]+",");

@@ -23,11 +23,11 @@ public class CalculateDataService<T> extends BaseService<T> {
 	public void CBMDailyCalculation(String tatalDate,String wellId){
 		String timeEffTotalUrl=Config.getInstance().configFile.getAgileCalculate().getRun()[0];
 		String commTotalUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
-		String statusSql="select well.wellname,to_char(t.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as acquisitiontime,"
+		String statusSql="select well.wellname,to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss') as acqTime,"
 				+ "t.commstatus,t.commtimeefficiency,t.commtime,t.commrange,"
 				+ "t.runstatus,t.runtimeefficiency,t.runtime,t.runrange "
 				+ " from tbl_cbm_discrete_hist t,tbl_wellinformation well "
-				+ " where t.wellid=well.id and t.acquisitiontime=( select max(t2.acquisitiontime) from tbl_cbm_discrete_hist t2 where t2.wellid=t.wellid and t2.acquisitiontime between to_date('"+tatalDate+"','yyyy-mm-dd')-1 and to_date('"+tatalDate+"','yyyy-mm-dd'))";
+				+ " where t.wellid=well.id and t.acqTime=( select max(t2.acqTime) from tbl_cbm_discrete_hist t2 where t2.wellid=t.wellid and t2.acqTime between to_date('"+tatalDate+"','yyyy-mm-dd')-1 and to_date('"+tatalDate+"','yyyy-mm-dd'))";
 		if(StringManagerUtils.isNotNull(wellId)){
 			statusSql+=" and t.wellid in("+wellId+")";
 		}
@@ -104,10 +104,10 @@ public class CalculateDataService<T> extends BaseService<T> {
 	
 	public void GroupValveDailyCalculation(String tatalDate,String wellId){
 		String commTotalUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
-		String statusSql="select well.wellname,to_char(t.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as acquisitiontime,"
+		String statusSql="select well.wellname,to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss') as acqTime,"
 				+ "t.commstatus,t.commtimeefficiency,t.commtime,t.commrange"
 				+ " from tbl_groupvalve_discrete_hist t,tbl_wellinformation well "
-				+ " where t.wellid=well.id and t.acquisitiontime=( select max(t2.acquisitiontime) from tbl_groupvalve_discrete_hist t2 where t2.wellid=t.wellid and t2.acquisitiontime between to_date('"+tatalDate+"','yyyy-mm-dd')-1 and to_date('"+tatalDate+"','yyyy-mm-dd'))";
+				+ " where t.wellid=well.id and t.acqTime=( select max(t2.acqTime) from tbl_groupvalve_discrete_hist t2 where t2.wellid=t.wellid and t2.acqTime between to_date('"+tatalDate+"','yyyy-mm-dd')-1 and to_date('"+tatalDate+"','yyyy-mm-dd'))";
 		if(StringManagerUtils.isNotNull(wellId)){
 			statusSql+=" and t.wellid in("+wellId+")";
 		}

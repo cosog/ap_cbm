@@ -503,7 +503,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		String tableName="viw_cbm_total_day";
 		this.pager = new Page("pagerForm", request);
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -550,7 +550,7 @@ public class DailyEvaluationController<T> extends BaseController{
 		String tableName="viw_groupvalve_total_day";
 		this.pager = new Page("pagerForm", request);
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acquisitionTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t  where wellName= '"+wellName+"' ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();

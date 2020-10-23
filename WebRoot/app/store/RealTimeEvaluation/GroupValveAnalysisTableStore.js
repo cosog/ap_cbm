@@ -24,7 +24,7 @@ Ext.define('AP.store.RealTimeEvaluation.GroupValveAnalysisTableStore', {
     		dataStr+="]}";
     		
     		var acqSataStr="{\"items\":[";
-    		acqSataStr+="{\"item\":\"采集时间:"+get_rawData.acquisitionTime+"\",\"itemCode\":\"acquisitionTime\",\"value\":\"\",\"curve\":\"\"},";
+    		acqSataStr+="{\"item\":\"采集时间:"+get_rawData.acqTime+"\",\"itemCode\":\"acqTime\",\"value\":\"\",\"curve\":\"\"},";
     		acqSataStr+="{\"item\":\"通信状态\",\"itemCode\":\"commStatus\",\"value\":\""+get_rawData.commStatusName+"\",\"alarmLevel\":"+get_rawData.commAlarmLevel+",\"curve\":\"\"},";
     		
     		acqSataStr+="{\"item\":\"1#流量计总量(m^3)\",\"itemCode\":\"cumulativeFlow1\",\"value\":\""+get_rawData.cumulativeFlow1+"\",\"curve\":\"\"},";

@@ -132,8 +132,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 			sql+=" and "+typeColumnName+"='"+statValue+"' ";
 		}
 		sql+=" order by t.sortNum, t.wellName";
-		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
-				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		sqlHis+=" and to_date(to_char(t.acqTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acqTime desc";
 		
 		if(StringManagerUtils.isNotNull(wellName.trim())){
 			sqlAll=sqlHis;
@@ -190,8 +190,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 			sql+=" and "+typeColumnName+"='"+statValue+"' ";
 		}
 		sql+=" order by t.sortNum, t.wellName";
-		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
-				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		sqlHis+=" and to_date(to_char(t.acqTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acqTime desc";
 		
 		if(StringManagerUtils.isNotNull(wellName.trim())){
 			sqlAll=sqlHis;
@@ -242,8 +242,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 			sql+=" and "+typeColumnName+"='"+statValue+"' ";
 		}
 		sql+=" order by t.sortNum, t.wellName";
-		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
-				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		sqlHis+=" and to_date(to_char(t.acqTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acqTime desc";
 		
 		if(StringManagerUtils.isNotNull(wellName.trim())){
 			sqlAll=sqlHis;
@@ -294,8 +294,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 			sql+=" and "+typeColumnName+"='"+statValue+"' ";
 		}
 		sql+=" order by t.sortNum, t.wellName";
-		sqlHis+=" and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
-				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acquisitionTime desc";
+		sqlHis+=" and to_date(to_char(t.acqTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') "
+				+ "and  t.wellName = '" + wellName.trim() + "' order by t.acqTime desc";
 		
 		if(StringManagerUtils.isNotNull(wellName.trim())){
 			sqlAll=sqlHis;
@@ -317,7 +317,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		}
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
 		
-		String sql="select to_char(acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+		String sql="select to_char(acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 				+ " commStatus,commStatusName,commAlarmLevel,"
 				+ " runStatus,runStatusName,runAlarmLevel,"
 				+ " gasFlowmeterCommStatus,gasFlowmeterCommName,gasInstantaneousFlow,gasCumulativeFlow,gasTodayProd,gasFlowmeterPress,"
@@ -338,7 +338,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		result_json.append("{ \"success\":true,\"isControl\":"+isControl);
 		if(list.size()>0){
 			Object[] obj=(Object[]) list.get(0);
-			result_json.append(",\"acquisitionTime\":\""+obj[0]+"\",");
+			result_json.append(",\"acqTime\":\""+obj[0]+"\",");
 			
 			result_json.append("\"commStatus\":\""+obj[1]+"\",");
 			result_json.append("\"commStatusName\":\""+obj[2]+"\",");
@@ -410,25 +410,25 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 //		StringBuffer dynSbf = new StringBuffer();
 //		
 //		String sql="select "
-//				+ " to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+//				+ " to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 //				+ " runTimeEfficiency,"
 //				+ " t.gasCumulativeFlow,t.liquidCumulativeflow,t.gasFlowmeterPress,"
 //				+ " t.totalWattEnergy"
 //				+ " from viw_cbm_discrete_hist t "
 //				+ " where t.wellName='"+selectedWellName+"'";
 //		if(StringManagerUtils.isNotNull(wellName)){
-//			sql+=" and t.acquisitionTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
+//			sql+=" and t.acqTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
 //		}else{
-//			sql+=" and t.acquisitiontime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
+//			sql+=" and t.acqTime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
 //		}
-//		sql+= " order by t.acquisitionTime";
+//		sql+= " order by t.acqTime";
 //		List<?> list=this.findCallSql(sql);
 //		
 //		dynSbf.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"wellName\":\""+selectedWellName+"\",\"totalRoot\":[");
 //		if (list.size() > 0) {
 //			for (int i = 0; i < list.size(); i++) {
 //				Object[] obj = (Object[]) list.get(i);
-//				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+//				dynSbf.append("{ \"acqTime\":\"" + obj[0] + "\",");
 //				dynSbf.append("\"runTimeEfficiency\":"+obj[1]+",");
 //				dynSbf.append("\"gasCumulativeFlow\":"+obj[2]+",");
 //				dynSbf.append("\"liquidCumulativeflow\":"+obj[3]+",");
@@ -449,26 +449,26 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		StringBuffer dynSbf = new StringBuffer();
 		
 		String sql="select "
-				+ " to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+				+ " to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 				+ " fluidLevel,SPM,t.gasFlowmeterPress,"
 				+ " t.gasInstantaneousFlow,t.liquidInstantaneousflow"
 				+ " from viw_cbm_discrete_hist t "
 				+ " where t.wellName='"+selectedWellName+"'";
 		if(StringManagerUtils.isNotNull(wellName)){
-			sql+=" and t.acquisitionTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
+			sql+=" and t.acqTime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1 ";
 		}else{
-			sql+=" and t.acquisitiontime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
+			sql+=" and t.acqTime >to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd') ";
 			startDate=StringManagerUtils.getCurrentTime();
 			endDate=StringManagerUtils.getCurrentTime();
 		}
-		sql+= " order by t.acquisitionTime";
+		sql+= " order by t.acqTime";
 		List<?> list=this.findCallSql(sql);
 		
 		dynSbf.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"wellName\":\""+selectedWellName+"\",\"startDate\":\""+startDate+"\",\"endDate\":\""+endDate+"\",\"totalRoot\":[");
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Object[] obj = (Object[]) list.get(i);
-				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+				dynSbf.append("{ \"acqTime\":\"" + obj[0] + "\",");
 				dynSbf.append("\"fluidLevel\":"+obj[1]+",");
 				dynSbf.append("\"SPM\":"+obj[2]+",");
 				dynSbf.append("\"gasFlowmeterPress\":"+obj[3]+",");
@@ -493,7 +493,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		}
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
 		
-		String sql="select to_char(acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),"
+		String sql="select to_char(acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 				+ " commStatus,commStatusName,commAlarmLevel,"
 				+ " cumulativeFlow1,flowmeterBackupPoint1,instantaneousFlow1,flowmeterTemperature1,flowmeterPress1,"
 				+ " cumulativeFlow2,flowmeterBackupPoint2,instantaneousFlow2,flowmeterTemperature2,flowmeterPress2,"
@@ -511,7 +511,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		result_json.append("{ \"success\":true,\"isControl\":"+isControl);
 		if(list.size()>0){
 			Object[] obj=(Object[]) list.get(0);
-			result_json.append(",\"acquisitionTime\":\""+obj[0]+"\",");
+			result_json.append(",\"acqTime\":\""+obj[0]+"\",");
 			
 			result_json.append("\"commStatus\":\""+obj[1]+"\",");
 			result_json.append("\"commStatusName\":\""+obj[2]+"\",");
@@ -565,8 +565,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		StringBuffer dynSbf = new StringBuffer();
 		String uplimit="";
 		String downlimit="";
-		String sql="select to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),t."+itemCode+" from viw_cbm_discrete_hist t "
-				+ " where t.wellName='"+wellName+"' and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') order by t.acquisitionTime";
+		String sql="select to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss'),t."+itemCode+" from viw_cbm_discrete_hist t "
+				+ " where t.wellName='"+wellName+"' and to_date(to_char(t.acqTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') order by t.acqTime";
 		
 		
 		int totals = getTotalCountRows(sql);//获取总记录数
@@ -576,7 +576,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Object[] obj = (Object[]) list.get(i);
-				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+				dynSbf.append("{ \"acqTime\":\"" + obj[0] + "\",");
 				dynSbf.append("\"value\":\""+obj[1]+"\"},");
 				if(obj.length==4&&i==list.size()-1){
 					uplimit=obj[2]+"";
@@ -593,8 +593,8 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		StringBuffer dynSbf = new StringBuffer();
 		String uplimit="";
 		String downlimit="";
-		String sql="select to_char(t.acquisitionTime,'yyyy-mm-dd hh24:mi:ss'),t."+itemCode+" from viw_groupvalve_discrete_hist t "
-				+ " where t.wellName='"+wellName+"' and to_date(to_char(t.acquisitionTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') order by t.acquisitionTime";
+		String sql="select to_char(t.acqTime,'yyyy-mm-dd hh24:mi:ss'),t."+itemCode+" from viw_groupvalve_discrete_hist t "
+				+ " where t.wellName='"+wellName+"' and to_date(to_char(t.acqTime,'yyyy-mm-dd'),'yyyy-mm-dd') between to_date('"+startDate+"','yyyy-mm-dd') and to_date('"+endDate+"','yyyy-mm-dd') order by t.acqTime";
 		
 		
 		int totals = getTotalCountRows(sql);//获取总记录数
@@ -604,7 +604,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 		if (list.size() > 0) {
 			for (int i = 0; i < list.size(); i++) {
 				Object[] obj = (Object[]) list.get(i);
-				dynSbf.append("{ \"acquisitionTime\":\"" + obj[0] + "\",");
+				dynSbf.append("{ \"acqTime\":\"" + obj[0] + "\",");
 				dynSbf.append("\"value\":\""+obj[1]+"\"},");
 				if(obj.length==4&&i==list.size()-1){
 					uplimit=obj[2]+"";

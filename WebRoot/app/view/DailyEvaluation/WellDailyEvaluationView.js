@@ -599,7 +599,7 @@ function createCBMWellDailyTableColumn(columnInfo) {
             myColumns += ",width:" + attr.width + ",xtype: 'rownumberer',sortable : false,locked:true";
         } else if (attr.dataIndex.toUpperCase()=='wellName'.toUpperCase()) {
             myColumns += width_ + ",sortable : false,locked:true,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
-        } else if (attr.dataIndex.toUpperCase() == 'acquisitionTime'.toUpperCase()) {
+        } else if (attr.dataIndex.toUpperCase() == 'acqTime'.toUpperCase()) {
             myColumns += width_ + ",sortable : false,locked:false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceTimeFormat(value,o,p,e);}";
         } else {
             myColumns += hidden_ + lock_ + width_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
@@ -1048,9 +1048,9 @@ initCBMWellDailyCurveChartFn = function (get_rawData, divId) {
             var year = parseInt(data[j].calculateDate.split(" ")[0].split("-")[0]);
             var month = parseInt(data[j].calculateDate.split(" ")[0].split("-")[1]);
             var day = parseInt(data[j].calculateDate.split(" ")[0].split("-")[2]);
-//            var hour = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[0]);
-//            var minute = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[1]);
-//            var second = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[2]);
+//            var hour = parseInt(data[j].acqTime.split(" ")[1].split(":")[0]);
+//            var minute = parseInt(data[j].acqTime.split(" ")[1].split(":")[1]);
+//            var second = parseInt(data[j].acqTime.split(" ")[1].split(":")[2]);
             if(i==0){
             	series += "[" + Date.parse(data[j].calculateDate.replace(/-/g, '/')) + "," + parseFloat(data[j].gastodayProd) + "]";
             }
@@ -1190,9 +1190,9 @@ initCBMWellDailyCurveChartFn2 = function (get_rawData, divId) {
             var year = parseInt(data[j].calculateDate.split(" ")[0].split("-")[0]);
             var month = parseInt(data[j].calculateDate.split(" ")[0].split("-")[1]);
             var day = parseInt(data[j].calculateDate.split(" ")[0].split("-")[2]);
-//            var hour = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[0]);
-//            var minute = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[1]);
-//            var second = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[2]);
+//            var hour = parseInt(data[j].acqTime.split(" ")[1].split(":")[0]);
+//            var minute = parseInt(data[j].acqTime.split(" ")[1].split(":")[1]);
+//            var second = parseInt(data[j].acqTime.split(" ")[1].split(":")[2]);
             if(i==0){
             	series += "[" + Date.parse(data[j].calculateDate.replace(/-/g, '/')) + "," + parseFloat(data[j].liquidflowMeterProd) + "]";
             }

@@ -99,7 +99,7 @@ public class EquipmentDriverServerTast {
 		Map<String, Object> acquisitionUnitMap = AcquisitionUnitMap.getMapObject();
 		String wellInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
 				+ " t.drivercode,"
-				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
+				+ " to_char(t3.acqTime,'yyyy-mm-dd hh24:mi:ss') as disAcqTime,"
 				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange,"
 				+ " t3.runstatus,t3.runtime,t3.runtimeefficiency,t3.runrange,"
 				+ " t3.gascumulativeflow,t3.gastodayprod"
@@ -108,7 +108,7 @@ public class EquipmentDriverServerTast {
 				+ " order by t.sortNum";
 		String groupValveInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
 				+ " t.drivercode,"
-				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
+				+ " to_char(t3.acqTime,'yyyy-mm-dd hh24:mi:ss') as disAcqTime,"
 				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange,"
 				+ " t3.cumulativeflow1,t3.dailyflow1,"
 				+ " t3.cumulativeflow2,t3.dailyflow2,"
@@ -119,12 +119,12 @@ public class EquipmentDriverServerTast {
 				+ " order by t.sortNum";
 		String BPInitsql="select t.wellName,t.unitType,t.driverAddr,t.driverId,t.acqcycle_discrete,t.savecycle_discrete,"
 				+ " t.drivercode,"
-				+ " to_char(t3.acquisitiontime,'yyyy-mm-dd hh24:mi:ss') as disAcquisitiontime,"
+				+ " to_char(t3.acqTime,'yyyy-mm-dd hh24:mi:ss') as disAcqTime,"
 				+ " t3.commstatus,t3.commtime,t3.commtimeefficiency,t3.commrange"
 				+ " from tbl_wellinformation t ,tbl_bp_discrete_latest  t3 "
 				+ " where t3.wellId=t.id"
 				+ " order by t.sortNum";
-		String AcquisitionTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+		String AcqTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 		String resetCommStatus="update tbl_cbm_discrete_latest t set t.commstatus=0  ";
 		String resetDailyCommStatus="update tbl_cbm_total_day t set t.commstatus=0 where t.calculatedate=to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')";
 		String resetGroupValveCommStatus="update tbl_GroupValve_discrete_latest t set t.commstatus=0  ";
@@ -187,7 +187,7 @@ public class EquipmentDriverServerTast {
 						break;
 					}
 				}
-				unit.lastDisAcquisitionTime=rs.getString(8);
+				unit.lastDisAcqTime=rs.getString(8);
 				unit.lastCommStatus=rs.getInt(9);
 				unit.lastCommTime=rs.getFloat(10);
 				unit.lastCommTimeEfficiency=rs.getFloat(11);
@@ -227,7 +227,7 @@ public class EquipmentDriverServerTast {
 						break;
 					}
 				}
-				unit.lastDisAcquisitionTime=rs.getString(8);
+				unit.lastDisAcqTime=rs.getString(8);
 				unit.lastCommStatus=rs.getInt(9);
 				unit.lastCommTime=rs.getFloat(10);
 				unit.lastCommTimeEfficiency=rs.getFloat(11);
@@ -270,7 +270,7 @@ public class EquipmentDriverServerTast {
 						break;
 					}
 				}
-				unit.lastDisAcquisitionTime=rs.getString(8);
+				unit.lastDisAcqTime=rs.getString(8);
 				unit.lastCommStatus=rs.getInt(9);
 				unit.lastCommTime=rs.getFloat(10);
 				unit.lastCommTimeEfficiency=rs.getFloat(11);
@@ -542,7 +542,7 @@ public class EquipmentDriverServerTast {
 						acquisitionUnitData.setFluidLevelIndicator(1);
 					else if("fluidLevelIndicatorCommStatus".equalsIgnoreCase(itemRs.getString(1)))
 						acquisitionUnitData.setFluidLevelIndicatorCommStatus(1);
-					else if("fluidLevelAcquisitionTime".equalsIgnoreCase(itemRs.getString(1)))
+					else if("fluidLevelAcqTime".equalsIgnoreCase(itemRs.getString(1)))
 						acquisitionUnitData.setFluidLevelAcquisitionTime(1);
 					else if("fluidLevelIndicatorSoundVelocity".equalsIgnoreCase(itemRs.getString(1)))
 						acquisitionUnitData.setFluidLevelIndicatorSoundVelocity(1);
@@ -658,7 +658,7 @@ public class EquipmentDriverServerTast {
 	}
 	
 	public static class AcquisitionData{
-		public  String AcquisitionTime="";
+		public  String AcqTime="";
 		public  String ReadTime="";//读取数据时间
 		public  String SaveTime="";//离散数据保存时间
 		
@@ -682,7 +682,7 @@ public class EquipmentDriverServerTast {
 		public float liquidFlowmeterProd;
 
 		public int fluidLevelIndicatorCommStatus;
-		public String fluidLevelAcquisitionTime;
+		public String fluidLevelAcqTime;
 		public float fluidLevelIndicatorSoundVelocity;
 		public float fluidLevel;
 		public float fluidLevelIndicatorPress;
@@ -716,11 +716,11 @@ public class EquipmentDriverServerTast {
 	    public String CommRange;//通信区间字符串
 	    public float CommTime;//在线时间
 	    public float CommEfficiency;//在线时率
-		public String getAcquisitionTime() {
-			return AcquisitionTime;
+		public String getAcqTime() {
+			return AcqTime;
 		}
-		public void setAcquisitionTime(String acquisitionTime) {
-			AcquisitionTime = acquisitionTime;
+		public void setAcqTime(String acqTime) {
+			AcqTime = acqTime;
 		}
 		
 		public String getRTUSystemTime() {
@@ -838,10 +838,10 @@ public class EquipmentDriverServerTast {
 			this.fluidLevelIndicatorCommStatus = fluidLevelIndicatorCommStatus;
 		}
 		public String getFluidLevelAcquisitionTime() {
-			return fluidLevelAcquisitionTime;
+			return fluidLevelAcqTime;
 		}
-		public void setFluidLevelAcquisitionTime(String fluidLevelAcquisitionTime) {
-			this.fluidLevelAcquisitionTime = fluidLevelAcquisitionTime;
+		public void setFluidLevelAcquisitionTime(String fluidLevelAcqTime) {
+			this.fluidLevelAcqTime = fluidLevelAcqTime;
 		}
 		public float getFluidLevelIndicatorSoundVelocity() {
 			return fluidLevelIndicatorSoundVelocity;
@@ -1049,7 +1049,7 @@ public class EquipmentDriverServerTast {
 		public  int UnitId;
 		public  String dirverName;
 		public int commStatus;
-		public  String lastDisAcquisitionTime;
+		public  String lastDisAcqTime;
 		public int lastCommStatus;
 		public float lastCommTime;
 		public float lastCommTimeEfficiency;
@@ -1205,12 +1205,12 @@ public class EquipmentDriverServerTast {
 			this.commStatus = commStatus;
 		}
 
-		public String getLastDisAcquisitionTime() {
-			return lastDisAcquisitionTime;
+		public String getLastDisAcqTime() {
+			return lastDisAcqTime;
 		}
 
-		public void setLastDisAcquisitionTime(String lastDisAcquisitionTime) {
-			this.lastDisAcquisitionTime = lastDisAcquisitionTime;
+		public void setLastDisAcqTime(String lastDisAcqTime) {
+			this.lastDisAcqTime = lastDisAcqTime;
 		}
 
 		public int getLastCommStatus() {

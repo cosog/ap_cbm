@@ -1,7 +1,7 @@
 {
 	"WellName": "高226-斜39",
 	"LiftingType": 200,
-	"AcquisitionTime": "2020-03-29 09:09:15",
+	"AcqTime": "2020-03-29 09:09:15",
 	"ProductionParameter": {
 		"TubingPressure": 0.0,
 		"CasingPressure": 0.0,
@@ -25,7 +25,7 @@
 		"PowerFactor": 0.0
 	},
 	"Diagram": {
-		"AcquisitionTime": "2020-03-29 09:09:15",
+		"AcqTime": "2020-03-29 09:09:15",
 		"AcquisitionCycle": 60,
 		"SPM": 5.212858,
 		"Stroke": 4.291,

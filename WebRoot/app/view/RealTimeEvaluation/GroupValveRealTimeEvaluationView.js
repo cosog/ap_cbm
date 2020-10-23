@@ -488,7 +488,7 @@ function createGroupValveRealtimeTableColumn(columnInfo) {
             myColumns += ",width:" + attr.width + ",xtype: 'rownumberer',sortable : false,locked:true";
         } else if (attr.dataIndex.toUpperCase()=='wellName'.toUpperCase()) {
             myColumns += width_ + ",sortable : false,locked:true,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
-        } else if (attr.dataIndex.toUpperCase() == 'acquisitionTime'.toUpperCase()) {
+        } else if (attr.dataIndex.toUpperCase() == 'acqTime'.toUpperCase()) {
             myColumns += width_ + ",sortable : false,locked:false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceTimeFormat(value,o,p,e);}";
         } else {
             myColumns += hidden_ + lock_ + width_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
@@ -725,7 +725,7 @@ GroupValveHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, d
     var catagories = "[";
     var title = get_rawData.wellName + "阀组" + itemName.split("(")[0] + "趋势曲线";
     for (var i = 0; i < data.length; i++) {
-        catagories += "\"" + data[i].acquisitionTime + "\"";
+        catagories += "\"" + data[i].acqTime + "\"";
         if (i < data.length - 1) {
             catagories += ",";
         }
@@ -737,14 +737,14 @@ GroupValveHistoryDataCurveChartFn = function (get_rawData, itemName, itemCode, d
         series += "{\"name\":\"" + legendName[i] + "\",";
         series += "\"data\":[";
         for (var j = 0; j < data.length; j++) {
-            var year = parseInt(data[j].acquisitionTime.split(" ")[0].split("-")[0]);
-            var month = parseInt(data[j].acquisitionTime.split(" ")[0].split("-")[1]);
-            var day = parseInt(data[j].acquisitionTime.split(" ")[0].split("-")[2]);
-            var hour = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[0]);
-            var minute = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[1]);
-            var second = parseInt(data[j].acquisitionTime.split(" ")[1].split(":")[2]);
+            var year = parseInt(data[j].acqTime.split(" ")[0].split("-")[0]);
+            var month = parseInt(data[j].acqTime.split(" ")[0].split("-")[1]);
+            var day = parseInt(data[j].acqTime.split(" ")[0].split("-")[2]);
+            var hour = parseInt(data[j].acqTime.split(" ")[1].split(":")[0]);
+            var minute = parseInt(data[j].acqTime.split(" ")[1].split(":")[1]);
+            var second = parseInt(data[j].acqTime.split(" ")[1].split(":")[2]);
 //            series += "[" + Date.UTC(year, month - 1, day, hour, minute, second) + "," + data[j].value + "]";
-            series += "[" + Date.parse(data[j].acquisitionTime.replace(/-/g, '/')) + "," + data[j].value + "]";
+            series += "[" + Date.parse(data[j].acqTime.replace(/-/g, '/')) + "," + data[j].value + "]";
             if (j != data.length - 1) {
                 series += ",";
             }

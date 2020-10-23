@@ -1,6 +1,6 @@
 Ext.define('AP.store.DailyEvaluation.GroupValveDailyAnalysisiListStore', {
     extend: 'Ext.data.Store',
-    fields: ['wellName','acquisitionTime',
+    fields: ['wellName','acqTime',
     	'commStatusName','commTime','commTimeEfficiency','commRange', 'commAlarmLevel','commtimeefficiencyLevel',
     	'runStatusName', 'runTime','runTimeEfficiency', 'runRange', 'runAlarmLevel','runtimeefficiencyLevel',
     	'rtuStatus', 'SPM','AI1', 'AI2', 'AI3', 'AI4', 

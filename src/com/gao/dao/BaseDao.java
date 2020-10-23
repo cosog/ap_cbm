@@ -1510,9 +1510,9 @@ public class BaseDao extends HibernateDaoSupport {
 		SimpleDateFormat dateFormat1=new SimpleDateFormat("yyyyMMdd_HHmmss");
         SimpleDateFormat dateFormat2=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String wellname=wellAcquisitionData.getWellName();
-		String cjsjstr=wellAcquisitionData.getAcquisitionTime();
+		String cjsjstr=wellAcquisitionData.getAcqTime();
 		
-		Date date=dateFormat2.parse(wellAcquisitionData.getAcquisitionTime());
+		Date date=dateFormat2.parse(wellAcquisitionData.getAcqTime());
 		String cjsjstr2=dateFormat1.format(date);
 		CLOB gtClob=null;
 		gtClob=new CLOB((OracleConnection) conn);

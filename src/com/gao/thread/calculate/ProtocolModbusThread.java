@@ -55,7 +55,7 @@ public class ProtocolModbusThread extends Thread{
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
         int readTimeout=1000*5;//socket read超时时间
         Gson gson = new Gson();
-        while(!isExit){
+        while(!(isExit||this.interrupted())){
         	//获取输入流，并读取客户端信息
             try {
     			byte[] recByte=new byte[256];
@@ -90,6 +90,7 @@ public class ProtocolModbusThread extends Thread{
     				}
     				
     				if(StringManagerUtils.isNotNull(revMacStr)){//接收到注册包
+    					
     					boolean isRun=false;
 						for(int j=0;j<EquipmentDriverServerTast.clientUnitList.size();j++){//遍历已连接的客户端
 							if(EquipmentDriverServerTast.clientUnitList.get(j).socket!=null){//如果已连接
@@ -108,11 +109,11 @@ public class ProtocolModbusThread extends Thread{
 							}
 						}
     					
-    					
     					for(int i=0;i<EquipmentDriverServerTast.units.size();i++){
     						if(revMacStr.equalsIgnoreCase(beeTechDriverServerTast.units.get(i).driverAddr)){
     							System.out.println(beeTechDriverServerTast.units.get(i).wellName+"上线");
     							clientUnit.unitDataList.add(beeTechDriverServerTast.units.get(i));
+    							
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).setCommStatus(1);
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageCount+=1;
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageSize+=(64+16);
@@ -121,6 +122,7 @@ public class ProtocolModbusThread extends Thread{
     							}
     						}
     					}
+    					System.out.println("当前运行线程数量:"+EquipmentDriverServerTast.clientUnitList.size());
     					if(clientUnit.unitDataList.size()==0){//未找到匹配的井
     						System.out.println("线程"+this.threadId+"未找到匹配的井，断开连接,释放资源:"+StringManagerUtils.bytesToHexString(recByte,recByte.length)+":"+revMacStr);
             				this.releaseResource(is,os);
@@ -1807,8 +1809,9 @@ public class ProtocolModbusThread extends Thread{
 				this.releaseResource(is,os);
 				break;
     		} 
-            
+            this.releaseResource(is,os);
         }
+        
 	}
 	
 	@SuppressWarnings("static-access")

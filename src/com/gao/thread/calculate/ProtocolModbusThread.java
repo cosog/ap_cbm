@@ -55,7 +55,7 @@ public class ProtocolModbusThread extends Thread{
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
         int readTimeout=1000*5;//socket read超时时间
         Gson gson = new Gson();
-        while(!isExit){
+        while(!(isExit||this.interrupted())){
         	//获取输入流，并读取客户端信息
             try {
     			byte[] recByte=new byte[256];
@@ -90,6 +90,7 @@ public class ProtocolModbusThread extends Thread{
     				}
     				
     				if(StringManagerUtils.isNotNull(revMacStr)){//接收到注册包
+    					
     					boolean isRun=false;
 						for(int j=0;j<EquipmentDriverServerTast.clientUnitList.size();j++){//遍历已连接的客户端
 							if(EquipmentDriverServerTast.clientUnitList.get(j).socket!=null){//如果已连接
@@ -107,7 +108,6 @@ public class ProtocolModbusThread extends Thread{
 								break;
 							}
 						}
-    					
     					
     					for(int i=0;i<EquipmentDriverServerTast.units.size();i++){
     						if(revMacStr.equalsIgnoreCase(beeTechDriverServerTast.units.get(i).driverAddr)){
@@ -1807,8 +1807,9 @@ public class ProtocolModbusThread extends Thread{
 				this.releaseResource(is,os);
 				break;
     		} 
-            
+            this.releaseResource(is,os);
         }
+        
 	}
 	
 	@SuppressWarnings("static-access")

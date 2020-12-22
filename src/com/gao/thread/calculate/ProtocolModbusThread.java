@@ -113,6 +113,7 @@ public class ProtocolModbusThread extends Thread{
     						if(revMacStr.equalsIgnoreCase(beeTechDriverServerTast.units.get(i).driverAddr)){
     							System.out.println(beeTechDriverServerTast.units.get(i).wellName+"上线");
     							clientUnit.unitDataList.add(beeTechDriverServerTast.units.get(i));
+    							
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).setCommStatus(1);
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageCount+=1;
     							clientUnit.unitDataList.get(clientUnit.unitDataList.size()-1).recvPackageSize+=(64+16);
@@ -121,6 +122,7 @@ public class ProtocolModbusThread extends Thread{
     							}
     						}
     					}
+    					System.out.println("当前运行线程数量:"+EquipmentDriverServerTast.clientUnitList.size());
     					if(clientUnit.unitDataList.size()==0){//未找到匹配的井
     						System.out.println("线程"+this.threadId+"未找到匹配的井，断开连接,释放资源:"+StringManagerUtils.bytesToHexString(recByte,recByte.length)+":"+revMacStr);
             				this.releaseResource(is,os);

@@ -46,6 +46,7 @@ public class ProtocolModbusThread extends Thread{
 	}
 	@SuppressWarnings({"unused", "static-access" })
 	public void run(){
+		System.out.println("线程ID："+threadId+",线程名称："+Thread.currentThread().getName());
 		clientUnit.setSign(1);
         int rc=0;
         InputStream is=null;

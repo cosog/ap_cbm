@@ -3,6 +3,9 @@ package com.gao.thread.calculate;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.gao.model.drive.RTUDriveConfig;
 import com.gao.tast.EquipmentDriverServerTast;
@@ -20,6 +23,7 @@ public class DriveServerThread extends Thread{
 	
 	public void run(){
 		int serverSocketPort=driveConfig.getPort();
+		ExecutorService executorService = Executors.newCachedThreadPool();
 		synchronized(this){
 			while(true){
 				for(int i=0;i<EquipmentDriverServerTast.clientUnitList.size();i++){
@@ -34,11 +38,19 @@ public class DriveServerThread extends Thread{
 							
 							if(EquipmentDriverServerTast.clientUnitList.size()>0&&EquipmentDriverServerTast.clientUnitList.get(i).socket!=null){
 								System.out.println(driveConfig.getDriverCode()+"服务端接收到客户端连接,thread:"+i+",IP:"+EquipmentDriverServerTast.clientUnitList.get(i).socket.getInetAddress()+",端口:"+EquipmentDriverServerTast.clientUnitList.get(i).socket.getPort());
+								
+								
 								EquipmentDriverServerTast.clientUnitList.get(i).thread=new ProtocolModbusThread(i,EquipmentDriverServerTast.clientUnitList.get(i),driveConfig);
 								if(EquipmentDriverServerTast.clientUnitList.get(i).thread!=null){
-									EquipmentDriverServerTast.clientUnitList.get(i).thread.start();
+//									EquipmentDriverServerTast.clientUnitList.get(i).thread.start();
+									executorService.submit(EquipmentDriverServerTast.clientUnitList.get(i).thread);
+									System.out.println(driveConfig.getDriverCode()+"线程池中当前线程数："+((ThreadPoolExecutor)executorService).getPoolSize());
+									System.out.println(driveConfig.getDriverCode()+"线程池中当前活跃线程数："+((ThreadPoolExecutor)executorService).getActiveCount());
 									break;
 								}
+								
+								
+								
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

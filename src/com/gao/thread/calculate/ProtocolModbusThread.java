@@ -38,31 +38,40 @@ public class ProtocolModbusThread extends Thread{
 	private String energyUrl=Config.getInstance().configFile.getAgileCalculate().getEnergy()[0];
 	private RTUDriveConfig driveConfig;
 	private boolean isExit=false;
+	private InputStream is=null;
+	private OutputStream os=null;
 	public ProtocolModbusThread(int threadId, ClientUnit clientUnit,RTUDriveConfig driveConfig) {
 		super();
 		this.threadId = threadId;
 		this.clientUnit = clientUnit;
 		this.driveConfig = driveConfig;
+		init(clientUnit.socket);
+	}
+	private void init(Socket socket){
+		try {
+			is=socket.getInputStream();
+			os=socket.getOutputStream();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 	}
 	@SuppressWarnings({"unused", "static-access" })
 	public void run(){
 		System.out.println("线程ID："+threadId+",线程名称："+Thread.currentThread().getName());
 		clientUnit.setSign(1);
         int rc=0;
-        InputStream is=null;
-        OutputStream os=null;
+		
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         StringBuffer recvBuff=new StringBuffer();
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
         int readTimeout=1000*5;//socket read超时时间
         Gson gson = new Gson();
-        while(!(isExit||this.interrupted())){
+        while(!(isExit||this.interrupted()||is==null||os==null)){
         	//获取输入流，并读取客户端信息
             try {
     			byte[] recByte=new byte[256];
     			byte[] readByte=new byte[12];
-    			is=clientUnit.socket.getInputStream();
-    			os=clientUnit.socket.getOutputStream();
     			boolean wellReaded=false;
     			if(clientUnit.unitDataList.size()==0){//未注册过，读取注册包进行注册
     				rc=this.readSocketConnReg(clientUnit.socket, readTimeout*10, recByte,is);

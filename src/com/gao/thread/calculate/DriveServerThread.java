@@ -14,16 +14,14 @@ import com.gao.tast.EquipmentDriverServerTast;
 public class DriveServerThread extends Thread{
 	private ServerSocket serverSocket;
 	private RTUDriveConfig driveConfig;
+	private ExecutorService pool = Executors.newCachedThreadPool();
 	public DriveServerThread(ServerSocket serverSocket,RTUDriveConfig driveConfig) {
 		super();
 		this.serverSocket = serverSocket;
 		this.driveConfig = driveConfig;
 	}
 	
-	
 	public void run(){
-		int serverSocketPort=driveConfig.getPort();
-		ExecutorService executorService = Executors.newCachedThreadPool();
 		synchronized(this){
 			while(true){
 				for(int i=0;i<EquipmentDriverServerTast.clientUnitList.size();i++){
@@ -32,10 +30,9 @@ public class DriveServerThread extends Thread{
 						System.out.println(driveConfig.getDriverCode()+"等待客户端连接...");
 						try {
 							if(serverSocket==null){
-								serverSocket = new ServerSocket(serverSocketPort);
+								serverSocket = new ServerSocket(driveConfig.getPort());
 							}
 							EquipmentDriverServerTast.clientUnitList.get(i).socket=serverSocket.accept();
-							
 							if(EquipmentDriverServerTast.clientUnitList.size()>0&&EquipmentDriverServerTast.clientUnitList.get(i).socket!=null){
 								System.out.println(driveConfig.getDriverCode()+"服务端接收到客户端连接,thread:"+i+",IP:"+EquipmentDriverServerTast.clientUnitList.get(i).socket.getInetAddress()+",端口:"+EquipmentDriverServerTast.clientUnitList.get(i).socket.getPort());
 								
@@ -43,14 +40,11 @@ public class DriveServerThread extends Thread{
 								EquipmentDriverServerTast.clientUnitList.get(i).thread=new ProtocolModbusThread(i,EquipmentDriverServerTast.clientUnitList.get(i),driveConfig);
 								if(EquipmentDriverServerTast.clientUnitList.get(i).thread!=null){
 //									EquipmentDriverServerTast.clientUnitList.get(i).thread.start();
-									executorService.submit(EquipmentDriverServerTast.clientUnitList.get(i).thread);
-									System.out.println(driveConfig.getDriverCode()+"线程池中当前线程数："+((ThreadPoolExecutor)executorService).getPoolSize());
-									System.out.println(driveConfig.getDriverCode()+"线程池中当前活跃线程数："+((ThreadPoolExecutor)executorService).getActiveCount());
+									pool.submit(EquipmentDriverServerTast.clientUnitList.get(i).thread);
+									System.out.println(driveConfig.getDriverCode()+"线程池中当前线程数："+((ThreadPoolExecutor)pool).getPoolSize());
+									System.out.println(driveConfig.getDriverCode()+"线程池中当前活跃线程数："+((ThreadPoolExecutor)pool).getActiveCount());
 									break;
 								}
-								
-								
-								
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

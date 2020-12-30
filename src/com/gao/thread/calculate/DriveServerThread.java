@@ -39,10 +39,10 @@ public class DriveServerThread extends Thread{
 								
 								EquipmentDriverServerTast.clientUnitList.get(i).thread=new ProtocolModbusThread(i,EquipmentDriverServerTast.clientUnitList.get(i),driveConfig);
 								if(EquipmentDriverServerTast.clientUnitList.get(i).thread!=null){
-//									EquipmentDriverServerTast.clientUnitList.get(i).thread.start();
-									pool.submit(EquipmentDriverServerTast.clientUnitList.get(i).thread);
-									System.out.println(driveConfig.getDriverCode()+"线程池中当前线程数："+((ThreadPoolExecutor)pool).getPoolSize());
-									System.out.println(driveConfig.getDriverCode()+"线程池中当前活跃线程数："+((ThreadPoolExecutor)pool).getActiveCount());
+									EquipmentDriverServerTast.clientUnitList.get(i).thread.start();
+//									pool.submit(EquipmentDriverServerTast.clientUnitList.get(i).thread);
+//									System.out.println(driveConfig.getDriverCode()+"线程池中当前线程数："+((ThreadPoolExecutor)pool).getPoolSize());
+//									System.out.println(driveConfig.getDriverCode()+"线程池中当前活跃线程数："+((ThreadPoolExecutor)pool).getActiveCount());
 									break;
 								}
 							}

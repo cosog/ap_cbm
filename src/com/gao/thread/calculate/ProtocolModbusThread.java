@@ -67,7 +67,7 @@ public class ProtocolModbusThread extends Thread{
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
         int readTimeout=1000*5;//socket read超时时间
         Gson gson = new Gson();
-        while(!(isExit||this.interrupted()||is==null||os==null)){
+        while(!(isExit||Thread.interrupted()||is==null||os==null)){
         	//获取输入流，并读取客户端信息
             try {
     			byte[] recByte=new byte[256];
@@ -1808,6 +1808,9 @@ public class ProtocolModbusThread extends Thread{
         					}
     					}
     				}
+    				if(!wellReaded){
+    					
+    				}
     			}
     			if(this.interrupted()){
             		throw new InterruptedException();
@@ -1816,25 +1819,27 @@ public class ProtocolModbusThread extends Thread{
             	}
     		} catch (Exception e) {
     			e.printStackTrace();
-				this.releaseResource(is,os);
+    			if(!isExit){//如果未释放资源
+    				this.releaseResource(is,os);
+    			}
 				break;
-    		} 
-            this.releaseResource(is,os);
+    		}
         }
-        
+        if(this.interrupted()&&(!isExit)){
+        	this.releaseResource(is,os);
+        }
 	}
 	
 	@SuppressWarnings("static-access")
 	public  void releaseResource(InputStream is,OutputStream os){
-		
 		try {
+			System.out.println("线程ID："+threadId+",线程名称："+Thread.currentThread().getName()+"释放资源！");
 			isExit=true;
 			Connection conn=OracleJdbcUtis.getConnection();
 			Statement stmt=null;
 			stmt = conn.createStatement();
 			Gson gson = new Gson();
 			String AcqTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
-			
 			for(int i=0;i<this.clientUnit.unitDataList.size();i++){
 				clientUnit.unitDataList.get(i).acquisitionData=new  AcquisitionData();
 				clientUnit.unitDataList.get(i).commStatus=0;

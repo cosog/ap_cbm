@@ -322,7 +322,7 @@ public class RealTimeEvaluationService<T> extends BaseService<T> {
 				+ " runStatus,runStatusName,runAlarmLevel,"
 				+ " gasFlowmeterCommStatus,gasFlowmeterCommName,gasInstantaneousFlow,gasCumulativeFlow,gasTodayProd,gasFlowmeterPress,"
 				+ " liquidFlowmeterCommStatus,liquidFlowmeterCommName,liquidInstantaneousflow,liquidCumulativeflow,liquidFlowmeterProd,"
-				+ " fluidLevelIndicatorCommStatus,fluidLevelIndicatorCommName,to_char(fluidLevelAcquisitionTime,'yyyy-mm-dd hh24:mi:ss'),soundVelocity,fluidLevel,fluidLevelIndicatorPress,"
+				+ " fluidLevelIndicatorCommStatus,fluidLevelIndicatorCommName,to_char(fluidLevelAcqTime,'yyyy-mm-dd hh24:mi:ss'),soundVelocity,fluidLevel,fluidLevelIndicatorPress,"
 				+ " vfdCommStatus,vfdCommName,vfdStatus,vfdStatusName,vfdStatus2,vfdStatus2Name,"
 				+ " runFrequency,SPM,vfdBusbarVoltage,vfdOutputVoltage,vfdOutputCurrent,setFrequencyFeedback,"
 				+ " vfdFaultCode,vfdPosition,vfdPositionName,"

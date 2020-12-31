@@ -28,18 +28,17 @@ import com.gao.utils.StringManagerUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class ProtocolModbusThread extends Thread{
+public class ProtocolModbusThread extends ProtocolBasicThread{
 
-	private int threadId;
 	private ClientUnit clientUnit;
 	private String url=Config.getInstance().configFile.getServer().getAccessPath()+"/graphicalUploadController/saveRTUAcquisitionData";
 	private String tiemEffUrl=Config.getInstance().configFile.getAgileCalculate().getRun()[0];
 	private String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 	private String energyUrl=Config.getInstance().configFile.getAgileCalculate().getEnergy()[0];
 	private RTUDriveConfig driveConfig;
-	private boolean isExit=false;
 	private InputStream is=null;
 	private OutputStream os=null;
+	private boolean releaseResourceSign=false;
 	public ProtocolModbusThread(int threadId, ClientUnit clientUnit,RTUDriveConfig driveConfig) {
 		super();
 		this.threadId = threadId;
@@ -67,7 +66,7 @@ public class ProtocolModbusThread extends Thread{
         EquipmentDriverServerTast beeTechDriverServerTast=EquipmentDriverServerTast.getInstance();
         int readTimeout=1000*5;//socket read超时时间
         Gson gson = new Gson();
-        while(!(isExit||Thread.interrupted()||is==null||os==null)){
+        while(!(isExit||this.interrupted()||is==null||os==null)){
         	//获取输入流，并读取客户端信息
             try {
     			byte[] recByte=new byte[256];
@@ -108,6 +107,7 @@ public class ProtocolModbusThread extends Thread{
 									if(revMacStr.equals(EquipmentDriverServerTast.clientUnitList.get(j).unitDataList.get(k).driverAddr)){//查询原有设备地址和新地址的连接，如存在断开资源，释放资源
 										if(EquipmentDriverServerTast.clientUnitList.get(j).thread!=null){
 											EquipmentDriverServerTast.clientUnitList.get(j).thread.interrupt();
+											EquipmentDriverServerTast.clientUnitList.get(j).thread.isExit=true;
 											isRun=true;
 											break;
 										}
@@ -1819,13 +1819,13 @@ public class ProtocolModbusThread extends Thread{
             	}
     		} catch (Exception e) {
     			e.printStackTrace();
-    			if(!isExit){//如果未释放资源
+    			if(!releaseResourceSign){//如果未释放资源
     				this.releaseResource(is,os);
     			}
 				break;
     		}
         }
-        if(this.interrupted()&&(!isExit)){
+        if(!releaseResourceSign){
         	this.releaseResource(is,os);
         }
 	}
@@ -1835,6 +1835,7 @@ public class ProtocolModbusThread extends Thread{
 		try {
 			System.out.println("线程ID："+threadId+",线程名称："+Thread.currentThread().getName()+"释放资源！");
 			isExit=true;
+			releaseResourceSign=true;
 			Connection conn=OracleJdbcUtis.getConnection();
 			Statement stmt=null;
 			stmt = conn.createStatement();
@@ -2226,15 +2227,6 @@ public class ProtocolModbusThread extends Thread{
     	return true;
     }
 
-
-	public int getThreadId() {
-		return threadId;
-	}
-
-	public void setThreadId(int threadId) {
-		this.threadId = threadId;
-	}
-
 	public ClientUnit getClientUnit() {
 		return clientUnit;
 	}
@@ -2251,12 +2243,6 @@ public class ProtocolModbusThread extends Thread{
 
 	public void setDriveConfig(RTUDriveConfig driveConfig) {
 		this.driveConfig = driveConfig;
-	}
-	public boolean isExit() {
-		return isExit;
-	}
-	public void setExit(boolean isExit) {
-		this.isExit = isExit;
 	}
 	
 }

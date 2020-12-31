@@ -23,6 +23,7 @@ import com.gao.model.drive.RTUDriveConfig;
 import com.gao.model.gridmodel.WellHandsontableChangedData;
 import com.gao.tast.EquipmentDriverServerTast.AcquisitionData;
 import com.gao.thread.calculate.DriveServerThread;
+import com.gao.thread.calculate.ProtocolBasicThread;
 import com.gao.utils.AcquisitionUnitMap;
 import com.gao.utils.DataModelMap;
 import com.gao.utils.EquipmentDriveMap;
@@ -1531,7 +1532,7 @@ public class EquipmentDriverServerTast {
 		public  List<UnitData> unitDataList=new ArrayList<UnitData>();
 		public  Socket socket=null;
 		public  int sign=0;//连接标志
-		public  Thread thread=null;
+		public  ProtocolBasicThread thread=null;
 		public  String revData="";
 		public List<UnitData> getUnitDataList() {
 			return unitDataList;
@@ -1554,7 +1555,7 @@ public class EquipmentDriverServerTast {
 		public Thread getThread() {
 			return thread;
 		}
-		public void setThread(Thread thread) {
+		public void setThread(ProtocolBasicThread thread) {
 			this.thread = thread;
 		}
 		public String getRevData() {
